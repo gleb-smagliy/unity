@@ -1,7 +1,5 @@
-import { gql } from 'apollo-server';
+import { createSchema as schemaCreation } from './create-schema';
 
-
-export const createSchema = () =>
-{
-
-};
+export const schemaCreation = schemaCreation({
+  registrationHandler: new ServiceRegistrationCommandHander()
+});
