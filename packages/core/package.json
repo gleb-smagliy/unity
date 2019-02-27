@@ -25,5 +25,17 @@
   },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/opportunity/issues"
+  },
+  "dependencies": {
+    "apollo-server": "^2.4.8",
+    "graphql": "^14.1.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/plugin-proposal-class-properties": "^7.3.4",
+    "@babel/plugin-syntax-object-rest-spread": "^7.2.0",
+    "@babel/preset-env": "^7.3.4",
+    "jest": "^24.1.0"
   }
 }
