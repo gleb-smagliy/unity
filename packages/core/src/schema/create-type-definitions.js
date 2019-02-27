@@ -18,13 +18,18 @@ const REGISTER_MUTATION = `
   {
     success: Boolean
     warnings: [ServiceRegistrationWarning]!
-    errors: [ServiceRegistrationError]!
+    error: ServiceRegistrationError
     payload: ServiceRegistrationPayload
   }
 
   type Mutation
   {
     register(service: ServiceDefinitionInput!): ServiceRegistrationResult!
+  }
+  
+  type Query
+  {
+    version: String
   }
 `;
 

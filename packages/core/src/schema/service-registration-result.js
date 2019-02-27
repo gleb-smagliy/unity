@@ -5,7 +5,7 @@ export const success = (payload, warnings = []) => ({
 });
 
 export const error = (error, warnings = []) => ({
-  success: true,
+  success: false,
   error: stringToError(error),
   warnings: warnings.map(stringToWarning)
 });
