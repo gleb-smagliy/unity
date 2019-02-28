@@ -1,4 +1,4 @@
-import { createSchema } from "../../src/schema/create-schema";
+import { createSchema } from "../../../src/registration/schema/create-schema";
 import { createRegistrationHandler, createSchemaBuilders, executeRegistration } from './utils';
 
 const HANDLER_RESULT_PAYLOAD = { version: '213' };
