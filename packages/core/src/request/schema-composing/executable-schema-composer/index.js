@@ -1,0 +1,1 @@
+export { buildExecutableSchemaComposer } from './build-executable-schema-composer';
