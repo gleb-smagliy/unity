@@ -33,7 +33,7 @@ export const buildCompositeGatewayTransformer = (transformers) =>
 
     return {
       success: true,
-      payload: transforms
+      payload: transforms.filter(t => typeof(t) === 'object' && t !== null)
     }
   };
 };

@@ -1,7 +1,9 @@
 import { tryGetName } from "../../../../src/request/schema-composing/executable-schema-composer/get-plugin-name";
 
-describe('tryGetName', () => {
-  it('should return success with class name when class instance is passed', () => {
+describe('tryGetName', () =>
+{
+  it('should return success with class name when class instance is passed', () =>
+  {
     class SomePlugin {}
 
     expect(tryGetName(new SomePlugin())).toBeSuccessful('SomePlugin');
