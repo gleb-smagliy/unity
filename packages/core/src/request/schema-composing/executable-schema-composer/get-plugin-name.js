@@ -2,9 +2,17 @@ const getName = plugin => plugin.name || plugin.constructor.name;
 
 export const tryGetName = plugin =>
 {
+  if(typeof(plugin) !== 'object')
+  {
+    return {
+      success: false,
+      error: `Plugin <${plugin}> is not an object`
+    }
+  }
+
   const name = getName(plugin);
 
-  if(name === null || name === undefined || typeof(name) !== 'string')
+  if(typeof(name) !== 'string' || name === 'Object')
   {
     return {
       success: false,
@@ -13,7 +21,7 @@ export const tryGetName = plugin =>
   }
 
   return {
-    success: false,
+    success: true,
     payload: name
   }
 };

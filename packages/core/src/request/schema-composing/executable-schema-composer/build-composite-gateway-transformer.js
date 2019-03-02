@@ -1,5 +1,5 @@
 import { tryGetName } from './get-plugin-name';
-import {tryGetPluginMetadata} from "./get-plugin-metadata";
+import { tryGetPluginMetadata } from './get-plugin-metadata';
 
 export const buildCompositeGatewayTransformer = (transformers) =>
 {

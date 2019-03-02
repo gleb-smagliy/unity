@@ -22,8 +22,6 @@ export const createResolvers = ({ registrationHandler }) => ({
 
       const result = await registrationHandler.execute(command);
 
-      console.log('result:', result);
-
       return result.success ?
         success(result.payload, result.warnings) :
         error(result.error, result.warnings);
