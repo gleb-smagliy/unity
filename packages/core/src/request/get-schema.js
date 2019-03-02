@@ -1,5 +1,4 @@
 import { getSchemaVersion } from './get-schema-version';
-import { buildSchemaBlocksRetriever } from './schema-retrieval';
 import { buildSchemaComposer } from "./schema-composing";
 
 //todo: currently just a stub
@@ -19,9 +18,21 @@ export const buildExecutableSchemaRetriever = (options) =>
   return async ({ version, tag }) =>
   {
     const { getVersionByTag } = options.storage.queries;
-    const schemaVersion = await getSchemaVersion({ version, tag, getVersionByTag });
+    const schemaVersionResult = await getSchemaVersion({ version, tag, getVersionByTag });
 
-    return await composeSchema({ version });
+    if(!schemaVersionResult.success)
+    {
+      throw new Error(schemaVersionResult.error);
+    }
+
+    const schemaVersion = schemaVersionResult.payload;
+
+    const result = await composeSchema({ version: schemaVersion });
+
+    if(!result.success)
+    {
+      throw new Error(result.error);
+    }
   };
 };
 

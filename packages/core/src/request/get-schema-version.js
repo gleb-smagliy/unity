@@ -1,5 +1,5 @@
 const isSpecificationStringValid = specificationString =>
-  typeof(specificationString) !== 'string' || specificationString.trim().length == 0
+  typeof(specificationString) !== 'string' || specificationString.trim().length === 0
 
 export const getSchemaVersion = async ({ version, tag, getVersionByTag}) =>
 {
@@ -7,11 +7,17 @@ export const getSchemaVersion = async ({ version, tag, getVersionByTag}) =>
   {
     if(!isSpecificationStringValid(tag))
     {
-      throw new Error(`Could not retrieve schema: version <${version}> and tag <${tag}> are not valid`);
+      return {
+        success: false,
+        error: `Could not retrieve schema: version <${version}> and tag <${tag}> are not valid`
+      }
     }
 
     return await getVersionByTag({ tag });
   }
 
-  return version;
+  return {
+    success: true,
+    payload: version
+  }
 };

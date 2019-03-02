@@ -9,10 +9,7 @@ export const buildSchemaComposer = (options) =>
   {
     const schemasRetrieval = await schemaRetriever({ version });
 
-    if(!schemasRetrieval.success)
-    {
-      throw new Error(`Could not retrieve schema definition: <${schemasRetrieval.error}>`);
-    }
+    if(!schemasRetrieval.success) return schemasRetrieval;
 
     return composeExecutableSchema(options, { schemaDefinition: schemasRetrieval.payload });
   };
