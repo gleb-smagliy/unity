@@ -10,10 +10,8 @@ describe('tryGetPluginMetadata', () =>
       'SomePlugin': pluginMetadata
     };
 
-    const getMetadataResult = tryGetPluginMetadata(metadatas, 'SomePlugin');
-
-    expect(getMetadataResult.success).toEqual(true);
-    expect(getMetadataResult.payload).toBe(pluginMetadata)
+    expect(tryGetPluginMetadata(metadatas, 'SomePlugin'))
+      .toBeSuccessful(pluginMetadata);
   });
 
   it('should return failure when plugin name is not present in the dictionary', () =>
@@ -22,10 +20,8 @@ describe('tryGetPluginMetadata', () =>
       'SomePlugin': {}
     };
 
-    const getMetadataResult = tryGetPluginMetadata(metadatas, 'not_existing_plugin');
-
-    expect(getMetadataResult.success).toEqual(false);
-    expect(getMetadataResult.error).toEqual(expect.any(String));
+    expect(tryGetPluginMetadata(metadatas, 'not_existing_plugin'))
+      .toBeFailed();
   });
 
   it('should return failure when plugin metadata is not an object', () =>
@@ -34,9 +30,7 @@ describe('tryGetPluginMetadata', () =>
       'SomePlugin': 123
     };
 
-    const getMetadataResult = tryGetPluginMetadata(metadatas, 'SomePlugin');
-
-    expect(getMetadataResult.success).toEqual(false);
-    expect(getMetadataResult.error).toEqual(expect.any(String));
+    expect(tryGetPluginMetadata(metadatas, 'SomePlugin'))
+      .toBeFailed();
   });
 });

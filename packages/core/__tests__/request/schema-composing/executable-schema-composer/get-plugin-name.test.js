@@ -4,34 +4,25 @@ describe('tryGetName', () => {
   it('should return success with class name when class instance is passed', () => {
     class SomePlugin {}
 
-    const getNameResult = tryGetName(new SomePlugin());
-
-    expect(getNameResult.success).toEqual(true);
-    expect(getNameResult.payload).toEqual('SomePlugin');
+    expect(tryGetName(new SomePlugin())).toBeSuccessful('SomePlugin');
   });
 
-  it('should return success with name property when object is passed', () => {
+  it('should return success with name property when object is passed', () =>
+  {
     const plugin = { name: 'some_plugin' };
 
-    const getNameResult = tryGetName(plugin);
-
-    expect(getNameResult.success).toEqual(true);
-    expect(getNameResult.payload).toEqual(plugin.name);
+    expect(tryGetName(plugin)).toBeSuccessful(plugin.name);
   });
 
-  it('should return failure when object without name is passed', () => {
+  it('should return failure when object without name is passed', () =>
+  {
     const plugin = { someProp: 'some_plugin' };
 
-    const getNameResult = tryGetName(plugin);
-
-    expect(getNameResult.success).toEqual(false);
-    expect(getNameResult.error).toEqual(expect.any(String));
+    expect(tryGetName(plugin)).toBeFailed();
   });
 
-  it('should return failure when not object is passed', () => {
-    const getNameResult = tryGetName('some_plugin');
-
-    expect(getNameResult.success).toEqual(false);
-    expect(getNameResult.error).toEqual(expect.any(String));
+  it('should return failure when not object is passed', () =>
+  {
+    expect(tryGetName('some_plugin')).toBeFailed();
   });
 });
