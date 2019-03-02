@@ -3,7 +3,7 @@ import { FilterRootFields, FilterTypes } from 'graphql-tools';
 
 const createValidTransformer = (name, payload) => ({
   name,
-  getTransform: jest.fn().mockReturnValue({ success: true, payload })
+  getTransforms: jest.fn().mockReturnValue({ success: true, payload })
 });
 
 describe('buildCompositeGatewayTransformer', () =>
@@ -30,7 +30,7 @@ describe('buildCompositeGatewayTransformer', () =>
   {
     const transformer = {
       name: 'transformer',
-      getTransform: jest.fn().mockReturnValue({ success: false, error: 'some err'})
+      getTransforms: jest.fn().mockReturnValue({ success: false, error: 'some err'})
     };
 
     const transformers = [transformer];
@@ -54,7 +54,7 @@ describe('buildCompositeGatewayTransformer', () =>
 
     runTransformers(transformers, metadata);
 
-    expect(transformers[0].getTransform).toHaveBeenCalledWith({ model: metadata.transformer });
+    expect(transformers[0].getTransforms).toHaveBeenCalledWith({ model: metadata.transformer });
   });
 
   it('should return success and flatten transformers outputs', () =>

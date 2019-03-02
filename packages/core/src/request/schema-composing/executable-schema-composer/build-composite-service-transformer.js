@@ -20,22 +20,22 @@ export const buildCompositeServicesTransformer = (transformers) =>
 
         if(!getTransformerMetadataResult.success) return getTransformerMetadataResult;
 
-        const getTransformResult = transformer.getTransform({ service: service, model: getTransformerMetadataResult.payload });
+        const getTransformsResult = transformer.getTransforms({ service: service, model: getTransformerMetadataResult.payload });
 
-        if(!getTransformResult.success) return getTransformResult;
+        if(!getTransformsResult.success) return getTransformsResult;
 
         if(!transforms[service.id])
         {
           transforms[service.id] = [];
         }
 
-        if(Array.isArray(getTransformResult.payload))
+        if(Array.isArray(getTransformsResult.payload))
         {
-          transforms[service.id].push(...getTransformResult.payload);
+          transforms[service.id].push(...getTransformsResult.payload);
         }
         else
         {
-          transforms[service.id].push(getTransformResult.payload);
+          transforms[service.id].push(getTransformsResult.payload);
         }
       }
     }

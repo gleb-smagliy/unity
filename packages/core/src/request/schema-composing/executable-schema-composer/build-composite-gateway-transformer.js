@@ -17,17 +17,17 @@ export const buildCompositeGatewayTransformer = (transformers) =>
 
       if(!getTransformerMetadataResult.success) return getTransformerMetadataResult;
 
-      const getTransformResult = transformer.getTransform({ model: getTransformerMetadataResult.payload });
+      const getTransformsResult = transformer.getTransforms({ model: getTransformerMetadataResult.payload });
 
-      if(!getTransformResult.success) return getTransformResult;
+      if(!getTransformsResult.success) return getTransformsResult;
 
-      if(Array.isArray(getTransformResult.payload))
+      if(Array.isArray(getTransformsResult.payload))
       {
-        transforms.push(...getTransformResult.payload);
+        transforms.push(...getTransformsResult.payload);
       }
       else
       {
-        transforms.push(getTransformResult.payload);
+        transforms.push(getTransformsResult.payload);
       }
     }
 
