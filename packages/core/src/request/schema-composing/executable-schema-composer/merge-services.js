@@ -3,11 +3,11 @@ import { mergeResolvers } from 'merge-graphql-schemas';
 import { makeServiceSchema } from './make-service-schema';
 import { SchemaTypeConflictError } from './type-conflict-error'
 
-const transformIfNeeded = (schema, transformations) =>
+const transformIfNeeded = (schema, transformation) =>
 {
-  if(Array.isArray(transformations) && transformations.length > 0)
+  if(Array.isArray(transformation) && transformation.length > 0)
   {
-    return transformSchema(schema, transformations);
+    return transformSchema(schema, transformation);
   }
 
   return schema;
@@ -18,10 +18,10 @@ const transformServicesToSchemas = (services, transformations, contextSetter) =>
 {
   return services.map(service =>
   {
-    const schema = makeServiceSchema({ schema: service.schema, contextSetter });
+    const schema = makeServiceSchema({ schema: service.schema, uri: service.uri, contextSetter });
     const transformation = transformations[service.id];
 
-    return transformIfNeeded(schema, transformations);
+    return transformIfNeeded(schema, transformation);
   });
 };
 

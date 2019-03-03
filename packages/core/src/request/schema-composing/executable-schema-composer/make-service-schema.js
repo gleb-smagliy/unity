@@ -2,12 +2,22 @@ import fetch from 'node-fetch';
 import { ApolloLink } from 'apollo-link';
 import { setContext } from "apollo-link-context";
 import { HttpLink } from 'apollo-link-http';
-import { transformSchema } from 'graphql-tools';
+import { makeRemoteExecutableSchema } from 'graphql-tools'
 
-export const makeServiceSchema = ({ schema, contextSetter = null }) =>
+const createHttpLink = uri => new HttpLink({ uri, fetch });
+
+const createContextLink = contextSetter => setContext(contextSetter);
+
+export const makeServiceSchema = ({ schema, uri, contextSetter = null }) =>
 {
-  if(contextSetter == null)
-  {
+  const links = contextSetter != null ?
+    [createContextLink(contextSetter), createHttpLink(uri)] :
+    [createHttpLink(uri)];
 
-  }
+  const link = ApolloLink.from(links);
+
+  return makeRemoteExecutableSchema({
+    link,
+    schema
+  });
 };
