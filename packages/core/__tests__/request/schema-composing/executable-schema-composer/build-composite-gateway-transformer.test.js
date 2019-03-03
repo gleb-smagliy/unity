@@ -25,7 +25,7 @@ describe('buildCompositeGatewayTransformer', () =>
     expect(runTransformers([new Transformer()], metadata)).toBeFailed();
   });
 
-  it('should return failure if transformer does not have a valid metadata', () =>
+  it('should return failure if transformer returns failure', () =>
   {
     const transformer = {
       name: 'transformer',

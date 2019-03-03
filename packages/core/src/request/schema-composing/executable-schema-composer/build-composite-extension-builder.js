@@ -1,9 +1,12 @@
 import { tryGetName } from './get-plugin-name';
 import { tryGetPluginMetadata } from './get-plugin-metadata';
 
+const isValidTypeDef = t => typeof(t) === 'string' && t !== null && t.trim().length > 0;
+const isValidResolver = r => typeof(r) === 'object' && r !== null;
+
 export const buildCompositeExtensionBuilder = extensionBuilders =>
 {
-  return ({ services, metadata }) =>
+  return ({ metadata }) =>
   {
     const typeDefs = [];
     const resolvers = [];
@@ -24,20 +27,20 @@ export const buildCompositeExtensionBuilder = extensionBuilders =>
 
       if(Array.isArray(buildResult.payload.typeDefs))
       {
-        typeDefs.push(...buildResult.payload.typeDefs);
+        typeDefs.push(...buildResult.payload.typeDefs.filter(isValidTypeDef));
       }
-      else
+      else if(isValidTypeDef(buildResult.payload.typeDefs))
       {
         typeDefs.push(buildResult.payload.typeDefs);
       }
 
       if(Array.isArray(buildResult.payload.resolvers))
       {
-        typeDefs.push(...buildResult.payload.resolvers);
+        resolvers.push(...buildResult.payload.resolvers.filter(isValidResolver));
       }
-      else
+      else if(isValidResolver(buildResult.payload.resolvers))
       {
-        typeDefs.push(buildResult.payload.resolvers);
+        resolvers.push(buildResult.payload.resolvers);
       }
     }
 
