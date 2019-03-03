@@ -1,5 +1,6 @@
 import { tryGetName } from './get-plugin-name';
 import { tryGetPluginMetadata } from './get-plugin-metadata';
+import { isValidTransform } from './is-valid-transform';
 
 export const buildCompositeGatewayTransformer = (transformers) =>
 {
@@ -33,7 +34,7 @@ export const buildCompositeGatewayTransformer = (transformers) =>
 
     return {
       success: true,
-      payload: transforms.filter(t => typeof(t) === 'object' && t !== null)
+      payload: transforms.filter(isValidTransform)
     }
   };
 };

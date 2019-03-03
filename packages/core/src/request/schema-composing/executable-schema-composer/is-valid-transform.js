@@ -1,0 +1,1 @@
+export const isValidTransform = t => typeof(t) === 'object' && t !== null;

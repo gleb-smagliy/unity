@@ -1,4 +1,8 @@
-import { buildCompositeGatewayTransformer } from "../../../../src/request/schema-composing/executable-schema-composer/build-composite-gateway-transformer";
+import { buildCompositeServicesTransformer } from "../../../../src/request/schema-composing/executable-schema-composer/build-composite-service-transformer";
+
+const DEFAULT_SERVICE = {
+  id: 'default_service'
+};
 
 const createValidTransformer = (name, payload) => ({
   name,
@@ -7,8 +11,8 @@ const createValidTransformer = (name, payload) => ({
 
 describe('buildCompositeGatewayTransformer', () =>
 {
-  const runTransformers = (transformers, metadata) =>
-    buildCompositeGatewayTransformer(transformers)({ metadata });
+  const runTransformers = (transformers, metadata, services = [DEFAULT_SERVICE]) =>
+    buildCompositeServicesTransformer(transformers)({ services, metadata });
 
   it('should return failure if transformer does not have a name', () =>
   {
@@ -41,7 +45,7 @@ describe('buildCompositeGatewayTransformer', () =>
     expect(runTransformers(transformers, metadata)).toBeFailed();
   });
 
-  it('should call transformer with metadata', () =>
+  it('should call transformer with service and metadata', () =>
   {
     const transformers = [
       createValidTransformer('transformer')
@@ -53,10 +57,10 @@ describe('buildCompositeGatewayTransformer', () =>
 
     runTransformers(transformers, metadata);
 
-    expect(transformers[0].getTransforms).toHaveBeenCalledWith({ model: metadata.transformer });
+    expect(transformers[0].getTransforms).toHaveBeenCalledWith({ model: metadata.transformer, service: DEFAULT_SERVICE});
   });
 
-  it('should return success and flatten transformers outputs', () =>
+  it('should return success and put transformations per service for single service', () =>
   {
     const transforms = [{key: 1}, {key: 2}];
 
@@ -70,7 +74,35 @@ describe('buildCompositeGatewayTransformer', () =>
     };
 
     expect(runTransformers(transformers, metadata)).toBeSuccessful(
-      [transforms[0], transforms[1], transforms[0], transforms[1]]
+      {
+        [DEFAULT_SERVICE.id]: [transforms[0], transforms[1], transforms[0], transforms[1]]
+      }
+    );
+  });
+
+  it('should return success and put transformations per service for multiple services', () =>
+  {
+    const transforms = [{key: 1}, {key: 2}];
+
+    const transformers = [
+      createValidTransformer('transformer', transforms),
+      createValidTransformer('transformer', transforms)
+    ];
+
+    const metadata = {
+      transformer: { key: 'value' }
+    };
+
+    const services = [
+      { id: 'service1' },
+      { id: 'service2' }
+    ];
+
+    expect(runTransformers(transformers, metadata, services)).toBeSuccessful(
+      {
+        service1: [transforms[0], transforms[1], transforms[0], transforms[1]],
+        service2: [transforms[0], transforms[1], transforms[0], transforms[1]]
+      }
     );
   });
 
@@ -89,7 +121,9 @@ describe('buildCompositeGatewayTransformer', () =>
     };
 
     expect(runTransformers(transformers, metadata)).toBeSuccessful(
-      [transforms[0], transforms[1], singleTransform]
+      {
+        [DEFAULT_SERVICE.id]: [transforms[0], transforms[1], singleTransform]
+      }
     );
   });
 
@@ -108,7 +142,9 @@ describe('buildCompositeGatewayTransformer', () =>
     };
 
     expect(runTransformers(transformers, metadata)).toBeSuccessful(
-      transforms
+      {
+        [DEFAULT_SERVICE.id]: transforms
+      }
     );
   });
 
@@ -126,7 +162,9 @@ describe('buildCompositeGatewayTransformer', () =>
     };
 
     expect(runTransformers(transformers, metadata)).toBeSuccessful(
-      transforms
+      {
+        [DEFAULT_SERVICE.id]: transforms
+      }
     );
   });
 });

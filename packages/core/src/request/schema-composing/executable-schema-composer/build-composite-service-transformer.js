@@ -1,5 +1,6 @@
 import { tryGetName } from './get-plugin-name';
 import { tryGetPluginMetadata } from './get-plugin-metadata';
+import { isValidTransform } from "./is-valid-transform";
 
 export const buildCompositeServicesTransformer = (transformers) =>
 {
@@ -31,9 +32,9 @@ export const buildCompositeServicesTransformer = (transformers) =>
 
         if(Array.isArray(getTransformsResult.payload))
         {
-          transforms[service.id].push(...getTransformsResult.payload);
+          transforms[service.id].push(...getTransformsResult.payload.filter(isValidTransform));
         }
-        else
+        else if(isValidTransform(getTransformsResult.payload))
         {
           transforms[service.id].push(getTransformsResult.payload);
         }
