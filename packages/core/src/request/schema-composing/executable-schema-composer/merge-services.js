@@ -1,7 +1,6 @@
 import { transformSchema, mergeSchemas } from 'graphql-tools';
 import { mergeResolvers } from 'merge-graphql-schemas';
 import { makeServiceSchema } from './make-service-schema';
-import { SchemaTypeConflictError } from './type-conflict-error'
 
 const transformIfNeeded = (schema, transformation) =>
 {
@@ -35,28 +34,18 @@ export const mergeServices = (services, {
   const servicesSchemas = transformServicesToSchemas(services, servicesTransformations, contextSetter);
   const mergedResolvers = mergeResolvers(extensions.resolvers);
 
-  try {
-    const mergedSchema = mergeSchemas({
-      schemas: [
-        extensions.typeDefs,
-        ...servicesSchemas
-      ],
-      resolvers: mergedResolvers,
-      onTypeConflict: left => { throw new SchemaTypeConflictError(`Type <${left.name}> ocurred more than once`) }
-    });
+  const mergedSchema = mergeSchemas({
+    schemas: [
+      ...extensions.typeDefs,
+      ...servicesSchemas
+    ],
+    resolvers: mergedResolvers
+  });
 
-    return transformIfNeeded(mergedSchema, gatewayTransformations);
-  }
-  catch(err)
-  {
-    if(err instanceof SchemaTypeConflictError)
-    {
-      return {
-        success: false,
-        error: err.message
-      }
-    }
+  const resultSchema = transformIfNeeded(mergedSchema, gatewayTransformations);
 
-    throw err;
-  }
+  return {
+    success: true,
+    payload: resultSchema
+  };
 };

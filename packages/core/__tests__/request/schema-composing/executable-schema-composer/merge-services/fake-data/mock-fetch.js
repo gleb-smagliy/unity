@@ -1,0 +1,1 @@
+export const mockFetch = (fetch, response) => fetch.mockResponseOnce(JSON.stringify(response));

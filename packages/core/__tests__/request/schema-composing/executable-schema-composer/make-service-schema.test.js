@@ -16,30 +16,34 @@ const setHeaders = (headers) => (request, previousContext) => ({ headers });
 
 describe('makeServiceSchema', () =>
 {
-    beforeEach(() => jest.mock('node-fetch', () => jest.fn()));
-    afterEach(() => jest.unmock('node-fetch'));
+  beforeEach(() =>
+  {
+    jest.resetAllMocks();
+    jest.mock('node-fetch', () => jest.fn())
+  });
+  afterEach(() => jest.unmock('node-fetch'));
 
-    it('should execute query against remote service without context trasnformations', async () =>
-    {
-      const remoteSchema = makeServiceSchema({ schema: CLIENT_SCHEMA, uri: SERVICE_URI });
+  it('should execute query against remote service without context trasnformations', async () =>
+  {
+    const remoteSchema = makeServiceSchema({ schema: CLIENT_SCHEMA, uri: SERVICE_URI });
 
-      await querySchema(remoteSchema);
+    await querySchema(remoteSchema);
 
-      expect(fetch).toHaveBeenCalledTimes(1);
-      expect(fetch.mock.calls[0][0]).toEqual(SERVICE_URI);
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch.mock.calls[0][0]).toEqual(SERVICE_URI);
+  });
+
+  it('should execute query against remote service with context transformations', async () =>
+  {
+    const remoteSchema = makeServiceSchema({
+      schema: CLIENT_SCHEMA,
+      uri: SERVICE_URI,
+      contextSetter: setHeaders({ 'X-Test': 1 })
     });
 
-    it('should execute query against remote service with context transformations', async () =>
-    {
-      const remoteSchema = makeServiceSchema({
-        schema: CLIENT_SCHEMA,
-        uri: SERVICE_URI,
-        contextSetter: setHeaders({ 'X-Test': 1 })
-      });
+    await querySchema(remoteSchema);
 
-      await querySchema(remoteSchema);
-
-      expect(fetch).toHaveBeenCalledTimes(1);
-      expect(fetch.mock.calls[0][1].headers['X-Test']).toEqual(1);
-    });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch.mock.calls[0][1].headers['X-Test']).toEqual(1);
+  });
 });
