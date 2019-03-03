@@ -22,10 +22,15 @@ export const buildExecutableSchemaComposer = (options) =>
     const buildGatewayTransformations = gatewayTransformer(schemaSpecification);
     if(!buildGatewayTransformations.success) return buildGatewayTransformations;
 
-    return mergeServices(services, {
+    const payload = mergeServices(services, {
       servicesTransformations: buildServicesTransformations.payload,
       extensions: buildExtensions.payload,
       gatewayTransformations: buildGatewayTransformations.payload
     });
+
+    return {
+      success: true,
+      payload
+    }
   };
 };
