@@ -1,9 +1,15 @@
-import { mergeServices } from "../../../../../src/request/schema-composing/executable-schema-composer/merge-services";
-import { authorService, AUTHOR_RESPONSE } from './fake-data/authors';
-import { bookService, BOOK_RESPONSE } from './fake-data/books';
-import { extensions, getBestTitle } from './fake-data/extensions';
-import { gatewayTransformations, servicesTransformations } from './fake-data/transforms';
-import { mockFetch } from './fake-data/mock-fetch';
+import { mergeServices } from "../../../../src/request/schema-composing/executable-schema-composer/merge-services";
+import {
+  authorService,
+  AUTHOR_RESPONSE,
+  bookService,
+  BOOK_RESPONSE,
+  extensions,
+  getBestTitle,
+  gatewayTransformations,
+  servicesTransformations,
+  mockFetch
+} from '../../../fake-data';
 import { graphql } from 'graphql';
 import fetch from 'node-fetch';
 

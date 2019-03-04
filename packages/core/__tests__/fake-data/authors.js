@@ -1,4 +1,4 @@
-import { buildFakeClientSchema } from '../../../../../fake-schema';
+import { buildFakeClientSchema } from '../fake-schema';
 
 const AUTHOR_SCHEMA = buildFakeClientSchema(`
   type Author {
