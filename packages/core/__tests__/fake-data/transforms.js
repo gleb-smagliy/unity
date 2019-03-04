@@ -1,4 +1,4 @@
-import { RenameTypes, RenameRootFields } from 'graphql-tools';
+import { RenameRootFields } from 'graphql-tools';
 
 export const servicesTransformations = {
   Author: [
