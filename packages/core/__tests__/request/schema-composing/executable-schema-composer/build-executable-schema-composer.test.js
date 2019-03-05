@@ -12,7 +12,8 @@ import {
   exampleExtensionBuilder,
   exampleGatewayTransformer,
   exampleServiceTransformer,
-  createSuccessfulMocks
+  createSuccessfulMocks,
+  PLUGINS_NAMES
 } from '../../../fake-plugins'
 
 export const composeExampleSchema = ({
@@ -84,7 +85,7 @@ describe('buildExecutableSchemaComposer', () =>
     expect(bookResult.data['Gateway_Book_randomBook'].title).toEqual(BOOK_RESPONSE.data.randomBook.title);
   });
 
-  it('should call extensions builder with metadata model', async () =>
+  it('should call extension builder with metadata model', async () =>
   {
     const mocks = createSuccessfulMocks();
     const services = [bookService, authorService];
@@ -95,14 +96,14 @@ describe('buildExecutableSchemaComposer', () =>
     });
 
     expect(mergeResult).toBeSuccessful();
-    expect(mocks.extensionBuilders[0].buildSchemaExtensions).toHaveBeenCalledWith({ model: mocks.metadata.extensionBuilder });
+    expect(mocks.extensionBuilders[0].buildSchemaExtensions).toHaveBeenCalledWith({ model: mocks.metadata[PLUGINS_NAMES.EXTENSION_BUILDER] });
   });
 
   it('should call service schema transformer with metadata model for each service', async () =>
   {
     const mocks = createSuccessfulMocks();
     const services = [bookService, authorService];
-    const model = mocks.metadata.serviceTransformer;
+    const model = mocks.metadata[PLUGINS_NAMES.SERVICE_TRANSFORMER];
 
     const mergeResult = composeExampleSchema({
       services,
@@ -126,7 +127,7 @@ describe('buildExecutableSchemaComposer', () =>
     });
 
     expect(mergeResult).toBeSuccessful();
-    expect(mocks.gatewaySchemaTransformers[0].getTransforms).toHaveBeenCalledWith({ model: mocks.metadata.gatewayTransformer });
+    expect(mocks.gatewaySchemaTransformers[0].getTransforms).toHaveBeenCalledWith({ model: mocks.metadata[PLUGINS_NAMES.GATEWAY_TRANSFORMER] });
   });
 
   it('should return failure if services transformer returns failure', async () =>
@@ -138,7 +139,7 @@ describe('buildExecutableSchemaComposer', () =>
       ...createSuccessfulMocks(),
       serviceSchemaTransformers: [exampleServiceTransformer({
         success: false,
-        name: 'serviceTransformer'
+        name: PLUGINS_NAMES.SERVICE_TRANSFORMER
       })]
     });
 
@@ -154,7 +155,7 @@ describe('buildExecutableSchemaComposer', () =>
       ...createSuccessfulMocks(),
       gatewaySchemaTransformers: [exampleGatewayTransformer({
         success: false,
-        name: 'gatewayTransformer'
+        name: PLUGINS_NAMES.GATEWAY_TRANSFORMER
       })]
     });
 
@@ -170,7 +171,7 @@ describe('buildExecutableSchemaComposer', () =>
       ...createSuccessfulMocks(),
       extensionBuilders: [exampleExtensionBuilder({
         success: false,
-        name: 'extensionBuilder'
+        name: PLUGINS_NAMES.EXTENSION_BUILDER
       })]
     });
 

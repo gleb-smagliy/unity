@@ -3,5 +3,5 @@ export {
   exampleExtensionBuilder,
   exampleGatewayTransformer,
   exampleServiceTransformer,
-  composeExampleSchema
+  PLUGINS_NAMES
 } from './create-plugins'

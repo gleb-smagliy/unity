@@ -1,29 +1,29 @@
-import {exampleExtensionBuilder, exampleGatewayTransformer, exampleServiceTransformer} from "./create-plugins";
+import {exampleExtensionBuilder, exampleGatewayTransformer, exampleServiceTransformer,PLUGINS_NAMES} from "./create-plugins";
 import {extensions, gatewayTransformations, servicesTransformations} from "../fake-data";
 
 export const createSuccessfulMocks = () => {
   const metadata = {
-    extensionBuilder: { extensionBuilderKey: 'extension_builder_value' },
-    gatewayTransformer: { gatewayTransformerKey: 'gateway_transformer_value' },
-    serviceTransformer: { serviceTransformerKey: 'service_transformer_value' },
+    [PLUGINS_NAMES.EXTENSION_BUILDER]: { extensionBuilderKey: 'extension_builder_value' },
+    [PLUGINS_NAMES.GATEWAY_TRANSFORMER]: { gatewayTransformerKey: 'gateway_transformer_value' },
+    [PLUGINS_NAMES.SERVICE_TRANSFORMER]: { serviceTransformerKey: 'service_transformer_value' },
   };
 
   const extensionBuilder = exampleExtensionBuilder({
     success: true,
     extensions,
-    name: 'extensionBuilder'
+    name: PLUGINS_NAMES.EXTENSION_BUILDER
   });
 
   const gatewayTransformer = exampleGatewayTransformer({
     success: true,
     transforms: gatewayTransformations,
-    name: 'gatewayTransformer'
+    name: PLUGINS_NAMES.GATEWAY_TRANSFORMER
   });
 
   const serviceTransformer = exampleServiceTransformer({
     success: true,
     transforms: servicesTransformations,
-    name: 'serviceTransformer'
+    name: PLUGINS_NAMES.SERVICE_TRANSFORMER
   });
 
   return {

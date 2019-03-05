@@ -1,0 +1,1 @@
+export { createSuccessfulStorage } from './create-storage';
