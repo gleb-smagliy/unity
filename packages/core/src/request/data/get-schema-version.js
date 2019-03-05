@@ -1,7 +1,7 @@
 const isSpecificationStringValid = specificationString =>
   typeof(specificationString) !== 'string' || specificationString.trim().length === 0
 
-export const getSchemaVersion = async ({ version, tag, getVersionByTag}) =>
+export const getSchemaVersion = async ({ version, tag, getVersionByTag }) =>
 {
   if(!isSpecificationStringValid(version))
   {

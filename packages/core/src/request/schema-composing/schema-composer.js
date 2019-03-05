@@ -1,4 +1,4 @@
-import { buildSchemaRetriever } from '../schema-retrieval';
+import { buildSchemaRetriever } from '../data';
 import { buildExecutableSchemaComposer } from "./executable-schema-composer";
 
 export const buildSchemaComposer = (options) =>

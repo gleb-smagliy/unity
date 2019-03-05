@@ -1,4 +1,4 @@
-import { buildSchemaRetriever } from "../../../src/request/schema-retrieval";
+import { buildSchemaRetriever } from "../../../src/request/data";
 
 const retrieveSchema = async ({ getServicesByVersion, getMetadataByVersion }, version) =>
 {

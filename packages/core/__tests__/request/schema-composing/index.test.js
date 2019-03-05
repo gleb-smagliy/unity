@@ -18,7 +18,7 @@ const createComposer = ({
   ...plugins
 });
 
-describe.only('schemaComposer', () =>
+describe('schemaComposer', () =>
 {
   beforeEach(() =>
   {
@@ -71,7 +71,7 @@ describe.only('schemaComposer', () =>
     expect(storage.getMetadataByVersion).toHaveBeenCalledTimes(2);
   });
 
-  it.only('should not call storage with version on the second call if caching is enabled', async () =>
+  it('should not call storage with version on the second call if caching is enabled', async () =>
   {
     const storage = createSuccessfulStorage();
 

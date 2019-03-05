@@ -7,7 +7,7 @@ export const buildSchemaComposer = (options) =>
   const { cache: cacheOptions } = options;
   const originalSchemaComposer = buildOriginalSchemaComposer(options);
 
-  if(typeof(cacheOptions) === 'object' || typeof(cacheOptions) === 'boolean')
+  if(typeof(cacheOptions) === 'object' || (typeof(cacheOptions) === 'boolean' && !!cacheOptions))
   {
     const inMemoryCache = typeof(cacheOptions) === 'object' ? new InMemoryCache(cacheOptions) : new InMemoryCache();
 

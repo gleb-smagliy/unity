@@ -1,4 +1,4 @@
-import { getSchemaVersion } from './get-schema-version';
+import { getSchemaVersion } from './data/get-schema-version';
 import { buildSchemaComposer } from "./schema-composing";
 
 //todo: currently just a stub
