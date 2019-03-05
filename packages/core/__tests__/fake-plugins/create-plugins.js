@@ -1,5 +1,3 @@
-import { buildExecutableSchemaComposer } from "../../../../../src/request/schema-composing/executable-schema-composer";
-
 const successResult = (payload) => ({
   success: true,
   payload
@@ -28,20 +26,3 @@ export const exampleServiceTransformer = ({ success, name, transforms }) => ({
     return successResult(transforms[service.id]);
   })
 });
-
-export const composeExampleSchema = ({
-  services,
-  metadata,
-  extensionBuilders = [],
-  serviceSchemaTransformers = [],
-  gatewaySchemaTransformers = []
-} = {}) =>
-{
-  const composer = buildExecutableSchemaComposer({
-    extensionBuilders,
-    serviceSchemaTransformers,
-    gatewaySchemaTransformers
-  });
-
-  return composer({ services, metadata });
-};

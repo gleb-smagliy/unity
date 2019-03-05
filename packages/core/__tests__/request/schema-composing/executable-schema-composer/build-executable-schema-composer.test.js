@@ -9,13 +9,28 @@ import { authorService, AUTHOR_RESPONSE,
 } from '../../../fake-data';
 
 import {
-  composeExampleSchema,
   exampleExtensionBuilder,
   exampleGatewayTransformer,
-  exampleServiceTransformer
-} from './utils/schema-composer-utils'
+  exampleServiceTransformer,
+  createSuccessfulMocks
+} from '../../../fake-plugins'
 
-import { createSuccessfulMocks } from './utils/mocks'
+export const composeExampleSchema = ({
+ services,
+ metadata,
+ extensionBuilders = [],
+ serviceSchemaTransformers = [],
+ gatewaySchemaTransformers = []
+} = {}) =>
+{
+  const composer = buildExecutableSchemaComposer({
+    extensionBuilders,
+    serviceSchemaTransformers,
+    gatewaySchemaTransformers
+  });
+
+  return composer({ services, metadata });
+};
 
 import { graphql } from 'graphql';
 import fetch from 'node-fetch';

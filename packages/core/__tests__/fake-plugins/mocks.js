@@ -1,5 +1,5 @@
-import {exampleExtensionBuilder, exampleGatewayTransformer, exampleServiceTransformer} from "./schema-composer-utils";
-import {extensions, gatewayTransformations, servicesTransformations} from "../../../../fake-data";
+import {exampleExtensionBuilder, exampleGatewayTransformer, exampleServiceTransformer} from "./create-plugins";
+import {extensions, gatewayTransformations, servicesTransformations} from "../fake-data";
 
 export const createSuccessfulMocks = () => {
   const metadata = {

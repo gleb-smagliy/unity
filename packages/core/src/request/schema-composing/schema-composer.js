@@ -12,6 +12,6 @@ export const buildSchemaComposer = (options) =>
 
     if(!schemasRetrieval.success) return schemasRetrieval;
 
-    return composeExecutableSchema(options, { schemaDefinition: schemasRetrieval.payload });
+    return composeExecutableSchema(schemasRetrieval.payload);
   };
 };
