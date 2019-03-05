@@ -2,18 +2,32 @@ import { getSchemaVersion } from './data/get-schema-version';
 import { buildSchemaComposer } from "./schema-composing";
 
 //todo: currently just a stub
-const validateOptions = () => ({ success: true });
-
-export const buildExecutableSchemaRetriever = (options) =>
+const prepareOptions = options =>
 {
-  const optionsValidation = validateOptions(options);
-
-  if(!optionsValidation.success)
+  if (typeof(options) !== 'object' || options === null)
   {
-    throw new Error(`Options is not valid: <${optionsValidation.error}>`);
+    return {
+      success: false,
+      error: 'Expected options to be a non-null object'
+    };
   }
 
-  const composeSchema = buildSchemaComposer(options);
+  return {
+    success: true,
+    payload: options
+  }
+};
+
+export const buildExecutableSchemaQuery = (options) =>
+{
+  const optionsPreparation = prepareOptions(options);
+
+  if(!optionsPreparation.success)
+  {
+    throw new Error(`Options is not valid: <${optionsPreparation.error}>`);
+  }
+
+  const composeSchema = buildSchemaComposer(optionsPreparation.payload);
 
   return async ({ version, tag }) =>
   {
