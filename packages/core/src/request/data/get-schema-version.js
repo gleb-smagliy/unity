@@ -1,5 +1,5 @@
 const isSpecificationStringValid = specificationString =>
-  typeof(specificationString) !== 'string' || specificationString.trim().length === 0
+  typeof(specificationString) === 'string' && specificationString.trim().length > 0;
 
 export const getSchemaVersion = async ({ version, tag, getVersionByTag }) =>
 {
