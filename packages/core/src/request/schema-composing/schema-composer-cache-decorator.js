@@ -5,7 +5,7 @@ export const cacheDecorator = ({ schemasCache, composeSchema }) => async ({ vers
 
   if(fromCacheResult.success)
   {
-    return fromCacheResult.payload;
+    return fromCacheResult;
   }
 
   const schemaComposition = composeSchema({ version });
