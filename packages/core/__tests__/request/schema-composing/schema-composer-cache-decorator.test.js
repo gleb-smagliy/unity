@@ -1,6 +1,7 @@
 import { cacheDecorator } from "../../../src/request/schema-composing/schema-composer-cache-decorator";
 
 const version = 'abcd-efdf';
+const otherVersion = 'abcd-efdf-1111';
 
 const successfulResult = (payload) => ({ success: true, payload });
 const failedResult = () => ({ success: false, error: 'unknown err' });
@@ -12,7 +13,7 @@ const createCache = (success) => ({
   setItem: jest.fn()
 });
 
-const createComposer = (success) => jest.fn().mockReturnValue(success ? successfulResult(SCHEMA) : failedResult());
+const createComposer = (success) => jest.fn().mockResolvedValue(success ? successfulResult(SCHEMA) : failedResult());
 
 describe('cacheDecorator', () =>
 {
@@ -26,6 +27,21 @@ describe('cacheDecorator', () =>
     await composer({ version });
 
     expect(composeSchema).toHaveBeenCalledWith({ version });
+  });
+
+  it('should call composeSchema with version if schema is in cache but other version is requested', async () =>
+  {
+    const schemasCache = createCache(false);
+    const composeSchema = createComposer(true);
+
+    const composer = cacheDecorator({ schemasCache, composeSchema });
+
+    await composer({ version });
+    await composer({ version: otherVersion });
+
+    expect(composeSchema).toHaveBeenCalledWith({ version });
+    expect(composeSchema).toHaveBeenCalledWith({ version: otherVersion });
+    expect(composeSchema).toHaveBeenCalledTimes(2);
   });
 
   it('should not call composeSchema if schema is in cache', async () =>
@@ -64,7 +80,7 @@ describe('cacheDecorator', () =>
     expect(schemasCache.tryGetItem).toHaveBeenCalledWith(version);
   });
 
-  it.only('should call setItem on cache with version and composed schema', async () =>
+  it('should call setItem on cache with version and composed schema', async () =>
   {
     const schemasCache = createCache(false);
     const composeSchema = createComposer(true);
@@ -76,7 +92,7 @@ describe('cacheDecorator', () =>
     expect(schemasCache.setItem).toHaveBeenCalledWith(version, SCHEMA);
   });
 
-  it.only('should not call setItem on cache if schema failed to compose', async () =>
+  it('should not call setItem on cache if schema failed to compose', async () =>
   {
     const schemasCache = createCache(false);
     const composeSchema = createComposer(false);
@@ -88,7 +104,7 @@ describe('cacheDecorator', () =>
     expect(schemasCache.setItem).not.toHaveBeenCalled();
   });
 
-  it.only('should return failure if schema failed to compose', async () =>
+  it('should return failure if schema failed to compose', async () =>
   {
     const schemasCache = createCache(false);
     const composeSchema = createComposer(false);
