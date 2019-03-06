@@ -1,20 +1,83 @@
-import { ServiceRegistrationCommandHander } from "../../../src/registration/command-handlers/registration-handler";
+import {
+  ServiceRegistrationCommandHander,
+  LOCK_STATUS
+} from "../../../src/registration/command-handlers/registration-handler";
+
+const LOCK_ID = '123';
+const GRAPHQL_COMMAND = { id: 'User', schemaBuilder: 'graphql' };
+const GRAPHQL_SCHEMA_BUILDERS = [{ name: 'graphql' }];
+
+const createSuccessfulLocking = () => ({
+  acquireLock: jest.fn().mockResolvedValue({ success: true, payload: { status: LOCK_STATUS.ACQUIRED, id: LOCK_ID }}),
+  isLockAcquired: jest.fn().mockResolvedValue({ success: true, payload: false }),
+  releaseLock: jest.fn().mockResolvedValue({ success: true })
+});
 
 describe('ServiceRegistrationCommandHander', () =>
 {
-  it('should take a lock to register a service', () =>
+  it('should take a lock to register a service', async () =>
   {
-    throw new Error();
+    const locking = createSuccessfulLocking();
+    const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders: GRAPHQL_SCHEMA_BUILDERS });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(locking.acquireLock).toHaveBeenCalledTimes(1);
   });
 
-  it.skip('should return a failure if lock is already acquired', () =>
+  it('should return a failure if lock is already acquired', async () =>
   {
-    throw new Error();
+    const locking = {
+      acquireLock: jest.fn().mockResolvedValue({ success: true, payload: { status: LOCK_STATUS.ALREADY_LOCKED }})
+    };
+
+    const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders: GRAPHQL_SCHEMA_BUILDERS });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeFailed();
   });
 
-  it.skip('should return failure and release lock if specified schema builder is not present in options', () =>
+  it('should return a failure if lock cannot be acquired', async () =>
   {
-    throw new Error();
+    const locking = {
+      acquireLock: jest.fn().mockResolvedValue({ success: false, error: 'unknown error' })
+    };
+
+    const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders: GRAPHQL_SCHEMA_BUILDERS });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeFailed();
+  });
+
+  it('should return failure and release lock if specified schema builder is not present in options', async () =>
+  {
+    const locking = createSuccessfulLocking();
+    const schemaBuilders = [{ name: 'openapi' }];
+
+    const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeFailed();
+    expect(locking.releaseLock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return failure if lock releasing failed', async () =>
+  {
+    const locking = {
+      ...createSuccessfulLocking(),
+      releaseLock: jest.fn().mockResolvedValue({ success: false, error: 'unknown error' })
+    };
+    const schemaBuilders = [{ name: 'openapi' }];
+
+    const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeFailed();
+    expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
   it.skip('should request schema from schema builder according to passed command', () =>
@@ -102,17 +165,7 @@ describe('ServiceRegistrationCommandHander', () =>
     throw new Error();
   });
 
-  it.skip('should update lock assigning new version to it', () =>
-  {
-    throw new Error();
-  });
-
-  it.skip('should return failure and release lock if lock version assigning fails', () =>
-  {
-    throw new Error();
-  });
-
-  it.skip('should return new version', () =>
+  it.skip('should return new schema version', () =>
   {
     throw new Error();
   });
