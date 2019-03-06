@@ -47,6 +47,8 @@ export const buildExecutableSchemaQuery = (options) =>
     {
       throw new Error(result.error);
     }
+
+    return result.payload;
   };
 };
 

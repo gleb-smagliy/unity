@@ -10,6 +10,8 @@ export const METADATA = {
 };
 
 export const createSuccessfulStorage = () => ({
-  getServicesByVersion: jest.fn().mockReturnValue({ success: true, payload: services }),
-  getMetadataByVersion: jest.fn().mockReturnValue({ success: true, payload: METADATA })
+  queries: {
+    getServicesByVersion: jest.fn().mockReturnValue({ success: true, payload: services }),
+    getMetadataByVersion: jest.fn().mockReturnValue({ success: true, payload: METADATA })
+  }
 });

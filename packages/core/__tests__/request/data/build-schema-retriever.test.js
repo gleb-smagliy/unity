@@ -2,7 +2,7 @@ import { buildSchemaRetriever } from "../../../src/request/data";
 
 const retrieveSchema = async ({ getServicesByVersion, getMetadataByVersion }, version) =>
 {
-  const retriever = buildSchemaRetriever({ storage: { getServicesByVersion, getMetadataByVersion }});
+  const retriever = buildSchemaRetriever({ storage: { queries: { getServicesByVersion, getMetadataByVersion }}});
 
   return await retriever({ version });
 };

@@ -29,7 +29,7 @@ const handleResults = (results) =>
 
 export const buildSchemaRetriever = (options) =>
 {
-  const { storage: { getServicesByVersion, getMetadataByVersion } } = options;
+  const { storage: { queries: { getServicesByVersion, getMetadataByVersion } } } = options;
 
   return async ({ version }) =>
   {

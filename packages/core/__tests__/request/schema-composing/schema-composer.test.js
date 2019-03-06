@@ -29,8 +29,10 @@ describe('schemaComposer', () =>
   it('should return failure if storage failed', async () =>
   {
     const storage = {
-      ...createSuccessfulStorage(),
-      getMetadataByVersion: jest.fn().mockReturnValue({ success: false, error: 'some error'})
+      queries: {
+        ...createSuccessfulStorage().queries,
+        getMetadataByVersion: jest.fn().mockReturnValue({ success: false, error: 'some error'})
+      }
     };
 
     const composeResult = await composeSchema({ storage });
@@ -44,7 +46,7 @@ describe('schemaComposer', () =>
 
     const composeResult = await composeSchema({ storage, version: VERSION });
 
-    expect(storage.getServicesByVersion).toHaveBeenCalledWith({ version: VERSION });
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledWith({ version: VERSION });
   });
 
   it('should call storage.getMetadataByVersion with passed version', async () =>
@@ -53,7 +55,7 @@ describe('schemaComposer', () =>
 
     const composeResult = await composeSchema({ storage, version: VERSION });
 
-    expect(storage.getMetadataByVersion).toHaveBeenCalledWith({ version: VERSION });
+    expect(storage.queries.getMetadataByVersion).toHaveBeenCalledWith({ version: VERSION });
   });
 
   it('should return be able to query composed schema', async () =>

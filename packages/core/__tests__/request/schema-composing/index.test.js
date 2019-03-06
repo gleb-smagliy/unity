@@ -37,8 +37,8 @@ describe('schemaComposer', () =>
     const composeResult = await composeSchema({ version: VERSION });
 
     expect(composeResult).toBeSuccessful();
-    expect(storage.getServicesByVersion).toHaveBeenCalledWith({ version: VERSION });
-    expect(storage.getMetadataByVersion).toHaveBeenCalledWith({ version: VERSION });
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledWith({ version: VERSION });
+    expect(storage.queries.getMetadataByVersion).toHaveBeenCalledWith({ version: VERSION });
   });
 
   it('should call storage with version on the first call if caching is disabled', async () =>
@@ -49,8 +49,8 @@ describe('schemaComposer', () =>
     const composeResult = await composeSchema({ version: VERSION });
 
     expect(composeResult).toBeSuccessful();
-    expect(storage.getServicesByVersion).toHaveBeenCalledWith({ version: VERSION });
-    expect(storage.getMetadataByVersion).toHaveBeenCalledWith({ version: VERSION });
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledWith({ version: VERSION });
+    expect(storage.queries.getMetadataByVersion).toHaveBeenCalledWith({ version: VERSION });
   });
 
   it('should call storage with version on the second call if caching is disabled', async () =>
@@ -65,10 +65,10 @@ describe('schemaComposer', () =>
     expect(composeResult1).toBeSuccessful();
     expect(composeResult2).toBeSuccessful();
 
-    expect(storage.getServicesByVersion).toHaveBeenCalledWith({ version: VERSION });
-    expect(storage.getMetadataByVersion).toHaveBeenCalledWith({ version: VERSION });
-    expect(storage.getServicesByVersion).toHaveBeenCalledTimes(2);
-    expect(storage.getMetadataByVersion).toHaveBeenCalledTimes(2);
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledWith({ version: VERSION });
+    expect(storage.queries.getMetadataByVersion).toHaveBeenCalledWith({ version: VERSION });
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledTimes(2);
+    expect(storage.queries.getMetadataByVersion).toHaveBeenCalledTimes(2);
   });
 
   it('should not call storage with version on the second call if caching is enabled', async () =>
@@ -83,10 +83,10 @@ describe('schemaComposer', () =>
     expect(composeResult1).toBeSuccessful();
     expect(composeResult2).toBeSuccessful();
 
-    expect(storage.getServicesByVersion).toHaveBeenCalledWith({ version: VERSION });
-    expect(storage.getMetadataByVersion).toHaveBeenCalledWith({ version: VERSION });
-    expect(storage.getServicesByVersion).toHaveBeenCalledTimes(1);
-    expect(storage.getMetadataByVersion).toHaveBeenCalledTimes(1);
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledWith({ version: VERSION });
+    expect(storage.queries.getMetadataByVersion).toHaveBeenCalledWith({ version: VERSION });
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledTimes(1);
+    expect(storage.queries.getMetadataByVersion).toHaveBeenCalledTimes(1);
   });
 
   it('should be able to query composed schema if cache is enabled', async () =>
