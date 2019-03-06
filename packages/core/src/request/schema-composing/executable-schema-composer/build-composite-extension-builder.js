@@ -1,5 +1,5 @@
-import { tryGetName } from './get-plugin-name';
-import { tryGetPluginMetadata } from './get-plugin-metadata';
+import { tryGetName } from '../../../plugins/utils/get-plugin-name';
+import { tryGetPluginMetadata } from '../../../plugins/utils/get-plugin-metadata';
 
 const isValidTypeDef = t => typeof(t) === 'string' && t !== null && t.trim().length > 0;
 const isValidResolver = r => typeof(r) === 'object' && r !== null;

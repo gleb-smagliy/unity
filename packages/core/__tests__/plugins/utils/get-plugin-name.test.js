@@ -1,4 +1,4 @@
-import { tryGetName } from "../../../../src/request/schema-composing/executable-schema-composer/get-plugin-name";
+import { tryGetName } from "../../../src/plugins/utils/get-plugin-name";
 
 describe('tryGetName', () =>
 {

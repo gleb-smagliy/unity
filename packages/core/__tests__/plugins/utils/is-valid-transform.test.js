@@ -1,4 +1,4 @@
-import { isValidTransform } from "../../../../src/request/schema-composing/executable-schema-composer/is-valid-transform";
+import { isValidTransform } from "../../../src/plugins/utils/is-valid-transform";
 
 describe('isValidTransform', () =>
 {

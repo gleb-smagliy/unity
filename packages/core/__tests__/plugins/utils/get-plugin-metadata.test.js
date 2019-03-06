@@ -1,4 +1,4 @@
-import { tryGetPluginMetadata } from "../../../../src/request/schema-composing/executable-schema-composer/get-plugin-metadata";
+import { tryGetPluginMetadata } from "../../../src/plugins/utils/get-plugin-metadata";
 
 describe('tryGetPluginMetadata', () =>
 {

@@ -1,4 +1,4 @@
-import { tryGetName } from "../../request/schema-composing/executable-schema-composer/get-plugin-name";
+import { tryGetName } from "../../plugins/utils/get-plugin-name";
 
 export const LOCK_STATUS = {
   ACQUIRED: 'ACQUIRED',
