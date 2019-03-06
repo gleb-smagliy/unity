@@ -1,5 +1,7 @@
-import { createSchema as schemaCreation } from './create-schema';
+import { createSchema as createSchemaImplementation } from './create-schema';
+import { ServiceRegistrationCommandHander } from '../command-handlers/registration';
 
-export const schemaCreation = schemaCreation({
-  registrationHandler: new ServiceRegistrationCommandHander()
+export const createSchema = options => createSchemaImplementation({
+  schemaBuilders: options.schemaBuilders,
+  registrationHandler: new ServiceRegistrationCommandHander(options)
 });

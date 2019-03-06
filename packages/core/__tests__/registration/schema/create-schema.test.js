@@ -4,7 +4,7 @@ import { createRegistrationHandler, createSchemaBuilders, executeRegistration } 
 const HANDLER_RESULT_PAYLOAD = { version: '213' };
 const HANDLER_ERROR_MESSAGE = 'something went wrong';
 
-describe('schema, created by create-schema', () =>
+describe('schema, created by schema creator', () =>
 {
   it('should return successful result if service is valid and command returned success', async () =>
   {
