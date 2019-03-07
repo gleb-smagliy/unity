@@ -6,6 +6,18 @@ export const LOCK_STATUS = {
   FAILURE: 'FAILURE'
 };
 
+const successWithLockStatus = (lockPayload, payload) => ({
+  success: true,
+  payload: {
+    lock: {
+      id: lockPayload.id,
+      time: lockPayload.time,
+      status: lockPayload.status
+    },
+    ...payload
+  }
+});
+
 export class ServiceRegistrationCommandHander
 {
   constructor(options)
@@ -15,9 +27,33 @@ export class ServiceRegistrationCommandHander
 
   execute = async (command) =>
   {
-    const { locking: { acquireLock, releaseLock }} = this.options;
+    const { id: serviceId } = command;
 
-    const acquireLockResult = await acquireLock();
+    return this.useLock(serviceId, async () => await this.executeImplementation(command));
+  };
+
+  executeImplementation = async (command) =>
+  {
+    const { id: serviceId, schemaBuilder: schemaBuilderName } = command;
+    const schemaBuilder = this.options.schemaBuilders.find(b => tryGetName(b).payload === schemaBuilderName);
+
+    if(!schemaBuilder)
+    {
+      return {
+        success: false,
+        error: `Specified schema builder ${schemaBuilderName} is not in options`
+      };
+    }
+
+    return {
+      success: true
+    }
+  };
+
+  useLock = async (lockId, func) =>
+  {
+    const { locking: { acquireLock, releaseLock }} = this.options;
+    const acquireLockResult = await acquireLock({ id: lockId });
 
     if(!acquireLockResult.success)
     {
@@ -26,34 +62,24 @@ export class ServiceRegistrationCommandHander
 
     if(acquireLockResult.payload.status === LOCK_STATUS.ALREADY_LOCKED)
     {
-      return {
-        success: false,
-        error: 'Lock is already acquired'
-      };
+      return successWithLockStatus(acquireLockResult.payload);
     }
-    const { id, schemaBuilder: schemaBuilderName } = command;
-    const schemaBuilder = this.options.schemaBuilders.find(b => tryGetName(b).payload === schemaBuilderName);
 
-    if(!schemaBuilder)
+    const funcResult = await func();
+
+    if(!funcResult.success)
     {
-      const ERROR = `Specified schema builder ${schemaBuilderName} is not in options`;
       const releaseLockResult = await releaseLock();
 
       if(!releaseLockResult.success)
       {
         return {
           success: false,
-          error: `Could not release lock (ERROR: <${releaseLockResult.error}>) while rollbacking due to: <${ERROR}>`
+          error: `Could not release lock (ERROR: <${releaseLockResult.error}>) while rollbacking due to: <${funcResult.error}>`
         };
       }
-
-      return {
-        success: false,
-        error: ERROR
-      }
     }
-    // const { storage: { getServicesByVersion, getMetadataByVersion }} = this.options;
 
-
-  }
+    return funcResult;
+  };
 }

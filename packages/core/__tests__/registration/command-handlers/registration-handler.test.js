@@ -15,7 +15,7 @@ const createSuccessfulLocking = () => ({
 
 describe('ServiceRegistrationCommandHander', () =>
 {
-  it('should take a lock to register a service', async () =>
+  it('should take a lock with service id to register a service', async () =>
   {
     const locking = createSuccessfulLocking();
     const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders: GRAPHQL_SCHEMA_BUILDERS });
@@ -23,19 +23,32 @@ describe('ServiceRegistrationCommandHander', () =>
     const result = await handler.execute(GRAPHQL_COMMAND);
 
     expect(locking.acquireLock).toHaveBeenCalledTimes(1);
+    expect(locking.acquireLock).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id });
   });
 
-  it('should return a failure if lock is already acquired', async () =>
+  it('should return success with lock status, name and time', async () =>
   {
+    const lockId = 'lock_name';
+    const lockTime = 123456;
+
+    const lock = {
+      status: LOCK_STATUS.ALREADY_LOCKED,
+      id: lockId,
+      time: lockTime
+    };
+
     const locking = {
-      acquireLock: jest.fn().mockResolvedValue({ success: true, payload: { status: LOCK_STATUS.ALREADY_LOCKED }})
+      acquireLock: jest.fn().mockResolvedValue({
+        success: true,
+        payload: { ...lock }
+      })
     };
 
     const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders: GRAPHQL_SCHEMA_BUILDERS });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
 
-    expect(result).toBeFailed();
+    expect(result).toBeSuccessful({ lock });
   });
 
   it('should return a failure if lock cannot be acquired', async () =>
