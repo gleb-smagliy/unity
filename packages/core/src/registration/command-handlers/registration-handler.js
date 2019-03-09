@@ -38,6 +38,15 @@ export class ServiceRegistrationCommandHander
 
   executeImplementation = async (command) =>
   {
+    const {
+      storage: {
+        queries: {
+          getVersionByTag,
+          getServicesByVersion
+        }
+      }
+    } = this.options;
+
     const { id: serviceId, schemaBuilder: schemaBuilderName, options } = command;
     const schemaBuilder = this.options.schemaBuilders.find(b => tryGetName(b).payload === schemaBuilderName);
 
@@ -49,12 +58,37 @@ export class ServiceRegistrationCommandHander
       };
     }
 
-    const buildServiceResult = await schemaBuilder.buildServiceModel({ id: serviceId, options });
+    const serviceDefinition = { id: serviceId, options };
+
+    const buildServiceResult = await schemaBuilder.buildServiceModel(serviceDefinition);
 
     if(!buildServiceResult.success)
     {
       return buildServiceResult;
     }
+
+    const stableVersionResult = await getVersionByTag({ tag: SYSTEM_TAGS.STABLE });
+
+    if(!stableVersionResult.success)
+    {
+      return stableVersionResult;
+    }
+
+    const servicesResult = await getServicesByVersion({ version: stableVersionResult.payload });
+
+    if(!servicesResult.success)
+    {
+      return servicesResult;
+    }
+
+    const extractMetadataResult = await schemaBuilder.extractMetadata(serviceDefinition);
+
+    if(!extractMetadataResult.success)
+    {
+      return extractMetadataResult;
+    }
+
+
 
     return {
       success: true
@@ -63,7 +97,10 @@ export class ServiceRegistrationCommandHander
 
   useLock = async (lockId, func) =>
   {
-    const { locking: { acquireLock, releaseLock }} = this.options;
+    const {
+      locking: { acquireLock, releaseLock }
+    } = this.options;
+
     const acquireLockResult = await acquireLock({ id: lockId });
 
     if(!acquireLockResult.success)

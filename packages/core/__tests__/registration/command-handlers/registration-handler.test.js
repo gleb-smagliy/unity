@@ -1,16 +1,38 @@
+import { RenameRootFields } from 'graphql-tools';
+
 import {
   ServiceRegistrationCommandHander,
   LOCK_STATUS,
   SYSTEM_TAGS
 } from "../../../src/registration/command-handlers/registration-handler";
 
-import { createSuccessfulStorage } from "../../fake-storage/create-storage";
+import {
+  createSuccessfulStorage,
+  services,
+  RETURN_VERSION as STABLE_VERSION
+} from "../../fake-storage/create-storage";
+
+import { exampleServiceTransformer } from '../../fake-plugins'
 
 const GRAPHQL_COMMAND = {
   id: 'User',
   schemaBuilder: 'graphql',
   options: { endpoint: 'http://localhost:8080/graphql' }
 };
+
+const SERVICE_TRANSFORMS = {
+  User: [new RenameRootFields((operation, name) => `User_${name}`),]
+};
+
+/* STORAGE MOCKS */
+
+// const STABLE_VERSION = 'aaaa-bbbb';
+//
+// const createSuccessfulStorage = ({ version =  STABLE_VERSION } = {}) => ({
+//   queries: {
+//     getVersionByTag: jest.fn().mockResolvedValue({ success: true, payload: version })
+//   }
+// });
 
 /* ===LOCKING MOCKS=== */
 
@@ -24,14 +46,17 @@ const createSuccessfulLocking = () => ({
 
 /* ===BUILDER MOCKS=== */
 
-const DEFAULT_BUILDER = { name: 'graphql', payload: { schema: { type: 'Query' }} };
+const DEFAULT_BUILDER = { name: 'graphql', service: { schema: { type: 'Query' }} };
 const createFailedBuilder = ({ name = DEFAULT_BUILDER.name } = {}) => ({
   name,
   buildServiceModel: jest.fn().mockResolvedValue({ success: false, error: 'unknown error' })
 });
-const createSuccessfulBuilder = ({ name, payload } = DEFAULT_BUILDER) => ({
+const createSuccessfulBuilder = ({ name, service, metadata } = DEFAULT_BUILDER) => ({
   name,
-  buildServiceModel: jest.fn().mockResolvedValue({ success: true, payload })
+  buildServiceModel: jest.fn().mockResolvedValue({ success: true, payload: service }),
+  extractMetadata: jest.fn().mockResolvedValue({
+    success: true,
+    payload: metadata })
 });
 // const GRAPHQL_SCHEMA_BUILDERS = [createSuccessfulBuilder()];
 
@@ -45,7 +70,9 @@ describe('ServiceRegistrationCommandHander', () =>
     const locking = createSuccessfulLocking();
     const handler = new ServiceRegistrationCommandHander({
       locking,
-      schemaBuilders: [createSuccessfulBuilder()]
+      storage: createSuccessfulStorage(),
+      schemaBuilders: [createSuccessfulBuilder()],
+      serviceSchemaTransformers: [exampleServiceTransformer()]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -74,7 +101,9 @@ describe('ServiceRegistrationCommandHander', () =>
 
     const handler = new ServiceRegistrationCommandHander({
       locking,
-      schemaBuilders: [createSuccessfulBuilder()]
+      storage: createSuccessfulStorage(),
+      schemaBuilders: [createSuccessfulBuilder()],
+      serviceSchemaTransformers: [exampleServiceTransformer()]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -90,7 +119,9 @@ describe('ServiceRegistrationCommandHander', () =>
 
     const handler = new ServiceRegistrationCommandHander({
       locking,
-      schemaBuilders: [createSuccessfulBuilder()]
+      storage: createSuccessfulStorage(),
+      schemaBuilders: [createSuccessfulBuilder()],
+      serviceSchemaTransformers: [exampleServiceTransformer()]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -103,7 +134,12 @@ describe('ServiceRegistrationCommandHander', () =>
     const locking = createSuccessfulLocking();
     const schemaBuilders = [{ name: 'openapi' }];
 
-    const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders });
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      schemaBuilders,
+      storage: createSuccessfulStorage(),
+      serviceSchemaTransformers: [exampleServiceTransformer()]
+    });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
 
@@ -119,7 +155,12 @@ describe('ServiceRegistrationCommandHander', () =>
     };
     const schemaBuilders = [{ name: 'openapi' }];
 
-    const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders });
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      schemaBuilders,
+      storage: createSuccessfulStorage(),
+      serviceSchemaTransformers: [exampleServiceTransformer()]
+    });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
 
@@ -133,7 +174,9 @@ describe('ServiceRegistrationCommandHander', () =>
 
     const handler = new ServiceRegistrationCommandHander({
       locking: createSuccessfulLocking(),
-      schemaBuilders: [builder]
+      storage: createSuccessfulStorage(),
+      schemaBuilders: [builder],
+      serviceSchemaTransformers: [exampleServiceTransformer()]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -150,7 +193,9 @@ describe('ServiceRegistrationCommandHander', () =>
 
     const handler = new ServiceRegistrationCommandHander({
       locking,
-      schemaBuilders: [builder]
+      storage: createSuccessfulStorage(),
+      schemaBuilders: [builder],
+      serviceSchemaTransformers: [exampleServiceTransformer()]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -163,19 +208,13 @@ describe('ServiceRegistrationCommandHander', () =>
 
   it('should request version by stable tag from storage', async () =>
   {
-    const STABLE_VERSION = 'aaaa-bbbb';
-    const builder = createFailedBuilder();
-    const locking = createSuccessfulLocking();
-    const storage = {
-      queries: {
-        getVersionByTag: jest.fn().mockResolvedValue({ success: true, payload: STABLE_VERSION })
-      }
-    };
+    const storage = createSuccessfulStorage();
 
     const handler = new ServiceRegistrationCommandHander({
-      locking,
-      schemaBuilders: [builder],
-      storage
+      locking: createSuccessfulLocking(),
+      schemaBuilders: [createSuccessfulBuilder()],
+      storage,
+      serviceSchemaTransformers: [exampleServiceTransformer()]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -187,18 +226,20 @@ describe('ServiceRegistrationCommandHander', () =>
 
   it('should return failure and release lock if cannot take a version by stable tag from storage', async () =>
   {
-    const builder = createFailedBuilder();
     const locking = createSuccessfulLocking();
     const storage = {
+      ...createSuccessfulStorage(),
       queries: {
+        ...createSuccessfulStorage().queries,
         getVersionByTag: jest.fn().mockResolvedValue({ success: false, error: 'some error' })
       }
     };
 
     const handler = new ServiceRegistrationCommandHander({
       locking,
-      schemaBuilders: [builder],
-      storage
+      schemaBuilders: [createSuccessfulBuilder()],
+      storage,
+      serviceSchemaTransformers: [exampleServiceTransformer()]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -206,74 +247,191 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(result).toBeFailed();
     expect(storage.queries.getVersionByTag).toHaveBeenCalledTimes(1);
     expect(storage.queries.getVersionByTag).toHaveBeenCalledWith({ tag: SYSTEM_TAGS.STABLE });
+    expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it.skip('should request services from storage by tagged as stable version', () =>
+  it('should request services from storage by tagged as stable version', async () =>
+  {
+    const storage = createSuccessfulStorage();
+
+    const handler = new ServiceRegistrationCommandHander({
+      locking: createSuccessfulLocking(),
+      schemaBuilders: [createSuccessfulBuilder()],
+      storage,
+      serviceSchemaTransformers: [exampleServiceTransformer()]
+    });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeSuccessful();
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledTimes(1);
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledWith({ version: STABLE_VERSION });
+  });
+
+  it('should return failure and release lock if cannot take a services', async () =>
+  {
+    const locking = createSuccessfulLocking();
+    const storage = {
+      ...createSuccessfulStorage(),
+      queries: {
+        ...createSuccessfulStorage().queries,
+        getServicesByVersion: jest.fn().mockResolvedValue({ success: false, error: 'some error' })
+      }
+    };
+
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      schemaBuilders: [createSuccessfulBuilder()],
+      storage,
+      serviceSchemaTransformers: [exampleServiceTransformer()]
+    });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeFailed();
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledTimes(1);
+    expect(storage.queries.getServicesByVersion).toHaveBeenCalledWith({ version: STABLE_VERSION });
+    expect(locking.releaseLock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should request service metadata from schema builder', async () =>
+  {
+    const builder = createSuccessfulBuilder();
+
+    const handler = new ServiceRegistrationCommandHander({
+      locking: createSuccessfulLocking(),
+      storage: createSuccessfulStorage(),
+      schemaBuilders: [builder],
+      serviceSchemaTransformers: [exampleServiceTransformer()]
+    });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeSuccessful();
+    expect(builder.extractMetadata).toHaveBeenCalledTimes(1);
+    expect(builder.extractMetadata).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id, options: GRAPHQL_COMMAND.options });
+  });
+
+  it('should return failure and release lock if extracting metadata returns failure', async () =>
+  {
+    const locking = createSuccessfulLocking();
+
+    const builder = {
+        ...createSuccessfulBuilder(),
+      extractMetadata: jest.fn().mockResolvedValue({ success: false, error: 'extract metadata error' })
+    };
+
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      storage: createSuccessfulStorage(),
+      schemaBuilders: [builder],
+      serviceSchemaTransformers: [exampleServiceTransformer()]
+    });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeFailed();
+    expect(builder.extractMetadata).toHaveBeenCalledTimes(1);
+    expect(builder.extractMetadata).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id, options: GRAPHQL_COMMAND.options });
+    expect(locking.releaseLock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call transformer for all services once (and take new definition for registering service)', async () =>
+  {
+    const newServiceFromStorage = {
+      ...DEFAULT_BUILDER.service,
+      id: GRAPHQL_COMMAND.id,
+      schema: 123
+    };
+
+    const transformer = exampleServiceTransformer({
+      success: true,
+      transforms: SERVICE_TRANSFORMS
+    });
+
+    const handler = new ServiceRegistrationCommandHander({
+      locking: createSuccessfulLocking(),
+      storage: createSuccessfulStorage({
+        services: [...services, newServiceFromStorage]
+      }),
+      schemaBuilders: [createSuccessfulBuilder()],
+      serviceSchemaTransformers: [transformer]
+    });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeSuccessful();
+    expect(transformer.getTransforms).toHaveBeenCalledTimes(3);
+    expect(transformer.getTransforms).toHaveBeenCalledWith(services[0]);
+    expect(transformer.getTransforms).toHaveBeenCalledWith(services[1]);
+    expect(transformer.getTransforms).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id, ...DEFAULT_BUILDER.service });
+    expect(transformer.getTransforms).not.toHaveBeenCalledWith(newServiceFromStorage);
+  });
+
+  it('should return failure and release lock if transformer returns failure', async () =>
+  {
+    const transformer = exampleServiceTransformer({
+      success: false
+    });
+
+    const locking = createSuccessfulLocking();
+
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      storage: createSuccessfulStorage(),
+      schemaBuilders: [createSuccessfulBuilder()],
+      serviceSchemaTransformers: [transformer]
+    });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeFailed();
+    expect(transformer.getTransforms).toHaveBeenCalledTimes(1);
+    expect(transformer.getTransforms).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id });
+    expect(locking.releaseLock).toHaveBeenCalledTimes(1);
+  });
+
+  it.skip('should extract metadata using metadata extractors for extension builders', async () =>
   {
     throw new Error();
   });
 
-  it.skip('should return failure and release lock if cannot take a services', () =>
+  it.skip('should return failure and release lock if extension builder metadata extractor returns failure', async () =>
   {
     throw new Error();
   });
 
-  it.skip('should request service metadata from metadata builder by specified schema builder', () =>
+  it.skip('should extract metadata using metadata extractors for gateway transformers', async () =>
   {
     throw new Error();
   });
 
-  it.skip('should return failure and release lock if metadata builder returns failure', () =>
+  it.skip('should return failure and release lock if gateway transformer metadata extractor returns failure', async () =>
   {
     throw new Error();
   });
 
-  it.skip('should transform schemas using schema transformers', () =>
+  it.skip('should save new services using storage', async () =>
   {
     throw new Error();
   });
 
-  it.skip('should extract metadata using metadata extractors for extension builders', () =>
+  it.skip('should assign a new version to the services using versioning strategy from options', async () =>
   {
     throw new Error();
   });
 
-  it.skip('should return failure and release lock if extension builder metadata extractor returns failure', () =>
+  it.skip('should return failure and release lock if services could not be saved', async () =>
   {
     throw new Error();
   });
 
-  it.skip('should extract metadata using metadata extractors for gateway transformers', () =>
+  it.skip('should return failure and release lock if services could not be saved', async () =>
   {
     throw new Error();
   });
 
-  it.skip('should return failure and release lock if gateway transformer metadata extractor returns failure', () =>
-  {
-    throw new Error();
-  });
-
-  it.skip('should save new services using storage', () =>
-  {
-    throw new Error();
-  });
-
-  it.skip('should assign a new version to the services using versioning strategy from options', () =>
-  {
-    throw new Error();
-  });
-
-  it.skip('should return failure and release lock if services could not be saved', () =>
-  {
-    throw new Error();
-  });
-
-  it.skip('should return failure and release lock if services could not be saved', () =>
-  {
-    throw new Error();
-  });
-
-  it.skip('should return new schema version', () =>
+  it.skip('should return new schema version', async () =>
   {
     throw new Error();
   });
