@@ -6,6 +6,10 @@ export const LOCK_STATUS = {
   FAILURE: 'FAILURE'
 };
 
+export const SYSTEM_TAGS = {
+  STABLE: 'stable'
+};
+
 const successWithLockStatus = (lockPayload, payload) => ({
   success: true,
   payload: {
@@ -34,7 +38,7 @@ export class ServiceRegistrationCommandHander
 
   executeImplementation = async (command) =>
   {
-    const { id: serviceId, schemaBuilder: schemaBuilderName } = command;
+    const { id: serviceId, schemaBuilder: schemaBuilderName, options } = command;
     const schemaBuilder = this.options.schemaBuilders.find(b => tryGetName(b).payload === schemaBuilderName);
 
     if(!schemaBuilder)
@@ -43,6 +47,13 @@ export class ServiceRegistrationCommandHander
         success: false,
         error: `Specified schema builder ${schemaBuilderName} is not in options`
       };
+    }
+
+    const buildServiceResult = await schemaBuilder.buildServiceModel({ id: serviceId, options });
+
+    if(!buildServiceResult.success)
+    {
+      return buildServiceResult;
     }
 
     return {

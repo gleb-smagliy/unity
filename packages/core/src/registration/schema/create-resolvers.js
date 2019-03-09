@@ -15,9 +15,13 @@ export const createResolvers = ({ registrationHandler }) => ({
         return error("You should specify exactly one schema builder.");
       }
 
+      const builder = usedSchemaBuilders[0];
+      const options = schemaBuilder[builder];
+
       const command = {
         id,
-        schemaBuilder: usedSchemaBuilders[0]
+        schemaBuilder: builder,
+        options
       };
 
       const result = await registrationHandler.execute(command);

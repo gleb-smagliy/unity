@@ -21,7 +21,7 @@
     "url": "git+https://github.com/gleb-smagliy/opportunity.git"
   },
   "scripts": {
-    "test": "jest"
+    "test": "./node_modules/.bin/jest"
   },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/opportunity/issues"

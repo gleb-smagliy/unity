@@ -1,24 +1,52 @@
 import {
   ServiceRegistrationCommandHander,
-  LOCK_STATUS
+  LOCK_STATUS,
+  SYSTEM_TAGS
 } from "../../../src/registration/command-handlers/registration-handler";
 
-const LOCK_ID = '123';
-const GRAPHQL_COMMAND = { id: 'User', schemaBuilder: 'graphql' };
-const GRAPHQL_SCHEMA_BUILDERS = [{ name: 'graphql' }];
+import { createSuccessfulStorage } from "../../fake-storage/create-storage";
 
+const GRAPHQL_COMMAND = {
+  id: 'User',
+  schemaBuilder: 'graphql',
+  options: { endpoint: 'http://localhost:8080/graphql' }
+};
+
+/* ===LOCKING MOCKS=== */
+
+const LOCK_ID = '123';
 const createSuccessfulLocking = () => ({
   acquireLock: jest.fn().mockResolvedValue({ success: true, payload: { status: LOCK_STATUS.ACQUIRED, id: LOCK_ID }}),
   isLockAcquired: jest.fn().mockResolvedValue({ success: true, payload: false }),
   releaseLock: jest.fn().mockResolvedValue({ success: true })
 });
 
+
+/* ===BUILDER MOCKS=== */
+
+const DEFAULT_BUILDER = { name: 'graphql', payload: { schema: { type: 'Query' }} };
+const createFailedBuilder = ({ name = DEFAULT_BUILDER.name } = {}) => ({
+  name,
+  buildServiceModel: jest.fn().mockResolvedValue({ success: false, error: 'unknown error' })
+});
+const createSuccessfulBuilder = ({ name, payload } = DEFAULT_BUILDER) => ({
+  name,
+  buildServiceModel: jest.fn().mockResolvedValue({ success: true, payload })
+});
+// const GRAPHQL_SCHEMA_BUILDERS = [createSuccessfulBuilder()];
+
+
+/* ===TESTS=== */
+
 describe('ServiceRegistrationCommandHander', () =>
 {
   it('should take a lock with service id to register a service', async () =>
   {
     const locking = createSuccessfulLocking();
-    const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders: GRAPHQL_SCHEMA_BUILDERS });
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      schemaBuilders: [createSuccessfulBuilder()]
+    });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
 
@@ -44,7 +72,10 @@ describe('ServiceRegistrationCommandHander', () =>
       })
     };
 
-    const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders: GRAPHQL_SCHEMA_BUILDERS });
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      schemaBuilders: [createSuccessfulBuilder()]
+    });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
 
@@ -57,7 +88,10 @@ describe('ServiceRegistrationCommandHander', () =>
       acquireLock: jest.fn().mockResolvedValue({ success: false, error: 'unknown error' })
     };
 
-    const handler = new ServiceRegistrationCommandHander({ locking, schemaBuilders: GRAPHQL_SCHEMA_BUILDERS });
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      schemaBuilders: [createSuccessfulBuilder()]
+    });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
 
@@ -93,27 +127,88 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it.skip('should request schema from schema builder according to passed command', () =>
+  it('should request schema from schema builder according to passed command', async () =>
   {
-    throw new Error();
+    const builder = createSuccessfulBuilder();
+
+    const handler = new ServiceRegistrationCommandHander({
+      locking: createSuccessfulLocking(),
+      schemaBuilders: [builder]
+    });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeSuccessful();
+    expect(builder.buildServiceModel).toHaveBeenCalledTimes(1);
+    expect(builder.buildServiceModel).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id, options: GRAPHQL_COMMAND.options });
   });
 
-  it.skip('should return failure and release lock if schema builder returns failure', () =>
+  it('should return failure and release lock if schema builder returns failure', async () =>
   {
-    throw new Error();
+    const builder = createFailedBuilder();
+    const locking = createSuccessfulLocking();
+
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      schemaBuilders: [builder]
+    });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeFailed();
+    expect(builder.buildServiceModel).toHaveBeenCalledTimes(1);
+    expect(locking.releaseLock).toHaveBeenCalledTimes(1);
+    expect(builder.buildServiceModel).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id, options: GRAPHQL_COMMAND.options });
   });
 
-  it.skip('should request version by stable tag from storage', () =>
+  it('should request version by stable tag from storage', async () =>
   {
-    throw new Error();
+    const STABLE_VERSION = 'aaaa-bbbb';
+    const builder = createFailedBuilder();
+    const locking = createSuccessfulLocking();
+    const storage = {
+      queries: {
+        getVersionByTag: jest.fn().mockResolvedValue({ success: true, payload: STABLE_VERSION })
+      }
+    };
+
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      schemaBuilders: [builder],
+      storage
+    });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeSuccessful();
+    expect(storage.queries.getVersionByTag).toHaveBeenCalledTimes(1);
+    expect(storage.queries.getVersionByTag).toHaveBeenCalledWith({ tag: SYSTEM_TAGS.STABLE });
   });
 
-  it.skip('should return failure and release lock if cannot take a version by stable tag from storage', () =>
+  it('should return failure and release lock if cannot take a version by stable tag from storage', async () =>
   {
-    throw new Error();
+    const builder = createFailedBuilder();
+    const locking = createSuccessfulLocking();
+    const storage = {
+      queries: {
+        getVersionByTag: jest.fn().mockResolvedValue({ success: false, error: 'some error' })
+      }
+    };
+
+    const handler = new ServiceRegistrationCommandHander({
+      locking,
+      schemaBuilders: [builder],
+      storage
+    });
+
+    const result = await handler.execute(GRAPHQL_COMMAND);
+
+    expect(result).toBeFailed();
+    expect(storage.queries.getVersionByTag).toHaveBeenCalledTimes(1);
+    expect(storage.queries.getVersionByTag).toHaveBeenCalledWith({ tag: SYSTEM_TAGS.STABLE });
   });
 
-  it.skip('should take services by tagged as stable version', () =>
+  it.skip('should request services from storage by tagged as stable version', () =>
   {
     throw new Error();
   });
