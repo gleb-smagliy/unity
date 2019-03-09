@@ -24,6 +24,17 @@ const successWithLockStatus = (lockPayload, payload) => ({
   }
 });
 
+const toServicesDict = ({ services, upsert }) =>
+{
+  const fullServicesList = [
+    ...services,
+    upsert
+  ];
+
+  return fullServicesList
+    .reduce((acc, service) => ({ ...acc, [service.id]: service }), {});
+};
+
 export class ServiceRegistrationCommandHander
 {
   constructor(options)
@@ -47,8 +58,7 @@ export class ServiceRegistrationCommandHander
           getVersionByTag,
           getServicesByVersion
         }
-      },
-      serviceSchemaTransformers
+      }
     } = this.options;
 
     const { id: serviceId, schemaBuilder: schemaBuilderName, options } = command;
@@ -71,6 +81,8 @@ export class ServiceRegistrationCommandHander
       return buildServiceResult;
     }
 
+    const newService = { ...buildServiceResult.payload, id: serviceId };
+
     const stableVersionResult = await getVersionByTag({ tag: SYSTEM_TAGS.STABLE });
 
     if(!stableVersionResult.success)
@@ -92,13 +104,10 @@ export class ServiceRegistrationCommandHander
       return extractMetadataResult;
     }
 
-    const newSchemaServices = [
-      ...servicesResult.payload,
-      { ...buildServiceResult.payload, id: serviceId }
-    ];
-
-    const services = newSchemaServices
-      .reduce((acc, service) => ({ ...acc, [service.id]: service }), {});
+    const services = toServicesDict({
+      services: servicesResult.payload,
+      upsert: newService
+    });
 
     const transformsResult = this.getServiceTransforms({ services: Object.values(services) });
 
