@@ -1,4 +1,6 @@
+import { transformSchema } from 'graphql-tools';
 import { tryGetName } from "../../plugins/utils/get-plugin-name";
+import { buildCompositeServicesTransformer } from "../../request/schema-composing/executable-schema-composer/build-composite-service-transformer";
 
 export const LOCK_STATUS = {
   ACQUIRED: 'ACQUIRED',
@@ -27,6 +29,7 @@ export class ServiceRegistrationCommandHander
   constructor(options)
   {
     this.options = options;
+    this.getServiceTransforms = buildCompositeServicesTransformer(options.serviceSchemaTransformers);
   }
 
   execute = async (command) =>
@@ -44,7 +47,8 @@ export class ServiceRegistrationCommandHander
           getVersionByTag,
           getServicesByVersion
         }
-      }
+      },
+      serviceSchemaTransformers
     } = this.options;
 
     const { id: serviceId, schemaBuilder: schemaBuilderName, options } = command;
@@ -88,7 +92,30 @@ export class ServiceRegistrationCommandHander
       return extractMetadataResult;
     }
 
+    const newSchemaServices = [
+      ...servicesResult.payload,
+      { ...buildServiceResult.payload, id: serviceId }
+    ];
 
+    const services = newSchemaServices
+      .reduce((acc, service) => ({ ...acc, [service.id]: service }), {});
+
+    const transformsResult = this.getServiceTransforms({ services: Object.values(services) });
+
+    if(!transformsResult.success)
+    {
+      return transformsResult;
+    }
+
+    for (let key of Object.keys(services))
+    {
+      const service = services[key];
+
+      services[key] = {
+        ...service,
+        transformedSchema: transformSchema(service.schema, transformsResult.payload[key])
+      };
+    }
 
     return {
       success: true

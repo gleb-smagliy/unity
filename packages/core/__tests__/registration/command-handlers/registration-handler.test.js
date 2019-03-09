@@ -12,7 +12,8 @@ import {
   RETURN_VERSION as STABLE_VERSION
 } from "../../fake-storage/create-storage";
 
-import { exampleServiceTransformer } from '../../fake-plugins'
+import { exampleServiceTransformer } from '../../fake-plugins';
+import { buildFakeClientSchema } from '../../fake-schema';
 
 const GRAPHQL_COMMAND = {
   id: 'User',
@@ -24,16 +25,6 @@ const SERVICE_TRANSFORMS = {
   User: [new RenameRootFields((operation, name) => `User_${name}`),]
 };
 
-/* STORAGE MOCKS */
-
-// const STABLE_VERSION = 'aaaa-bbbb';
-//
-// const createSuccessfulStorage = ({ version =  STABLE_VERSION } = {}) => ({
-//   queries: {
-//     getVersionByTag: jest.fn().mockResolvedValue({ success: true, payload: version })
-//   }
-// });
-
 /* ===LOCKING MOCKS=== */
 
 const LOCK_ID = '123';
@@ -44,9 +35,40 @@ const createSuccessfulLocking = () => ({
 });
 
 
+// TRANSFORMS CHECKS
+
+const toServiceDefinition = service => ({
+  service: {
+    id: service.id,
+    schema: service.schema
+  }
+});
+
+const expectServiceToBeTransformeed = (getTransforms, service) =>
+  expect(getTransforms).toHaveBeenCalledWith(toServiceDefinition(service));
+
+const expectServiceNotToBeTransformeed = (getTransforms, service) =>
+  expect(getTransforms).not.toHaveBeenCalledWith(toServiceDefinition(service));
+
+
 /* ===BUILDER MOCKS=== */
 
-const DEFAULT_BUILDER = { name: 'graphql', service: { schema: { type: 'Query' }} };
+const USER_SCHEMA = buildFakeClientSchema(`
+  type User {
+    id: ID!
+    firstName: String!
+    lastName: String
+  }
+
+  type Query {
+    me: User!
+  }
+`);
+
+const DEFAULT_BUILDER = {
+  name: 'graphql',
+  service: { id: GRAPHQL_COMMAND.id, schema: USER_SCHEMA}
+};
 const createFailedBuilder = ({ name = DEFAULT_BUILDER.name } = {}) => ({
   name,
   buildServiceModel: jest.fn().mockResolvedValue({ success: false, error: 'unknown error' })
@@ -72,10 +94,10 @@ describe('ServiceRegistrationCommandHander', () =>
       locking,
       storage: createSuccessfulStorage(),
       schemaBuilders: [createSuccessfulBuilder()],
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
-    const result = await handler.execute(GRAPHQL_COMMAND);
+    await handler.execute(GRAPHQL_COMMAND);
 
     expect(locking.acquireLock).toHaveBeenCalledTimes(1);
     expect(locking.acquireLock).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id });
@@ -103,7 +125,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking,
       storage: createSuccessfulStorage(),
       schemaBuilders: [createSuccessfulBuilder()],
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -121,7 +143,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking,
       storage: createSuccessfulStorage(),
       schemaBuilders: [createSuccessfulBuilder()],
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -138,7 +160,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking,
       schemaBuilders,
       storage: createSuccessfulStorage(),
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -159,7 +181,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking,
       schemaBuilders,
       storage: createSuccessfulStorage(),
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -176,7 +198,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking: createSuccessfulLocking(),
       storage: createSuccessfulStorage(),
       schemaBuilders: [builder],
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -195,7 +217,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking,
       storage: createSuccessfulStorage(),
       schemaBuilders: [builder],
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -214,7 +236,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking: createSuccessfulLocking(),
       schemaBuilders: [createSuccessfulBuilder()],
       storage,
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -239,7 +261,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking,
       schemaBuilders: [createSuccessfulBuilder()],
       storage,
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -258,7 +280,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking: createSuccessfulLocking(),
       schemaBuilders: [createSuccessfulBuilder()],
       storage,
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -283,7 +305,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking,
       schemaBuilders: [createSuccessfulBuilder()],
       storage,
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -302,7 +324,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking: createSuccessfulLocking(),
       storage: createSuccessfulStorage(),
       schemaBuilders: [builder],
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -325,7 +347,7 @@ describe('ServiceRegistrationCommandHander', () =>
       locking,
       storage: createSuccessfulStorage(),
       schemaBuilders: [builder],
-      serviceSchemaTransformers: [exampleServiceTransformer()]
+      serviceSchemaTransformers: [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })]
     });
 
     const result = await handler.execute(GRAPHQL_COMMAND);
@@ -344,10 +366,7 @@ describe('ServiceRegistrationCommandHander', () =>
       schema: 123
     };
 
-    const transformer = exampleServiceTransformer({
-      success: true,
-      transforms: SERVICE_TRANSFORMS
-    });
+    const transformer = exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS });
 
     const handler = new ServiceRegistrationCommandHander({
       locking: createSuccessfulLocking(),
@@ -362,10 +381,10 @@ describe('ServiceRegistrationCommandHander', () =>
 
     expect(result).toBeSuccessful();
     expect(transformer.getTransforms).toHaveBeenCalledTimes(3);
-    expect(transformer.getTransforms).toHaveBeenCalledWith(services[0]);
-    expect(transformer.getTransforms).toHaveBeenCalledWith(services[1]);
-    expect(transformer.getTransforms).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id, ...DEFAULT_BUILDER.service });
-    expect(transformer.getTransforms).not.toHaveBeenCalledWith(newServiceFromStorage);
+    expectServiceToBeTransformeed(transformer.getTransforms, services[0]);
+    expectServiceToBeTransformeed(transformer.getTransforms, services[1]);
+    expectServiceToBeTransformeed(transformer.getTransforms, DEFAULT_BUILDER.service);
+    expectServiceNotToBeTransformeed(transformer.getTransforms, newServiceFromStorage);
   });
 
   it('should return failure and release lock if transformer returns failure', async () =>
@@ -386,8 +405,7 @@ describe('ServiceRegistrationCommandHander', () =>
     const result = await handler.execute(GRAPHQL_COMMAND);
 
     expect(result).toBeFailed();
-    expect(transformer.getTransforms).toHaveBeenCalledTimes(1);
-    expect(transformer.getTransforms).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id });
+    expect(transformer.getTransforms).toHaveBeenCalled();
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 

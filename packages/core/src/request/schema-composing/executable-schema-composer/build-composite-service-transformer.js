@@ -17,11 +17,16 @@ export const buildCompositeServicesTransformer = (transformers) =>
 
         if(!getNameResult.success) return getNameResult;
 
-        const getTransformerMetadataResult = tryGetPluginMetadata(metadata, getNameResult.payload);
+        // const getTransformerMetadataResult = tryGetPluginMetadata(metadata, getNameResult.payload);
+        //
+        // if(!getTransformerMetadataResult.success) return getTransformerMetadataResult;
 
-        if(!getTransformerMetadataResult.success) return getTransformerMetadataResult;
-
-        const getTransformsResult = transformer.getTransforms({ service: service, model: getTransformerMetadataResult.payload });
+        const getTransformsResult = transformer.getTransforms({
+          service: {
+            id: service.id,
+            schema: service.schema
+          }
+        });
 
         if(!getTransformsResult.success) return getTransformsResult;
 

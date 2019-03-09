@@ -99,11 +99,10 @@ describe('buildExecutableSchemaComposer', () =>
     expect(mocks.extensionBuilders[0].buildSchemaExtensions).toHaveBeenCalledWith({ model: mocks.metadata[PLUGINS_NAMES.EXTENSION_BUILDER] });
   });
 
-  it('should call service schema transformer with metadata model for each service', async () =>
+  it('should call service schema transformer for each service', async () =>
   {
     const mocks = createSuccessfulMocks();
     const services = [bookService, authorService];
-    const model = mocks.metadata[PLUGINS_NAMES.SERVICE_TRANSFORMER];
 
     const mergeResult = composeExampleSchema({
       services,
@@ -112,8 +111,12 @@ describe('buildExecutableSchemaComposer', () =>
 
     expect(mergeResult).toBeSuccessful();
 
-    expect(mocks.serviceSchemaTransformers[0].getTransforms).toHaveBeenCalledWith({ model, service: authorService });
-    expect(mocks.serviceSchemaTransformers[0].getTransforms).toHaveBeenCalledWith({ model, service: bookService });
+    expect(mocks.serviceSchemaTransformers[0].getTransforms).toHaveBeenCalledWith({
+      service: { id: authorService.id, schema: authorService.schema }
+    });
+    expect(mocks.serviceSchemaTransformers[0].getTransforms).toHaveBeenCalledWith({
+      service: { id: bookService.id, schema: bookService.schema }
+    });
   });
 
   it('should call gateway schema transformer with metadata model', async () =>

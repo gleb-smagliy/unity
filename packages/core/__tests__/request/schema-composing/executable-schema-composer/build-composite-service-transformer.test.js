@@ -1,7 +1,8 @@
 import { buildCompositeServicesTransformer } from "../../../../src/request/schema-composing/executable-schema-composer/build-composite-service-transformer";
 
 const DEFAULT_SERVICE = {
-  id: 'default_service'
+  id: 'default_service',
+  schema: 'probably_invalid_schema - does not matter'
 };
 
 const createValidTransformer = (name, payload) => ({
@@ -11,22 +12,12 @@ const createValidTransformer = (name, payload) => ({
 
 describe('buildCompositeServicesTransformer', () =>
 {
-  const runTransformers = (transformers, metadata, services = [DEFAULT_SERVICE]) =>
-    buildCompositeServicesTransformer(transformers)({ services, metadata });
+  const runTransformers = (transformers, services = [DEFAULT_SERVICE]) =>
+    buildCompositeServicesTransformer(transformers)({ services });
 
   it('should return failure if transformer does not have a name', () =>
   {
-    expect(runTransformers([123], {})).toBeFailed();
-  });
-
-  it('should return failure if transformer does not have a valid metadata', () =>
-  {
-    class Transformer {}
-    const metadata = {
-      'transformer_metadata': {}
-    };
-
-    expect(runTransformers([new Transformer()], metadata)).toBeFailed();
+    expect(runTransformers([123])).toBeFailed();
   });
 
   it('should return failure if transformer returns failure', () =>
@@ -38,11 +29,7 @@ describe('buildCompositeServicesTransformer', () =>
 
     const transformers = [transformer];
 
-    const metadata = {
-      'transformer': {}
-    };
-
-    expect(runTransformers(transformers, metadata)).toBeFailed();
+    expect(runTransformers(transformers)).toBeFailed();
   });
 
   it('should call transformer with service and metadata', () =>
@@ -51,13 +38,14 @@ describe('buildCompositeServicesTransformer', () =>
       createValidTransformer('transformer')
     ];
 
-    const metadata = {
-      transformer: { key: 'value' }
-    };
+    runTransformers(transformers);
 
-    runTransformers(transformers, metadata);
-
-    expect(transformers[0].getTransforms).toHaveBeenCalledWith({ model: metadata.transformer, service: DEFAULT_SERVICE});
+    expect(transformers[0].getTransforms).toHaveBeenCalledWith({
+      service: {
+        id: DEFAULT_SERVICE.id,
+        schema: DEFAULT_SERVICE.schema
+      }
+    });
   });
 
   it('should return success and put transformations per service for single service', () =>
@@ -69,11 +57,7 @@ describe('buildCompositeServicesTransformer', () =>
       createValidTransformer('transformer', transforms)
     ];
 
-    const metadata = {
-      transformer: { key: 'value' }
-    };
-
-    expect(runTransformers(transformers, metadata)).toBeSuccessful(
+    expect(runTransformers(transformers)).toBeSuccessful(
       {
         [DEFAULT_SERVICE.id]: [transforms[0], transforms[1], transforms[0], transforms[1]]
       }
@@ -89,16 +73,12 @@ describe('buildCompositeServicesTransformer', () =>
       createValidTransformer('transformer', transforms)
     ];
 
-    const metadata = {
-      transformer: { key: 'value' }
-    };
-
     const services = [
       { id: 'service1' },
       { id: 'service2' }
     ];
 
-    expect(runTransformers(transformers, metadata, services)).toBeSuccessful(
+    expect(runTransformers(transformers, services)).toBeSuccessful(
       {
         service1: [transforms[0], transforms[1], transforms[0], transforms[1]],
         service2: [transforms[0], transforms[1], transforms[0], transforms[1]]
@@ -116,11 +96,7 @@ describe('buildCompositeServicesTransformer', () =>
       createValidTransformer('transformer', singleTransform)
     ];
 
-    const metadata = {
-      transformer: { key: 'value' }
-    };
-
-    expect(runTransformers(transformers, metadata)).toBeSuccessful(
+    expect(runTransformers(transformers)).toBeSuccessful(
       {
         [DEFAULT_SERVICE.id]: [transforms[0], transforms[1], singleTransform]
       }
@@ -137,11 +113,7 @@ describe('buildCompositeServicesTransformer', () =>
       createValidTransformer('transformer', undefined)
     ];
 
-    const metadata = {
-      transformer: { key: 'value' }
-    };
-
-    expect(runTransformers(transformers, metadata)).toBeSuccessful(
+    expect(runTransformers(transformers)).toBeSuccessful(
       {
         [DEFAULT_SERVICE.id]: transforms
       }
@@ -157,11 +129,7 @@ describe('buildCompositeServicesTransformer', () =>
       createValidTransformer('transformer', 123)
     ];
 
-    const metadata = {
-      transformer: { key: 'value' }
-    };
-
-    expect(runTransformers(transformers, metadata)).toBeSuccessful(
+    expect(runTransformers(transformers)).toBeSuccessful(
       {
         [DEFAULT_SERVICE.id]: transforms
       }
