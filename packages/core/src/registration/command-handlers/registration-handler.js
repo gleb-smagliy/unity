@@ -1,21 +1,14 @@
 import { transformSchema } from 'graphql-tools';
 import { tryGetName } from "../../plugins/utils/get-plugin-name";
+import { extractMetadataForPlugins } from './extract-metadata-for-plugins';
 import { buildCompositeServicesTransformer } from "../../request/schema-composing/executable-schema-composer/build-composite-service-transformer";
 import { lockBarrier } from "./lock-barrier";
+import { composeResultsAsync } from './compose-results-async';
+import { toServicesHash } from './to-services-hash'
+import { buildServicesByTagQuery } from './services-by-tag-query';
 
 export const SYSTEM_TAGS = {
   STABLE: 'stable'
-};
-
-const toServicesDict = ({ services, upsert }) =>
-{
-  const fullServicesList = [
-    ...services,
-    upsert
-  ];
-
-  return fullServicesList
-    .reduce((acc, service) => ({ ...acc, [service.id]: service }), {});
 };
 
 export class ServiceRegistrationCommandHander
@@ -25,6 +18,7 @@ export class ServiceRegistrationCommandHander
     this.options = options;
     this.getServiceTransforms = buildCompositeServicesTransformer(options.serviceSchemaTransformers);
     this.withLock = lockBarrier(options.locking);
+    this.getServicesByTag = buildServicesByTagQuery(options.storage.queries);
   }
 
   execute = async (command) =>
@@ -38,10 +32,6 @@ export class ServiceRegistrationCommandHander
   {
     const {
       storage: {
-        queries: {
-          getVersionByTag,
-          getServicesByVersion
-        },
         commands: {
           insertServices,
           insertMetadata
@@ -65,38 +55,31 @@ export class ServiceRegistrationCommandHander
 
     const serviceDefinition = { id: serviceId, options };
 
-    const buildServiceResult = await schemaBuilder.buildServiceModel(serviceDefinition);
+    const schemaResult = await composeResultsAsync(
+      schemaBuilder.buildServiceModel(serviceDefinition),
+      schemaBuilder.extractMetadata(serviceDefinition),
+      this.getServicesByTag({ tag: SYSTEM_TAGS.STABLE }),
+    );
 
-    if(!buildServiceResult.success)
+    if(!schemaResult.success)
     {
-      return buildServiceResult;
+      return schemaResult;
     }
 
-    const newService = { ...buildServiceResult.payload, id: serviceId };
+    const [
+      builtService,
+      serviceMetadata,
+      { version: stableVersion, services: stableServices }
+    ] = schemaResult.payload;
 
-    const stableVersionResult = await getVersionByTag({ tag: SYSTEM_TAGS.STABLE });
+    const newService = {
+      schema: builtService.schema,
+      metadata: serviceMetadata.metadata,
+      id: serviceId
+    };
 
-    if(!stableVersionResult.success)
-    {
-      return stableVersionResult;
-    }
-
-    const servicesResult = await getServicesByVersion({ version: stableVersionResult.payload });
-
-    if(!servicesResult.success)
-    {
-      return servicesResult;
-    }
-
-    const extractMetadataResult = await schemaBuilder.extractMetadata(serviceDefinition);
-
-    if(!extractMetadataResult.success)
-    {
-      return extractMetadataResult;
-    }
-
-    const services = toServicesDict({
-      services: servicesResult.payload,
+    const services = toServicesHash({
+      services: stableServices,
       upsert: newService
     });
 
@@ -119,42 +102,19 @@ export class ServiceRegistrationCommandHander
 
     // todo: implement servicesCollection after it's API is defined
     const servicesCollection = {};
+    const metadataExtraction = await extractMetadataForPlugins({
+      plugins: [ ...extensionBuilders, ...gatewaySchemaTransformers ],
+      args: [servicesCollection]
+    });
 
-    const extensionBuildersMetadata = {};
-
-    for(let extensionBuilder of extensionBuilders)
+    if(!metadataExtraction.success)
     {
-      const name = tryGetName(extensionBuilder).payload;
-      const extractor = extensionBuilder.getMetadataExtractor();
-
-      const extractMetadataResult = await extractor.extractMetadata(servicesCollection);
-
-      if(!extractMetadataResult.success)
-      {
-        return extractMetadataResult;
-      }
-
-      extensionBuildersMetadata[name] = extractMetadataResult.payload;
+      return metadataExtraction;
     }
 
-    const gatewaySchemaTransformersMetadata = {};
+    const metadata = metadataExtraction.payload;
 
-    for(let gatewaySchemaTransformer of gatewaySchemaTransformers)
-    {
-      const name = tryGetName(gatewaySchemaTransformer).payload;
-      const extractor = gatewaySchemaTransformer.getMetadataExtractor();
-
-      const extractMetadataResult = await extractor.extractMetadata(servicesCollection);
-
-      if(!extractMetadataResult.success)
-      {
-        return extractMetadataResult;
-      }
-
-      gatewaySchemaTransformersMetadata[name] = extractMetadataResult.payload;
-    }
-
-    const { version: newVersion } = versioning.createVersion({ currentVersion: stableVersionResult.payload });
+    const { version: newVersion } = versioning.createVersion({ currentVersion: stableVersion });
 
     const insertServicesResult = await insertServices({
       version: newVersion,
@@ -163,10 +123,7 @@ export class ServiceRegistrationCommandHander
 
     const insertMetadataResult = await insertMetadata({
       version: newVersion,
-      metadata: {
-        ...extensionBuildersMetadata,
-        ...gatewaySchemaTransformersMetadata
-      }
+      metadata
     });
 
     if(!insertMetadataResult.success)
@@ -186,44 +143,4 @@ export class ServiceRegistrationCommandHander
       }
     }
   };
-
-  // useLock = async (lockId, func) =>
-  // {
-  //   const {
-  //     locking: { acquireLock, releaseLock }
-  //   } = this.options;
-  //
-  //   const acquireLockResult = await acquireLock({ id: lockId });
-  //
-  //   if(!acquireLockResult.success)
-  //   {
-  //     return acquireLockResult;
-  //   }
-  //
-  //   if(acquireLockResult.payload.status === LOCK_STATUS.ALREADY_LOCKED)
-  //   {
-  //     return successWithLockStatus(acquireLockResult.payload);
-  //   }
-  //
-  //   const funcResult = await func();
-  //
-  //   if(!funcResult.success)
-  //   {
-  //     const releaseLockResult = await releaseLock();
-  //
-  //     if(!releaseLockResult.success)
-  //     {
-  //       return {
-  //         success: false,
-  //         error: `Could not release lock (ERROR: <${releaseLockResult.error}>) while rollbacking due to: <${funcResult.error}>`
-  //       };
-  //     }
-  //
-  //     return funcResult;
-  //   }
-  //
-  //   const funcPayload = funcResult.payload;
-  //
-  //   return successWithLockStatus(acquireLockResult.payload, funcPayload);
-  // };
 }
