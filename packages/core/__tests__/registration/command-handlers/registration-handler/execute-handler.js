@@ -5,6 +5,8 @@ import {createSuccessfulStorage} from "../../../fake-storage";
 import {ServiceRegistrationCommandHander} from "../../../../src/registration/command-handlers/registration-handler";
 import {RenameRootFields} from "graphql-tools";
 import { GRAPHQL_COMMAND } from './graphql-command';
+import { createSuccessfulExtractorPlugin } from './fake-extractor-plugins';
+import { createFakeVersioning } from './fake-versioning';
 
 export const SERVICE_TRANSFORMS = {
   User: [new RenameRootFields((operation, name) => `User_${name}`),]
@@ -16,6 +18,9 @@ export const executeHandler = async ({
   schemaBuilders: originalBuilders = [createSuccessfulBuilder()],
   builderExtension = null,
   serviceSchemaTransformers = [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })],
+  extensionBuilders = [createSuccessfulExtractorPlugin()],
+  gatewaySchemaTransformers = [createSuccessfulExtractorPlugin()],
+  versioning = createFakeVersioning(),
   command = GRAPHQL_COMMAND
 } = {}) =>
 {
@@ -45,16 +50,20 @@ export const executeHandler = async ({
     locking,
     storage,
     schemaBuilders,
-    serviceSchemaTransformers
+    extensionBuilders,
+    serviceSchemaTransformers,
+    gatewaySchemaTransformers,
+    versioning
   });
 
-  const result = await handler.execute(command);
-
   return {
-    result,
+    result: await handler.execute(command),
     storage,
     locking,
     builder: schemaBuilders[0],
-    serviceTransformers: serviceSchemaTransformers
+    serviceTransformers: serviceSchemaTransformers,
+    extensionBuilders,
+    gatewayTransformers: gatewaySchemaTransformers,
+    versioning
   };
 };

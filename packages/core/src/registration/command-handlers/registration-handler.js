@@ -1,6 +1,7 @@
 import { transformSchema } from 'graphql-tools';
 import { tryGetName } from "../../plugins/utils/get-plugin-name";
 import { buildCompositeServicesTransformer } from "../../request/schema-composing/executable-schema-composer/build-composite-service-transformer";
+import {tryGetPluginMetadata} from "../../plugins/utils/get-plugin-metadata";
 
 export const LOCK_STATUS = {
   ACQUIRED: 'ACQUIRED',
@@ -57,8 +58,15 @@ export class ServiceRegistrationCommandHander
         queries: {
           getVersionByTag,
           getServicesByVersion
+        },
+        commands: {
+          insertServices,
+          insertMetadata
         }
-      }
+      },
+      extensionBuilders,
+      gatewaySchemaTransformers,
+      versioning
     } = this.options;
 
     const { id: serviceId, schemaBuilder: schemaBuilderName, options } = command;
@@ -126,8 +134,73 @@ export class ServiceRegistrationCommandHander
       };
     }
 
+    // todo: implement servicesCollection after it's API is defined
+    const servicesCollection = {};
+
+    const extensionBuildersMetadata = {};
+
+    for(let extensionBuilder of extensionBuilders)
+    {
+      const name = tryGetName(extensionBuilder).payload;
+      const extractor = extensionBuilder.getMetadataExtractor();
+
+      const extractMetadataResult = await extractor.extractMetadata(servicesCollection);
+
+      if(!extractMetadataResult.success)
+      {
+        return extractMetadataResult;
+      }
+
+      extensionBuildersMetadata[name] = extractMetadataResult.payload;
+    }
+
+    const gatewaySchemaTransformersMetadata = {};
+
+    for(let gatewaySchemaTransformer of gatewaySchemaTransformers)
+    {
+      const name = tryGetName(gatewaySchemaTransformer).payload;
+      const extractor = gatewaySchemaTransformer.getMetadataExtractor();
+
+      const extractMetadataResult = await extractor.extractMetadata(servicesCollection);
+
+      if(!extractMetadataResult.success)
+      {
+        return extractMetadataResult;
+      }
+
+      gatewaySchemaTransformersMetadata[name] = extractMetadataResult.payload;
+    }
+
+    const { version: newVersion } = versioning.createVersion({ currentVersion: stableVersionResult.payload });
+
+    const insertServicesResult = await insertServices({
+      version: newVersion,
+      services: Object.values(services)
+    });
+
+    const insertMetadataResult = await insertMetadata({
+      version: newVersion,
+      metadata: {
+        ...extensionBuildersMetadata,
+        ...gatewaySchemaTransformersMetadata
+      }
+    });
+
+    if(!insertMetadataResult.success)
+    {
+      return insertMetadataResult;
+    }
+
+    if(!insertServicesResult.success)
+    {
+      return insertServicesResult;
+    }
+
     return {
-      success: true
+      success: true,
+      payload: {
+        version: newVersion
+      }
     }
   };
 
@@ -162,8 +235,12 @@ export class ServiceRegistrationCommandHander
           error: `Could not release lock (ERROR: <${releaseLockResult.error}>) while rollbacking due to: <${funcResult.error}>`
         };
       }
+
+      return funcResult;
     }
 
-    return funcResult;
+    const funcPayload = funcResult.payload;
+
+    return successWithLockStatus(acquireLockResult.payload, funcPayload);
   };
 }
