@@ -1,6 +1,7 @@
 export const composeResultsAsync = async (...promises) => await Promise
-  .all(promises)
-  .then(results =>
+.all(promises)
+.then(
+  results =>
   {
     const failedResult = results.find(r => !r.success);
 
@@ -13,4 +14,5 @@ export const composeResultsAsync = async (...promises) => await Promise
       success: true,
       payload: results.map(r => r.payload)
     };
-  });
+  }
+);

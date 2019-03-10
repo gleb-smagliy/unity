@@ -12,6 +12,44 @@ export const SYSTEM_TAGS = {
   STABLE: 'stable'
 };
 
+const iterateSaga = async (saga) =>
+{
+  const generator = saga();
+
+  let step = generator.next();
+  let result = {
+    success: true
+  };
+
+  while(!step.done)
+  {
+    const stepValue = step.value;
+
+    let args = undefined;
+
+    if(stepValue.operator === 'call')
+    {
+      const returned = stepValue.func(step.args);
+
+      result = typeof(returned.then) === 'function' ? await returned : returned;
+
+      if(!result.success)
+      {
+        return result;
+      }
+
+      args = result.payload;
+    }
+
+    step.next(args);
+  }
+
+  return {
+    success: true,
+    payload: result.payload
+  }
+};
+
 export class ServiceRegistrationCommandHander
 {
   constructor(options)
@@ -39,6 +77,14 @@ export class ServiceRegistrationCommandHander
     } = this.options;
 
     const { id: serviceId, schemaBuilder: schemaBuilderName, options } = command;
+
+
+    return compose(
+      this.findSchemaBuilder(this.options.schemaBuilders, schemaBuilderName),
+      this.
+    );
+
+
     const schemaBuilder = this.options.schemaBuilders.find(b => tryGetName(b).payload === schemaBuilderName);
 
     if(!schemaBuilder)
