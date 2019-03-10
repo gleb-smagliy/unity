@@ -1,29 +1,11 @@
 import { transformSchema } from 'graphql-tools';
 import { tryGetName } from "../../plugins/utils/get-plugin-name";
 import { buildCompositeServicesTransformer } from "../../request/schema-composing/executable-schema-composer/build-composite-service-transformer";
-import {tryGetPluginMetadata} from "../../plugins/utils/get-plugin-metadata";
-
-export const LOCK_STATUS = {
-  ACQUIRED: 'ACQUIRED',
-  ALREADY_LOCKED: 'ALREADY_LOCKED',
-  FAILURE: 'FAILURE'
-};
+import { lockBarrier } from "./lock-barrier";
 
 export const SYSTEM_TAGS = {
   STABLE: 'stable'
 };
-
-const successWithLockStatus = (lockPayload, payload) => ({
-  success: true,
-  payload: {
-    lock: {
-      id: lockPayload.id,
-      time: lockPayload.time,
-      status: lockPayload.status
-    },
-    ...payload
-  }
-});
 
 const toServicesDict = ({ services, upsert }) =>
 {
@@ -42,13 +24,14 @@ export class ServiceRegistrationCommandHander
   {
     this.options = options;
     this.getServiceTransforms = buildCompositeServicesTransformer(options.serviceSchemaTransformers);
+    this.withLock = lockBarrier(options.locking);
   }
 
   execute = async (command) =>
   {
     const { id: serviceId } = command;
 
-    return this.useLock(serviceId, async () => await this.executeImplementation(command));
+    return this.withLock(serviceId, async () => await this.executeImplementation(command));
   };
 
   executeImplementation = async (command) =>
@@ -204,43 +187,43 @@ export class ServiceRegistrationCommandHander
     }
   };
 
-  useLock = async (lockId, func) =>
-  {
-    const {
-      locking: { acquireLock, releaseLock }
-    } = this.options;
-
-    const acquireLockResult = await acquireLock({ id: lockId });
-
-    if(!acquireLockResult.success)
-    {
-      return acquireLockResult;
-    }
-
-    if(acquireLockResult.payload.status === LOCK_STATUS.ALREADY_LOCKED)
-    {
-      return successWithLockStatus(acquireLockResult.payload);
-    }
-
-    const funcResult = await func();
-
-    if(!funcResult.success)
-    {
-      const releaseLockResult = await releaseLock();
-
-      if(!releaseLockResult.success)
-      {
-        return {
-          success: false,
-          error: `Could not release lock (ERROR: <${releaseLockResult.error}>) while rollbacking due to: <${funcResult.error}>`
-        };
-      }
-
-      return funcResult;
-    }
-
-    const funcPayload = funcResult.payload;
-
-    return successWithLockStatus(acquireLockResult.payload, funcPayload);
-  };
+  // useLock = async (lockId, func) =>
+  // {
+  //   const {
+  //     locking: { acquireLock, releaseLock }
+  //   } = this.options;
+  //
+  //   const acquireLockResult = await acquireLock({ id: lockId });
+  //
+  //   if(!acquireLockResult.success)
+  //   {
+  //     return acquireLockResult;
+  //   }
+  //
+  //   if(acquireLockResult.payload.status === LOCK_STATUS.ALREADY_LOCKED)
+  //   {
+  //     return successWithLockStatus(acquireLockResult.payload);
+  //   }
+  //
+  //   const funcResult = await func();
+  //
+  //   if(!funcResult.success)
+  //   {
+  //     const releaseLockResult = await releaseLock();
+  //
+  //     if(!releaseLockResult.success)
+  //     {
+  //       return {
+  //         success: false,
+  //         error: `Could not release lock (ERROR: <${releaseLockResult.error}>) while rollbacking due to: <${funcResult.error}>`
+  //       };
+  //     }
+  //
+  //     return funcResult;
+  //   }
+  //
+  //   const funcPayload = funcResult.payload;
+  //
+  //   return successWithLockStatus(acquireLockResult.payload, funcPayload);
+  // };
 }
