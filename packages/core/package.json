@@ -21,7 +21,10 @@
     "url": "git+https://github.com/gleb-smagliy/opportunity.git"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jest"
+    "test": "./node_modules/.bin/jest",
+    "test:watch": "npm run test --watch",
+    "build": "babel src --out-dir lib",
+    "build:watch": "npm run build -- --watch"
   },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/opportunity/issues"
@@ -31,8 +34,6 @@
     "apollo-link-context": "^1.0.14",
     "apollo-link-http": "^1.5.11",
     "apollo-server": "^2.4.8",
-    "graphql": "^14.1.1",
-    "graphql-tools": "^4.0.4",
     "lru-cache": "^5.1.1",
     "merge-graphql-schemas": "^1.5.8",
     "node-fetch": "^2.3.0",
@@ -46,5 +47,9 @@
     "@babel/preset-env": "^7.3.4",
     "jest": "^24.1.0",
     "jest-fetch-mock": "^2.1.1"
+  },
+  "peerDependencies": {
+    "graphql": "^14.1.1",
+    "graphql-tools": "^4.0.4",
   }
 }

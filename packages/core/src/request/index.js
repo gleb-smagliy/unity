@@ -1,0 +1,1 @@
+export { buildExecutableSchemaQuery } from './build-executabe-schema-query';
