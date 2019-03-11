@@ -1,7 +1,6 @@
-import { extractMetadataForPlugins } from './extract-metadata-for-plugins';
+import { extractMetadataForPlugins } from '../../plugins/extract-metadata-for-plugins';
 import { lockBarrier } from "./lock-barrier";
-import { buildServicesByTagQuery } from './services-by-tag-query';
-import { buildInsertSchemaCommand } from "./insert-schema-command";
+import { buildServicesByTagQuery, buildInsertSchemaCommand } from '../../data';
 import { runSaga } from "../../saga-runner";
 import { registrationSaga } from './registration-saga';
 

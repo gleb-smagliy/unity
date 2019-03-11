@@ -1,4 +1,4 @@
-import { composeResultsAsync } from './compose-results-async';
+import { composeResultsAsync } from '../operation-result/compose-results-async';
 
 export const buildInsertSchemaCommand = ({ insertServices, insertMetadata }) => async ({ version, services, metadata }) =>
 {

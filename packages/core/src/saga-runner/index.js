@@ -1,1 +1,2 @@
-export { effects, runSaga } from './run-saga';
+export { runSaga } from './run-saga';
+export { effects } from './effects';

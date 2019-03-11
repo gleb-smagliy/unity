@@ -1,15 +1,21 @@
-const OPERATIONS = {
-  CALL: 'EFFECTS/CALL'
-};
+import { EFFECTS } from './effects';
 
-const call = (func, ...args) => ({
-  operation: OPERATIONS.CALL,
-  func,
-  args
-});
+const isPromise = value => typeof(value.then) === 'function';
 
-export const effects = {
-  call
+const isGenerator = value => typeof(value.next) === 'function';
+
+const getResult = async (value) =>
+{
+  switch(true)
+  {
+    case isPromise(value):
+      return await value;
+    case isGenerator(value):
+      return await runSaga(value);
+    default:
+      return value;
+  }
+
 };
 
 export const runSaga = async (generator) =>
@@ -23,11 +29,9 @@ export const runSaga = async (generator) =>
   {
     const stepValue = step.value;
 
-    if(stepValue.operation === OPERATIONS.CALL)
+    if(stepValue.operation === EFFECTS.CALL)
     {
-      const returned = stepValue.func(...stepValue.args);
-
-      result = typeof(returned.then) === 'function' ? await returned : returned;
+      result = await getResult(stepValue.func(...stepValue.args));
 
       if(!result.success)
       {

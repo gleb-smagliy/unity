@@ -1,5 +1,5 @@
 import { effects } from "../../saga-runner";
-import { findSchemaBuilder } from "./find-schema-builder";
+import { findSchemaBuilder } from "../../plugins/schema-builders/find-schema-builder";
 import { buildServicesHash } from "./build-services-hash";
 import { transformServices } from "./service-transformer";
 
