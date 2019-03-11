@@ -1,7 +1,6 @@
 import { executeHandler } from "./execute-handler";
-import { ServiceRegistrationCommandHander } from "../../../../src/registration/command-handlers/registration-handler";
-import { SYSTEM_TAGS } from "../../../../src/registration/command-handlers/registration-saga";
-import { LOCK_STATUS } from "../../../../src/registration/command-handlers/lock-barrier";
+import { ServiceRegistrationCommandHander, SYSTEM_TAGS } from "../../../../src/registration/command-handlers/registration-handler";
+import { LOCK_STATUS } from "../../../../src/registration/modules/locking";
 import { createSuccessfulStorage, services, RETURN_VERSION as STABLE_VERSION } from "../../../fake-storage/create-storage";
 import { NEW_VERSION } from './fake-versioning';
 import { exampleServiceTransformer } from '../../../fake-plugins';

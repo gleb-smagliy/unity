@@ -1,4 +1,4 @@
-import { isValidTransform } from "../../../src/plugins/utils/is-valid-transform";
+import { isValidTransform } from "../../../src/common-modules/plugins";
 
 describe('isValidTransform', () =>
 {

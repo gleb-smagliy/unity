@@ -1,4 +1,4 @@
-import { tryGetName } from "../../../src/plugins/utils/get-plugin-name";
+import { tryGetName } from "../../../src/common-modules/plugins";
 
 describe('tryGetName', () =>
 {

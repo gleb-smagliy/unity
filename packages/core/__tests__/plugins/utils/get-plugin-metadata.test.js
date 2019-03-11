@@ -1,4 +1,4 @@
-import { tryGetPluginMetadata } from "../../../src/plugins/utils/get-plugin-metadata";
+import { tryGetPluginMetadata } from "../../../src/common-modules/plugins";
 
 describe('tryGetPluginMetadata', () =>
 {

@@ -18,6 +18,8 @@ const getResult = async (value) =>
 
 };
 
+const isOperationResult = value => typeof(value.success) === 'boolean';
+
 export const runSaga = async (generator) =>
 {
   let step = generator.next();
@@ -33,12 +35,19 @@ export const runSaga = async (generator) =>
     {
       result = await getResult(stepValue.func(...stepValue.args));
 
-      if(!result.success)
+      let nextStepArg = result;
+
+      if(isOperationResult(result))
       {
-        return result;
+        if(!result.success)
+        {
+          return result;
+        }
+
+        nextStepArg = result.payload;
       }
 
-      step = generator.next(result.payload);
+      step = generator.next(nextStepArg);
     }
   }
 

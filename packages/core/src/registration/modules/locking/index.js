@@ -1,0 +1,1 @@
+export { LOCK_STATUS, lockBarrier } from './lock-barrier';

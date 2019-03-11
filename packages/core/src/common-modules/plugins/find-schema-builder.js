@@ -1,4 +1,4 @@
-import {tryGetName} from "../../plugins/utils/get-plugin-name";
+import {tryGetName} from "./get-plugin-name";
 
 export const findSchemaBuilder = (builders, builderName) =>
 {

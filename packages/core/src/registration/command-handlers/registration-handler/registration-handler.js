@@ -1,7 +1,7 @@
-import { extractMetadataForPlugins } from '../../plugins/extract-metadata-for-plugins';
-import { lockBarrier } from "./lock-barrier";
-import { buildServicesByTagQuery, buildInsertSchemaCommand } from '../../data';
-import { runSaga } from "../../saga-runner";
+import { lockBarrier } from "../../modules/locking";
+import {  extractMetadataForPlugins } from "../../modules/plugins";
+import { buildServicesByTagQuery, buildInsertSchemaCommand } from '../../../data';
+import { runSaga } from "../../../common-modules/saga-runner";
 import { registrationSaga } from './registration-saga';
 
 export class ServiceRegistrationCommandHander
@@ -10,7 +10,6 @@ export class ServiceRegistrationCommandHander
   {
     this.options = options;
     this.withLock = lockBarrier(options.locking);
-    this.getServicesByTag = buildServicesByTagQuery(options.storage.queries);
     this.insertSchema = buildInsertSchemaCommand(options.storage.commands);
   }
 
@@ -22,8 +21,6 @@ export class ServiceRegistrationCommandHander
       command,
       options: this.options,
       extractPluginsMetadata: this.extractPluginsMetadata,
-      transformServices: this.transformServices,
-      getServicesByTag: this.getServicesByTag,
       insertSchema: this.insertSchema
     });
 

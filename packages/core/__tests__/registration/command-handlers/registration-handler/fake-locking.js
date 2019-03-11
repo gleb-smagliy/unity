@@ -1,4 +1,4 @@
-import { LOCK_STATUS } from "../../../../src/registration/command-handlers/lock-barrier";
+import { LOCK_STATUS } from "../../../../src/registration/modules/locking";
 
 export const LOCK_ID = '123';
 

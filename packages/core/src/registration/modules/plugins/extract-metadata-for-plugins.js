@@ -1,4 +1,4 @@
-import { tryGetName } from "./utils/get-plugin-name";
+import { tryGetName } from "../../../common-modules/plugins";
 
 export const extractMetadataForPlugins = async ({ plugins, args }) =>
 {

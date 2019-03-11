@@ -1,6 +1,4 @@
-import { tryGetName } from '../../../plugins/utils/get-plugin-name';
-import { tryGetPluginMetadata } from '../../../plugins/utils/get-plugin-metadata';
-import { isValidTransform } from "../../../plugins/utils/is-valid-transform";
+import { tryGetName, isValidTransform } from '../../../common-modules/plugins';
 
 export const buildCompositeServicesTransformer = (transformers) =>
 {
@@ -16,10 +14,6 @@ export const buildCompositeServicesTransformer = (transformers) =>
         const getNameResult = tryGetName(transformer);
 
         if(!getNameResult.success) return getNameResult;
-
-        // const getTransformerMetadataResult = tryGetPluginMetadata(metadata, getNameResult.payload);
-        //
-        // if(!getTransformerMetadataResult.success) return getTransformerMetadataResult;
 
         const getTransformsResult = transformer.getTransforms({
           service: {

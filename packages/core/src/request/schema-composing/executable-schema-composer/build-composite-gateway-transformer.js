@@ -1,6 +1,4 @@
-import { tryGetName } from '../../../plugins/utils/get-plugin-name';
-import { tryGetPluginMetadata } from '../../../plugins/utils/get-plugin-metadata';
-import { isValidTransform } from '../../../plugins/utils/is-valid-transform';
+import { tryGetName, isValidTransform, tryGetPluginMetadata } from '../../../common-modules/plugins';
 
 export const buildCompositeGatewayTransformer = (transformers) =>
 {
