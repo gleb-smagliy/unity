@@ -15,11 +15,12 @@ function* insertingServicesSaga({
   servicesHash,
   pluginsMetadata
 }) {
+  const currentVersion = servicesHash.getVersion();
   const insertSchema = yield _sagaRunner.effects.call(_data.buildInsertSchemaCommand, storage.commands);
   const {
     version
-  } = versioning.createVersion({
-    currentVersion: servicesHash.getVersion()
+  } = yield _sagaRunner.effects.call(versioning.createVersion, {
+    currentVersion
   });
   yield _sagaRunner.effects.call(insertSchema, {
     version,

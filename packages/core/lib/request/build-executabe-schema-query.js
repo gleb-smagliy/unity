@@ -5,27 +5,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.buildExecutableSchemaQuery = void 0;
 
+var _options = require("../common-modules/options");
+
 var _getSchemaVersion = require("./data/get-schema-version");
 
 var _schemaComposing = require("./schema-composing");
 
-//todo: currently just a stub
-const prepareOptions = options => {
-  if (typeof options !== 'object' || options === null) {
-    return {
-      success: false,
-      error: 'Expected options to be a non-null object'
-    };
-  }
-
-  return {
-    success: true,
-    payload: options
-  };
-};
-
 const buildExecutableSchemaQuery = options => {
-  const optionsPreparation = prepareOptions(options);
+  const optionsPreparation = (0, _options.prepareOptions)(options);
 
   if (!optionsPreparation.success) {
     throw new Error(`Options is not valid: <${optionsPreparation.error}>`);

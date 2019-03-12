@@ -15,9 +15,24 @@ const REGISTER_MUTATION = `
     message: String
   }
   
+  enum RegistrationLockStatus
+  {
+      ACQUIRED,
+      ALREADY_LOCKED,
+      FAILURE
+  }
+  
+  type RegistrationLock
+  {
+    id: ID!,
+    time: Int!
+    status: RegistrationLockStatus
+  }
+  
   type ServiceRegistrationPayload
   {
     version: String
+    lock: RegistrationLock
   }
 
   type ServiceRegistrationResult
