@@ -1,22 +1,6 @@
+import { prepareOptions } from "../common-modules/options";
 import { getSchemaVersion } from './data/get-schema-version';
 import { buildSchemaComposer } from "./schema-composing";
-
-//todo: currently just a stub
-const prepareOptions = options =>
-{
-  if (typeof(options) !== 'object' || options === null)
-  {
-    return {
-      success: false,
-      error: 'Expected options to be a non-null object'
-    };
-  }
-
-  return {
-    success: true,
-    payload: options
-  }
-};
 
 export const buildExecutableSchemaQuery = (options) =>
 {

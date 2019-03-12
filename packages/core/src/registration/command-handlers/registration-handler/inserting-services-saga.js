@@ -3,9 +3,10 @@ import { buildInsertSchemaCommand } from "../../../data";
 
 export function* insertingServicesSaga({ storage, versioning, servicesHash, pluginsMetadata })
 {
-  const insertSchema = yield effects.call(buildInsertSchemaCommand, storage.commands);
+  const currentVersion = servicesHash.getVersion();
 
-  const { version } = versioning.createVersion({ currentVersion: servicesHash.getVersion() });
+  const insertSchema = yield effects.call(buildInsertSchemaCommand, storage.commands);
+  const { version } = yield effects.call(versioning.createVersion, { currentVersion });
 
   yield effects.call(insertSchema, {
     version,

@@ -1,6 +1,8 @@
 import { transformSchema } from "graphql-tools";
 import { buildCompositeServicesTransformer } from "../../../request/schema-composing/executable-schema-composer/build-composite-service-transformer";
 
+const isNonEmptyArray = obj => typeof(obj) === 'object' && Array.isArray(obj) && obj.length > 0;
+
 export const transformServices = (transformers) => (servicesHash) =>
 {
   const compositeTransformer = buildCompositeServicesTransformer(transformers);
@@ -16,14 +18,17 @@ export const transformServices = (transformers) => (servicesHash) =>
   for (let key of Object.keys(servicesHash))
   {
     const service = servicesHash[key];
+    const serviceTransforms = transformsResult.payload[key];
+
+    const transformedSchema = isNonEmptyArray(serviceTransforms) ?
+      transformSchema(service.schema, serviceTransforms) :
+      service.schema;
 
     result[key] = {
       ...service,
-      transformedSchema: transformSchema(service.schema, transformsResult.payload[key])
+      transformedSchema
     };
   }
-
-  console.log('result:', result);
 
   return {
     success: true,
