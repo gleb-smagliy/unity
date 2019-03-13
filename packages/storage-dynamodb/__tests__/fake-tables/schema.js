@@ -16,12 +16,20 @@ export const SCHEMA_TABLE =
       {
         name: 'ref', location: 'OBJECT_FIELD',
         arguments: [
-          { name: 'query', type: 'String', value: "" }
+          { name: 'query', value: "\"friendById\"" },
+          { name: 'as', value: "\"friend\"" }
+        ]
+      },
+      {
+        name: 'key', location: 'OBJECT_TYPE',
+        arguments: [
+          { name: 'query', value: "[\"id\", \"name\"]" },
         ]
       }
 
     ],
-    Endpoint: "localhost",
+    Endpoint: "localhost/[stage]",
+    Stage: "test"
 
   },
   {
@@ -29,6 +37,18 @@ export const SCHEMA_TABLE =
     Id: "PLUGIN_METADATA/ReferenceExtensionBuilder", // SortKey
     Type: "PLUGIN_METADATA",
     PluginName: "ReferenceExtensionBuilder",
-    Metadata: {}
+    Metadata: {
+      extendTypes: [
+        {
+          name: 'User',
+          keyFields: [{ name: 'id', type: 'Int!' }],
+          asField: 'friends',
+          query: 'Friends.friendsByUserId',
+          type: '[Friends_Friend]',
+          keysArgs: [{ name: 'userId', type: 'Int!' }],
+          additinalArgs: [{ name: 'hideBlocked', type: 'Boolean!' }]
+        }
+      ]
+    }
   },
 ];
