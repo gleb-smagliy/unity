@@ -1,8 +1,13 @@
-export const getMetadataByVersion = async () => {
-
-
-  return {
-    success: true,
-    payload:
-  }
-};
+// export const createGetMetadataByVersionQuery = ({ docClient }) => async ({ version }) =>
+// {
+//   const pluginName = 'some_plugin';
+//
+//   return {
+//     success: true,
+//     payload: {
+//       [pluginName]: {
+//         key: 'value'
+//       }
+//     }
+//   };
+// };
