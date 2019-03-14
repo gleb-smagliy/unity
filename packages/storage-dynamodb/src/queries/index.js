@@ -1,3 +1,3 @@
 export { createGetSchemaByVersionQuery } from './get-schema-by-version';
-export { getVersionByTag } from './get-version-by-tag';
-export { getSchemaByVersion } from './get-services-by-version';
+export { createGetServicesByVersionQuery } from './get-services-by-version';
+export { createGetVersionByTagQuery } from './get-version-by-tag';
