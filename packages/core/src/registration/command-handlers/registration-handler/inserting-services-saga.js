@@ -1,5 +1,4 @@
 import { effects } from "../../../common-modules/saga-runner";
-import { buildInsertSchemaCommand } from "../../../data";
 
 export function* insertingServicesSaga({ storage, versioning, servicesHash, pluginsMetadata })
 {
