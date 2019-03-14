@@ -1,3 +1,2 @@
-export { SERVICES_TABLE } from './services';
-export { PLUGINS_METADATA_TABLE } from './plugins-metadata';
+export { SCHEMA_TABLE , PLUGIN_METADATA, SERVICE } from './schema';
 export { TAGS_TABLE } from './tags';

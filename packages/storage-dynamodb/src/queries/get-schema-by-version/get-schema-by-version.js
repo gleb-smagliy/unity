@@ -1,4 +1,5 @@
 import { createQueryParams } from './create-query-params';
+import { splitSchemaItems } from './split-schema-items';
 
 export const createGetSchemaByVersionQuery = ({ docClient, tableName }) =>
 {
