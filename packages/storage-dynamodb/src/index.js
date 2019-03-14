@@ -27,8 +27,8 @@ export const createStorage = ({
       getVersionByTag: createGetVersionByTagQuery({ docClient, tableName: tags }),
     },
     commands: {
-      insertSchemaCommand: createInsertSchemaCommand({ docClient, tableName: schema }),
-      upsertTagCommand: createUpsertTagCommand({ docClient, tableName: tags })
+      insertSchema: createInsertSchemaCommand({ docClient, tableName: schema }),
+      upsertTag: createUpsertTagCommand({ docClient, tableName: tags })
     }
   };
 };

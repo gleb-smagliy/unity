@@ -14,8 +14,11 @@ const transformResult = items => {
 
   if (typeof item !== 'object') {
     return {
-      success: false,
-      error: 'GetVersionByTagQuery: queried items[0] is not an object'
+      success: true,
+      payload: {
+        version: null,
+        stage: null
+      }
     };
   }
 

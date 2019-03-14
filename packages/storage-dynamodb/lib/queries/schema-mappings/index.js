@@ -4,9 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.toServices = exports.toPluginsMetadata = exports.ITEM_TYPE = void 0;
-
-var _fakeTables = require("../../../__tests__/fake-tables");
-
 const ITEM_TYPE = {
   PLUGIN_METADATA: 'PLUGIN_METADATA',
   SERVICE: 'SERVICE'

@@ -35,11 +35,11 @@ const createStorage = ({
       })
     },
     commands: {
-      insertSchemaCommand: (0, _commands.createInsertSchemaCommand)({
+      insertSchema: (0, _commands.createInsertSchemaCommand)({
         docClient,
         tableName: schema
       }),
-      upsertTagCommand: (0, _commands.createUpsertTagCommand)({
+      upsertTag: (0, _commands.createUpsertTagCommand)({
         docClient,
         tableName: tags
       })

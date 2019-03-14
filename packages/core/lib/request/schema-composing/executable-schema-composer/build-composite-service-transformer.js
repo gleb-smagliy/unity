@@ -9,8 +9,7 @@ var _plugins = require("../../../common-modules/plugins");
 
 const buildCompositeServicesTransformer = transformers => {
   return ({
-    services,
-    metadata
+    services
   }) => {
     const transforms = {}; // todo: O(n * m) - could we do something to achieve lower complexity?
 

@@ -9,8 +9,6 @@ var _locking = require("../../modules/locking");
 
 var _plugins = require("../../modules/plugins");
 
-var _data = require("../../../data");
-
 var _sagaRunner = require("../../../common-modules/saga-runner");
 
 var _registrationSaga = require("./registration-saga");
@@ -26,8 +24,7 @@ class ServiceRegistrationCommandHander {
       const saga = (0, _registrationSaga.registrationSaga)({
         command,
         options: this.options,
-        extractPluginsMetadata: this.extractPluginsMetadata,
-        insertSchema: this.insertSchema
+        extractPluginsMetadata: this.extractPluginsMetadata
       });
       return this.withLock(serviceId, async () => await (0, _sagaRunner.runSaga)(saga));
     });
@@ -39,7 +36,6 @@ class ServiceRegistrationCommandHander {
 
     this.options = options;
     this.withLock = (0, _locking.lockBarrier)(options.locking);
-    this.insertSchema = (0, _data.buildInsertSchemaCommand)(options.storage.commands);
   }
 
 }

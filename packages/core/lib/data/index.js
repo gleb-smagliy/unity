@@ -9,13 +9,5 @@ Object.defineProperty(exports, "buildServicesByTagQuery", {
     return _servicesByTagQuery.buildServicesByTagQuery;
   }
 });
-Object.defineProperty(exports, "buildInsertSchemaCommand", {
-  enumerable: true,
-  get: function () {
-    return _insertSchemaCommand.buildInsertSchemaCommand;
-  }
-});
 
 var _servicesByTagQuery = require("./services-by-tag-query");
-
-var _insertSchemaCommand = require("./insert-schema-command");

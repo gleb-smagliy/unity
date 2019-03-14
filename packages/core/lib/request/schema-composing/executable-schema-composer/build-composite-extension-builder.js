@@ -13,7 +13,7 @@ const isValidResolver = r => typeof r === 'object' && r !== null;
 
 const buildCompositeExtensionBuilder = extensionBuilders => {
   return ({
-    metadata
+    pluginsMetadata
   }) => {
     const typeDefs = [];
     const resolvers = [];
@@ -21,7 +21,7 @@ const buildCompositeExtensionBuilder = extensionBuilders => {
     for (let builder of extensionBuilders) {
       const getNameResult = (0, _plugins.tryGetName)(builder);
       if (!getNameResult.success) return getNameResult;
-      const getBuilderMetadataResult = (0, _plugins.tryGetPluginMetadata)(metadata, getNameResult.payload);
+      const getBuilderMetadataResult = (0, _plugins.tryGetPluginMetadata)(pluginsMetadata, getNameResult.payload);
       if (!getBuilderMetadataResult.success) return getBuilderMetadataResult;
       const buildResult = builder.buildSchemaExtensions({
         model: getBuilderMetadataResult.payload

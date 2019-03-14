@@ -9,14 +9,14 @@ var _plugins = require("../../../common-modules/plugins");
 
 const buildCompositeGatewayTransformer = transformers => {
   return ({
-    metadata
+    pluginsMetadata
   }) => {
     const transforms = [];
 
     for (let transformer of transformers) {
       const getNameResult = (0, _plugins.tryGetName)(transformer);
       if (!getNameResult.success) return getNameResult;
-      const getTransformerMetadataResult = (0, _plugins.tryGetPluginMetadata)(metadata, getNameResult.payload);
+      const getTransformerMetadataResult = (0, _plugins.tryGetPluginMetadata)(pluginsMetadata, getNameResult.payload);
       if (!getTransformerMetadataResult.success) return getTransformerMetadataResult;
       const getTransformsResult = transformer.getTransforms({
         model: getTransformerMetadataResult.payload

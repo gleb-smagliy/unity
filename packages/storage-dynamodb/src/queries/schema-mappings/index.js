@@ -1,5 +1,3 @@
-import {SERVICE} from "../../../__tests__/fake-tables";
-
 export const ITEM_TYPE = {
   PLUGIN_METADATA: 'PLUGIN_METADATA',
   SERVICE: 'SERVICE'

@@ -7,7 +7,18 @@ export const buildServicesByTagQuery = ({ getVersionByTag, getServicesByVersion 
     return versionResult;
   }
 
-  const version = versionResult.payload;
+  const { version } = versionResult.payload;
+
+  if(version === null)
+  {
+    return {
+      success: true,
+      payload: {
+        version: null,
+        services: []
+      }
+    };
+  }
 
   const servicesResult = await getServicesByVersion({ version });
 
