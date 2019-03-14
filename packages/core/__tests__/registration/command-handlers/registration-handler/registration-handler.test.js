@@ -8,8 +8,7 @@ import { expectServiceNotToBeTransformeed, expectServiceToBeTransformeed } from 
 import {
   createFailedBuilder,
   createSuccessfulBuilder,
-  DEFAULT_BUILDER,
-  USER_SCHEMA
+  DEFAULT_BUILDER
 } from './fake-schema-builders';
 import { GRAPHQL_COMMAND } from "./graphql-command";
 import {createFailedExtractorPlugin, DEFAULT_NAME as SOME_METADATA_NAME, SOME_METADATA} from "./fake-extractor-plugins";
@@ -261,9 +260,9 @@ describe('ServiceRegistrationCommandHander', () =>
     const { result, storage } = await executeHandler();
 
     expect(result).toBeSuccessful();
-    expect(storage.commands.insertServices).toHaveBeenCalledTimes(1);
+    expect(storage.commands.insertSchema).toHaveBeenCalledTimes(1);
 
-    const [{ version, services: insertingServices}] = storage.commands.insertServices.mock.calls[0];
+    const [{ version, services: insertingServices}] = storage.commands.insertSchema.mock.calls[0];
 
     expect(version).toEqual(NEW_VERSION);
     expect(insertingServices).toHaveLength(services.length + 1);
@@ -274,12 +273,12 @@ describe('ServiceRegistrationCommandHander', () =>
     const { result, storage } = await executeHandler();
 
     expect(result).toBeSuccessful();
-    expect(storage.commands.insertMetadata).toHaveBeenCalledTimes(1);
+    expect(storage.commands.insertSchema).toHaveBeenCalledTimes(1);
 
-    const [{ version, metadata: insertingMetadata }] = storage.commands.insertMetadata.mock.calls[0];
+    const [{ version, pluginsMetadata }] = storage.commands.insertSchema.mock.calls[0];
 
     expect(version).toEqual(NEW_VERSION);
-    expect(insertingMetadata).toEqual({ [SOME_METADATA_NAME]: SOME_METADATA });
+    expect(pluginsMetadata).toEqual({ [SOME_METADATA_NAME]: SOME_METADATA });
   });
 
   it('should assign a new version to the services using versioning strategy from options', async () =>
@@ -296,28 +295,13 @@ describe('ServiceRegistrationCommandHander', () =>
     const { storage, result, locking } = await executeHandler({
       storage: {
         commands: {
-          insertServices: jest.fn().mockResolvedValue({ success: false, error: 'some error' })
+          insertSchema: jest.fn().mockResolvedValue({ success: false, error: 'some error' })
         }
       }
     });
 
     expect(result).toBeFailed();
-    expect(storage.commands.insertServices).toHaveBeenCalledTimes(1);
-    expect(locking.releaseLock).toHaveBeenCalledTimes(1);
-  });
-
-  it('should return failure and release lock if plugins metadata could not be inserted', async () =>
-  {
-    const { storage, result, locking } = await executeHandler({
-      storage: {
-        commands: {
-          insertMetadata: jest.fn().mockResolvedValue({ success: false, error: 'some error' })
-        }
-      }
-    });
-
-    expect(result).toBeFailed();
-    expect(storage.commands.insertMetadata).toHaveBeenCalledTimes(1);
+    expect(storage.commands.insertSchema).toHaveBeenCalledTimes(1);
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 

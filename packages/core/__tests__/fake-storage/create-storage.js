@@ -27,9 +27,7 @@ export const createSuccessfulStorage = ({ services = DEFAULT_SERVICES } = {}) =>
     getVersionByTag: jest.fn().mockResolvedValue({ success: true, payload: RETURN_VERSION })
   },
   commands: {
-    insertServices: jest.fn().mockReturnValue({ success: true, payload: services }),
-    insertMetadata: jest.fn().mockReturnValue({ success: true, payload: METADATA }),
-    updateTag: jest.fn().mockResolvedValue({ success: true, payload: RETURN_VERSION }),
-    insertTag: jest.fn().mockResolvedValue({ success: true, payload: RETURN_VERSION })
+    insertSchema: jest.fn().mockReturnValue({ success: true }),
+    upsertTag: jest.fn().mockResolvedValue({ success: true, payload: RETURN_VERSION }),
   }
 });
