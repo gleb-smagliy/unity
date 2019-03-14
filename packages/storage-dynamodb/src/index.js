@@ -5,6 +5,11 @@ import {
   createGetVersionByTagQuery
 } from './queries';
 
+import {
+  createInsertSchemaCommand,
+  createUpsertTagCommand
+} from './commands';
+
 export const createStorage = ({
   clientOptions,
   tables: {
@@ -20,6 +25,10 @@ export const createStorage = ({
       getSchemaByVersion: createGetSchemaByVersionQuery({ docClient, tableName: schema }),
       getServicesByVersion: createGetServicesByVersionQuery({ docClient, tableName: schema }),
       getVersionByTag: createGetVersionByTagQuery({ docClient, tableName: tags }),
+    },
+    commands: {
+      insertSchemaCommand: createInsertSchemaCommand({ docClient, tableName: schema }),
+      upsertTagCommand: createUpsertTagCommand({ docClient, tableName: tags })
     }
   };
 };
