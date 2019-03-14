@@ -1,5 +1,17 @@
-import { createQueryParams } from './create-query-params';
-import { splitSchemaItems } from './split-schema-items';
+import { toServices, toPluginsMetadata } from "./schema-mappings";
+
+const createQueryParams = ({ version, tableName }) => ({
+  TableName: tableName,
+  KeyConditionExpression: 'Version = :version',
+  ExpressionAttributeValues:{
+    ':version': version
+  }
+});
+
+const splitSchemaItems = items => ({
+  metadata: toPluginsMetadata(items),
+  services: toServices(items)
+});
 
 export const createGetSchemaByVersionQuery = ({ docClient, tableName }) =>
 {
@@ -20,7 +32,7 @@ export const createGetSchemaByVersionQuery = ({ docClient, tableName }) =>
     {
       return {
         success: false,
-        error: err.message
+        error: `GetSchemaByVersionQuery:: ${err.message}`
       };
     }
   };
