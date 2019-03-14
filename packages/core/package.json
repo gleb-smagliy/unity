@@ -22,7 +22,7 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/jest",
-    "test:watch": "npm run test --watch",
+    "test:watch": "npm run test -- --watch",
     "build": "babel src --out-dir lib",
     "build:watch": "npm run build -- --watch"
   },
@@ -36,8 +36,7 @@
     "apollo-server": "^2.4.8",
     "lru-cache": "^5.1.1",
     "merge-graphql-schemas": "^1.5.8",
-    "node-fetch": "^2.3.0",
-    "ramda": "^0.26.1"
+    "node-fetch": "^2.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

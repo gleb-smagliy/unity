@@ -1,4 +1,16 @@
-import { equals } from 'ramda';
+import { deepStrictEqual } from 'assert';
+
+const equals = (left, right) => {
+  try
+  {
+    deepStrictEqual(left, right);
+
+    return true;
+  }
+  catch (e) {
+    return false;
+  }
+};
 
 export const resultMatchers = {
   toBeSuccessful(result, payload)
