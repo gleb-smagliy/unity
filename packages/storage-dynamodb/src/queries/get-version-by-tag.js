@@ -1,4 +1,7 @@
-const toVersion = (items) =>
+import {execute} from "../execute-dynamodb-operation";
+import {toServices} from "./schema-mappings";
+
+const transformResult = (items) =>
 {
   const item = items[0];
 
@@ -27,24 +30,11 @@ const createQueryParams = ({ tag, tableName }) => ({
   }
 });
 
-export const createGetVersionByTagQuery = ({ docClient, tableName }) =>
+const transformError = error => `GetVersionByTagQuery:: ${error.message}`;
+
+export const createGetVersionByTagQuery = ({ docClient, tableName }) => async ({ tag }) =>
 {
-  return async ({ tag }) =>
-  {
-    const params = createQueryParams({ tag, tableName });
+  const params = createQueryParams({ tag, tableName });
 
-    try
-    {
-      const queryResult = await docClient.query(params).promise();
-
-      return toVersion(queryResult);
-    }
-    catch(err)
-    {
-      return {
-        success: false,
-        error: `GetVersionByTagQuery:: ${err.message}`
-      };
-    }
-  };
+  return execute(docClient.query(params), { transformResult, transformError });
 };

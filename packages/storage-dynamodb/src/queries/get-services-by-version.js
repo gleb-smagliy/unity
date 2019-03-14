@@ -1,4 +1,5 @@
 import { toServices, ITEM_TYPE } from './schema-mappings';
+import { execute } from '../execute-dynamodb-operation';
 
 const createQueryParams = ({ version, tableName }) => ({
   TableName: tableName,
@@ -10,27 +11,11 @@ const createQueryParams = ({ version, tableName }) => ({
   },
 });
 
-export const createGetServicesByVersionQuery = ({ docClient, tableName }) =>
+const transformError = err => `GetServicesByVersionQuery:: ${err.message}`;
+
+export const createGetServicesByVersionQuery = ({ docClient, tableName }) => async ({ version }) =>
 {
-  return async ({ version }) =>
-  {
-    const params = createQueryParams({ version, tableName });
+  const params = createQueryParams({ version, tableName });
 
-    try
-    {
-      const scanResult = await docClient.scan(params).promise();
-
-      return {
-        success: true,
-        payload: toServices(scanResult)
-      };
-    }
-    catch(err)
-    {
-      return {
-        success: false,
-        error: `GetServicesByVersionQuery:: ${err.message}`
-      };
-    }
-  };
+  return execute(docClient.scan(params), { transformPayload: toServices, transformError });
 };

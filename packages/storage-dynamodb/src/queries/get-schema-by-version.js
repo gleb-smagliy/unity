@@ -1,4 +1,5 @@
 import { toServices, toPluginsMetadata } from "./schema-mappings";
+import { execute } from '../execute-dynamodb-operation';
 
 const createQueryParams = ({ version, tableName }) => ({
   TableName: tableName,
@@ -8,32 +9,16 @@ const createQueryParams = ({ version, tableName }) => ({
   }
 });
 
-const splitSchemaItems = items => ({
+const transformPayload = items => ({
   pluginsMetadata: toPluginsMetadata(items),
   services: toServices(items)
 });
 
-export const createGetSchemaByVersionQuery = ({ docClient, tableName }) =>
+const transformError = err => `GetSchemaByVersionQuery:: ${err.message}`;
+
+export const createGetSchemaByVersionQuery = ({ docClient, tableName }) => async ({ version }) =>
 {
-  return async ({ version }) =>
-  {
-    const params = createQueryParams({ version, tableName });
+  const params = createQueryParams({ version, tableName });
 
-    try
-    {
-      const queryResult = await docClient.query(params).promise();
-
-      return {
-        success: true,
-        payload: splitSchemaItems(queryResult)
-      };
-    }
-    catch(err)
-    {
-      return {
-        success: false,
-        error: `GetSchemaByVersionQuery:: ${err.message}`
-      };
-    }
-  };
+  return execute(docClient.query(params), { transformPayload, transformError });
 };
