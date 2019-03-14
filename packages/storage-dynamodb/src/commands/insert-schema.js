@@ -9,14 +9,14 @@ const createParams = ({ tableName, tag, version, stage }) => ({
   }
 });
 
-const transformError = error => `UpsertTagCommand::${error.message}`;
+const transformError = error => `InsertSchemaCommand::${error.message}`;
 
-export const createUpsertTagCommand = ({ docClient, tableName }) => async ({
-  tag,
+export const createInsertSchemaCommand = ({ docClient, tableName }) => async ({
   version,
-  stage
-}) => {
-
+  services,
+  pluginsMetadata
+}) =>
+{
   const params = createParams({ tableName, tag, version, stage });
 
   return execute(docClient.put(params), { transformError });
