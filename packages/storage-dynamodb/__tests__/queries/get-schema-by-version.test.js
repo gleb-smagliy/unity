@@ -30,7 +30,7 @@ describe('getSchemaByVersionQuery', () =>
     expect(result.payload.services).toEqual([expectedService]);
   });
 
-  it.skip('should return success with properly mapped plugins metadata if dynamodb query resolves successfully', async () =>
+  it('should return success with properly mapped plugins metadata if dynamodb query resolves successfully', async () =>
   {
     const docClient = createSuccessfulQueryClient(SCHEMA_TABLE);
     const result = await runQuery({ docClient, version });
@@ -41,21 +41,21 @@ describe('getSchemaByVersionQuery', () =>
     };
 
     expect(result).toBeSuccessful();
-    expect(result.payload.metadata).toEqual({
+    expect(result.payload.pluginsMetadata).toEqual({
       [PLUGIN_METADATA.PluginName]: expectedMetadata
     });
   });
 
-  it.skip('should call dynamodb query with right params', async () =>
+  it('should call dynamodb query with right params', async () =>
   {
     const docClient = createSuccessfulQueryClient(SCHEMA_TABLE);
     await runQuery({ docClient, version });
 
     expect(docClient.query).toHaveBeenCalledWith({
       TableName: tableName,
-      KeyConditionExpression: 'Tag = :tag',
+      KeyConditionExpression: 'Version = :version',
       ExpressionAttributeValues: {
-        ':tag': tag
+        ':version': version
       }
     });
   });

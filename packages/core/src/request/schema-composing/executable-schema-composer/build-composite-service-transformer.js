@@ -2,7 +2,7 @@ import { tryGetName, isValidTransform } from '../../../common-modules/plugins';
 
 export const buildCompositeServicesTransformer = (transformers) =>
 {
-  return ({ services, metadata }) =>
+  return ({ services }) =>
   {
     const transforms = {};
 

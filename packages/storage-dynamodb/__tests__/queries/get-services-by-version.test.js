@@ -39,7 +39,7 @@ describe('getSchemaByVersionQuery', () =>
     expect(result).toBeSuccessful([]);
   });
 
-  it.skip('should call dynamodb scan with right params', async () =>
+  it('should call dynamodb scan with right params', async () =>
   {
     const docClient = createSuccessfulScanClient([]);
     await runQuery({ version, docClient });

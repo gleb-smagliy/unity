@@ -17,11 +17,11 @@ import {
 } from '../../../fake-plugins'
 
 export const composeExampleSchema = ({
- services,
- metadata,
- extensionBuilders = [],
- serviceSchemaTransformers = [],
- gatewaySchemaTransformers = []
+  services,
+  pluginsMetadata,
+  extensionBuilders = [],
+  serviceSchemaTransformers = [],
+  gatewaySchemaTransformers = []
 } = {}) =>
 {
   const composer = buildExecutableSchemaComposer({
@@ -30,7 +30,7 @@ export const composeExampleSchema = ({
     gatewaySchemaTransformers
   });
 
-  return composer({ services, metadata });
+  return composer({ services, pluginsMetadata });
 };
 
 import { graphql } from 'graphql';
@@ -96,7 +96,7 @@ describe('buildExecutableSchemaComposer', () =>
     });
 
     expect(mergeResult).toBeSuccessful();
-    expect(mocks.extensionBuilders[0].buildSchemaExtensions).toHaveBeenCalledWith({ model: mocks.metadata[PLUGINS_NAMES.EXTENSION_BUILDER] });
+    expect(mocks.extensionBuilders[0].buildSchemaExtensions).toHaveBeenCalledWith({ model: mocks.pluginsMetadata[PLUGINS_NAMES.EXTENSION_BUILDER] });
   });
 
   it('should call service schema transformer for each service', async () =>
@@ -130,7 +130,7 @@ describe('buildExecutableSchemaComposer', () =>
     });
 
     expect(mergeResult).toBeSuccessful();
-    expect(mocks.gatewaySchemaTransformers[0].getTransforms).toHaveBeenCalledWith({ model: mocks.metadata[PLUGINS_NAMES.GATEWAY_TRANSFORMER] });
+    expect(mocks.gatewaySchemaTransformers[0].getTransforms).toHaveBeenCalledWith({ model: mocks.pluginsMetadata[PLUGINS_NAMES.GATEWAY_TRANSFORMER] });
   });
 
   it('should return failure if services transformer returns failure', async () =>

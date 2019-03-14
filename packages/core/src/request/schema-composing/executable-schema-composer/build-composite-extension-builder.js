@@ -5,7 +5,7 @@ const isValidResolver = r => typeof(r) === 'object' && r !== null;
 
 export const buildCompositeExtensionBuilder = extensionBuilders =>
 {
-  return ({ metadata }) =>
+  return ({ pluginsMetadata }) =>
   {
     const typeDefs = [];
     const resolvers = [];
@@ -16,7 +16,7 @@ export const buildCompositeExtensionBuilder = extensionBuilders =>
 
       if(!getNameResult.success) return getNameResult;
 
-      const getBuilderMetadataResult = tryGetPluginMetadata(metadata, getNameResult.payload);
+      const getBuilderMetadataResult = tryGetPluginMetadata(pluginsMetadata, getNameResult.payload);
 
       if(!getBuilderMetadataResult.success) return getBuilderMetadataResult;
 

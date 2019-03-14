@@ -9,7 +9,7 @@ const createQueryParams = ({ version, tableName }) => ({
 });
 
 const splitSchemaItems = items => ({
-  metadata: toPluginsMetadata(items),
+  pluginsMetadata: toPluginsMetadata(items),
   services: toServices(items)
 });
 

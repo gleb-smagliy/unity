@@ -1,1 +1,6 @@
-export { createSuccessfulStorage } from './create-storage';
+export {
+  METADATA,
+  services,
+  createSuccessfulStorage,
+  RETURN_VERSION
+} from './create-storage';

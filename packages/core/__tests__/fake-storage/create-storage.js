@@ -16,7 +16,7 @@ export const RETURN_VERSION = 'aaaa-bbbb';
 export const createSuccessfulStorage = ({ services = DEFAULT_SERVICES } = {}) => ({
   queries: {
     getServicesByVersion: jest.fn().mockReturnValue({ success: true, payload: services }),
-    getMetadataByVersion: jest.fn().mockReturnValue({ success: true, payload: METADATA }),
+    // getMetadataByVersion: jest.fn().mockReturnValue({ success: true, payload: METADATA }),
     getSchemaByVersion: jest.fn().mockReturnValue({
       success: true,
       payload: {

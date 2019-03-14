@@ -1,43 +1,22 @@
-const handleResults = (results) =>
-{
-  const [servicesResult, metadataResult] = results;
-
-  if(!servicesResult.success)
-  {
-    return {
-      success: false,
-      error: servicesResult.error
-    };
-  }
-
-  if(!metadataResult.success)
-  {
-    return {
-      success: false,
-      error: metadataResult.error
-    };
-  }
-
-  return {
-    success: true,
-    payload: {
-      services: servicesResult.payload,
-      metadata: metadataResult.payload
-    }
-  };
-};
-
 export const buildSchemaRetriever = (options) =>
 {
-  const { storage: { queries: { getServicesByVersion, getMetadataByVersion } } } = options;
+  const { storage: { queries: { getSchemaByVersion } } } = options;
 
   return async ({ version }) =>
   {
-      const servicesPromise = getServicesByVersion({ version });
-      const metadataPromise = getMetadataByVersion({ version });
+      const schemaResult = await getSchemaByVersion({ version });
 
-      const promises = Promise.all([servicesPromise, metadataPromise]);
+      if(!schemaResult.success)
+      {
+        return schemaResult;
+      }
 
-      return promises.then(handleResults);
+      return {
+        success: true,
+        payload: {
+          services: schemaResult.payload.services,
+          pluginsMetadata: schemaResult.payload.pluginsMetadata
+        }
+      };
   };
 };

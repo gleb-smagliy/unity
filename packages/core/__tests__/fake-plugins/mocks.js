@@ -2,7 +2,7 @@ import {exampleExtensionBuilder, exampleGatewayTransformer, exampleServiceTransf
 import {extensions, gatewayTransformations, servicesTransformations} from "../fake-data";
 
 export const createSuccessfulMocks = () => {
-  const metadata = {
+  const pluginsMetadata = {
     [PLUGINS_NAMES.EXTENSION_BUILDER]: { extensionBuilderKey: 'extension_builder_value' },
     [PLUGINS_NAMES.GATEWAY_TRANSFORMER]: { gatewayTransformerKey: 'gateway_transformer_value' },
     [PLUGINS_NAMES.SERVICE_TRANSFORMER]: { serviceTransformerKey: 'service_transformer_value' },
@@ -30,6 +30,6 @@ export const createSuccessfulMocks = () => {
     extensionBuilders: [extensionBuilder],
     gatewaySchemaTransformers: [gatewayTransformer],
     serviceSchemaTransformers: [serviceTransformer],
-    metadata
+    pluginsMetadata
   }
 };

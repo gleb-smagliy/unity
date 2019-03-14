@@ -58,7 +58,7 @@ describe('buildExecutableSchemaQuery', () =>
         ...createSuccessfulStorage().queries,
       queries: {
         ...createSuccessfulStorage().queries,
-        getServicesByVersion: jest.fn().mockResolvedValue({ success: false, error: 'db connection error'})
+        getSchemaByVersion: jest.fn().mockResolvedValue({ success: false, error: 'db connection error'})
       }
     };
 

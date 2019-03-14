@@ -7,8 +7,8 @@ const createValidTransformer = (name, payload) => ({
 
 describe('buildCompositeGatewayTransformer', () =>
 {
-  const runTransformers = (transformers, metadata) =>
-    buildCompositeGatewayTransformer(transformers)({ metadata });
+  const runTransformers = (transformers, pluginsMetadata) =>
+    buildCompositeGatewayTransformer(transformers)({ pluginsMetadata });
 
   it('should return failure if transformer does not have a name', () =>
   {

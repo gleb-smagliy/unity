@@ -9,9 +9,9 @@ export const buildExecutableSchemaComposer = (options) =>
   const servicesTransformer = buildCompositeServicesTransformer(options.serviceSchemaTransformers);
   const gatewayTransformer = buildCompositeGatewayTransformer(options.gatewaySchemaTransformers);
 
-  return ({ services, metadata }) =>
+  return ({ services, pluginsMetadata }) =>
   {
-    const schemaSpecification = { services, metadata };
+    const schemaSpecification = { services, pluginsMetadata };
 
     const buildServicesTransformations = servicesTransformer(schemaSpecification);
     if(!buildServicesTransformations.success) return buildServicesTransformations;

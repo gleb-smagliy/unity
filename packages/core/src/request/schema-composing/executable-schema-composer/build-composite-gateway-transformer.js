@@ -2,7 +2,7 @@ import { tryGetName, isValidTransform, tryGetPluginMetadata } from '../../../com
 
 export const buildCompositeGatewayTransformer = (transformers) =>
 {
-  return ({ metadata }) =>
+  return ({ pluginsMetadata }) =>
   {
     const transforms = [];
 
@@ -12,7 +12,7 @@ export const buildCompositeGatewayTransformer = (transformers) =>
 
       if(!getNameResult.success) return getNameResult;
 
-      const getTransformerMetadataResult = tryGetPluginMetadata(metadata, getNameResult.payload);
+      const getTransformerMetadataResult = tryGetPluginMetadata(pluginsMetadata, getNameResult.payload);
 
       if(!getTransformerMetadataResult.success) return getTransformerMetadataResult;
 

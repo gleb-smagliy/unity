@@ -22,8 +22,8 @@ const createValidBuilder = (name, payload = DEFAULT_PAYLOAD) => ({
 
 describe('buildCompositeExtensionBuilder', () =>
 {
-  const runBuilders = (builders, metadata) =>
-    buildCompositeExtensionBuilder(builders)({ metadata });
+  const runBuilders = (builders, pluginsMetadata) =>
+    buildCompositeExtensionBuilder(builders)({ pluginsMetadata });
 
   it('should return failure if builder does not have a name', () =>
   {
