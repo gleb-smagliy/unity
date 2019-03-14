@@ -5,9 +5,9 @@ const tableName = 'test.Tag';
 
 const runCommand = async ({ docClient, payload }) =>
 {
-  const query = createUpsertTagCommand({ docClient, tableName });
+  const command = createUpsertTagCommand({ docClient, tableName });
 
-  return await query(payload);
+  return await command(payload);
 };
 
 const payload = {
@@ -19,6 +19,14 @@ const payload = {
 describe('upsertTag command', () =>
 {
   it('should return success if dynamodb put resolves successfully', async () =>
+  {
+    const docClient = createSuccessfulPutClient();
+    const result = await runCommand({ docClient, payload });
+
+    expect(result).toBeSuccessful();
+  });
+
+  it('should call dynamodb put with right params', async () =>
   {
     const docClient = createSuccessfulPutClient();
     await runCommand({ docClient, payload });

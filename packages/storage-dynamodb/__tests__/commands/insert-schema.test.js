@@ -1,5 +1,5 @@
 import { createInsertSchemaCommand } from "../../src/commands";
-import { createFailedPutClient, createSuccessfulPutClient } from '../fake-dynamodb-client';
+import { createSuccessfulBatchWriteClient, createFailedBatchWriteClient } from '../fake-dynamodb-client';
 
 const tableName = 'test.Schema';
 
@@ -10,13 +10,17 @@ const runCommand = async ({ docClient, payload }) =>
   return await command(payload);
 };
 
-const payload = {
+const putRequest = (...items) => items.map(item => ({
+  PutRequest: { Item: item }
+}));
+
+const createPayload = ({ stage } = {}) => ({
   version: 'some_version',
   services: [{
     id: 'User',
     schema: { dummy: 123 },
     metadata: [{ dummy: 321 }],
-    stage: 'test',
+    stage,
     endpoint: 'localhost'
   }],
   pluginsMetadata: {
@@ -29,18 +33,18 @@ const payload = {
       metadata: { testKey2: 'test_value_2' }
     },
   }
-};
+});
 
-const PUT_REQUESTS = {
+const createPutRequests = ({ stage }) => ({
   SERVICE: {
     Version: 'some_version',
     Id: 'SERVICE/User',
-    Type: 'Service',
+    Type: 'SERVICE',
     ServiceId: 'User',
     Schema: { dummy: 123 },
     Metadata: [{ dummy: 321 }],
     Endpoint: 'localhost',
-    Stage: 'test'
+    Stage: stage
   },
   METADATA1: {
     Version: 'some_version',
@@ -56,26 +60,52 @@ const PUT_REQUESTS = {
     PluginName: 'schema_transformer',
     Metadata: { testKey2: 'test_value_2' }
   }
-};
+});
 
 describe('insertSchema command', () =>
 {
   it('should return success if dynamodb batchWrite resolves successfully', async () =>
   {
-    const docClient = createSuccessfulPutClient();
-    await runCommand({ docClient, payload });
+    const docClient = createSuccessfulBatchWriteClient();
+    const result = await runCommand({ docClient, payload: createPayload() });
+
+    expect(result).toBeSuccessful();
+  });
+
+  it('should call batchWrite with right params', async () =>
+  {
+    const stage = 'test';
+
+    const docClient = createSuccessfulBatchWriteClient();
+    await runCommand({ docClient, payload: createPayload({ stage }) });
+
+    const PUT_REQUESTS = createPutRequests({ stage });
 
     expect(docClient.batchWrite).toHaveBeenCalledWith({
       RequestItems: {
-        [tableName]: [putRequest(PUT_REQUESTS.SERVICE, PUT_REQUESTS.METADATA1, PUT_REQUESTS.METADATA2)]
+        [tableName]: putRequest(PUT_REQUESTS.SERVICE, PUT_REQUESTS.METADATA1, PUT_REQUESTS.METADATA2)
+      }
+    });
+  });
+
+  it('should call batchWrite with right params replaces service stage with null if it is undefined', async () =>
+  {
+    const docClient = createSuccessfulBatchWriteClient();
+    await runCommand({ docClient, payload: createPayload() });
+
+    const PUT_REQUESTS = createPutRequests({ stage: null });
+
+    expect(docClient.batchWrite).toHaveBeenCalledWith({
+      RequestItems: {
+        [tableName]: putRequest(PUT_REQUESTS.SERVICE, PUT_REQUESTS.METADATA1, PUT_REQUESTS.METADATA2)
       }
     });
   });
 
   it('should return failure if dynamodb batchWrite rejects', async () =>
   {
-    const docClient = createFailedPutClient();
-    const result = await runCommand({ docClient, payload });
+    const docClient = createFailedBatchWriteClient();
+    const result = await runCommand({ docClient, payload: createPayload() });
 
     expect(result).toBeFailed();
   });
