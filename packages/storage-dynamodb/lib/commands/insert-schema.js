@@ -9,6 +9,8 @@ var _schemaMappings = require("../queries/schema-mappings");
 
 var _executeDynamodbOperation = require("../execute-dynamodb-operation");
 
+var _graphql = require("graphql");
+
 const toPutRequest = item => ({
   PutRequest: {
     Item: item
@@ -21,9 +23,9 @@ const toServiceItem = (version, service) => {
   return {
     Version: version,
     Id: `${_schemaMappings.ITEM_TYPE.SERVICE}/${serviceId}`,
-    Type: _schemaMappings.ITEM_TYPE.SERVICE,
+    SchemaItemType: _schemaMappings.ITEM_TYPE.SERVICE,
     ServiceId: serviceId,
-    Schema: service.schema,
+    Schema: (0, _graphql.introspectionFromSchema)(service.schema),
     Metadata: service.metadata,
     Endpoint: service.endpoint,
     Stage: stage
@@ -35,7 +37,7 @@ const toPluginMetadataItem = (version, pluginMetadata) => {
   return {
     Version: version,
     Id: `${_schemaMappings.ITEM_TYPE.PLUGIN_METADATA}/${pluginName}`,
-    Type: _schemaMappings.ITEM_TYPE.PLUGIN_METADATA,
+    SchemaItemType: _schemaMappings.ITEM_TYPE.PLUGIN_METADATA,
     PluginName: pluginName,
     Metadata: pluginMetadata.metadata
   };
@@ -66,6 +68,9 @@ const createInsertSchemaCommand = ({
   services,
   pluginsMetadata
 }) => {
+  // const params = JSON.parse(
+  //   JSON.stringify(createParams({ tableName, version, services, pluginsMetadata }))
+  // );
   const params = createParams({
     tableName,
     version,

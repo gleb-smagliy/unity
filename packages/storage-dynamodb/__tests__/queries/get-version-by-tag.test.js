@@ -38,12 +38,15 @@ describe('getSchemaByVersionQuery', () =>
     });
   });
 
-  it('should return failure if dynamodb resolves 0 items', async () =>
+  it('should return version and stage equal to nulls if dynamodb resolves 0 items', async () =>
   {
     const docClient = createSuccessfulQueryClient([]);
     const result = await runQuery({ docClient, tag });
 
-    expect(result).toBeFailed();
+    expect(result).toBeSuccessful({
+      version: null,
+      stage: null
+    });
   });
 
   it('should return failure if dynamodb rejects', async () =>

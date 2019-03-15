@@ -11,7 +11,7 @@ const ITEM_TYPE = {
 exports.ITEM_TYPE = ITEM_TYPE;
 
 const pluginMetadataReducer = (result, item) => {
-  if (item.Type !== ITEM_TYPE.PLUGIN_METADATA) {
+  if (item.SchemaItemType !== ITEM_TYPE.PLUGIN_METADATA) {
     return result;
   }
 
@@ -35,6 +35,6 @@ const toPluginsMetadata = items => items.reduce(pluginMetadataReducer, {});
 
 exports.toPluginsMetadata = toPluginsMetadata;
 
-const toServices = items => items.filter(item => item.Type === ITEM_TYPE.SERVICE).map(serviceMapper);
+const toServices = items => items.filter(item => item.SchemaItemType === ITEM_TYPE.SERVICE).map(serviceMapper);
 
 exports.toServices = toServices;

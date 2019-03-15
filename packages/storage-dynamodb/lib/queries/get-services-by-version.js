@@ -15,7 +15,7 @@ const createQueryParams = ({
 }) => ({
   TableName: tableName,
   KeyConditionExpression: 'Version = :version',
-  FilterExpression: 'Type = :type',
+  FilterExpression: 'SchemaItemType = :type',
   ExpressionAttributeValues: {
     ':version': version,
     ':type': _schemaMappings.ITEM_TYPE.SERVICE

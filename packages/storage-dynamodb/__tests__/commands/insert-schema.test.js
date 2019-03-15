@@ -1,5 +1,7 @@
 import { createInsertSchemaCommand } from "../../src/commands";
 import { createSuccessfulBatchWriteClient, createFailedBatchWriteClient } from '../fake-dynamodb-client';
+import { SERVICE } from "../fake-tables";
+import { introspectionFromSchema } from 'graphql';
 
 const tableName = 'test.Schema';
 
@@ -18,7 +20,7 @@ const createPayload = ({ stage } = {}) => ({
   version: 'some_version',
   services: [{
     id: 'User',
-    schema: { dummy: 123 },
+    schema: SERVICE.Schema,
     metadata: [{ dummy: 321 }],
     stage,
     endpoint: 'localhost'
@@ -39,9 +41,9 @@ const createPutRequests = ({ stage }) => ({
   SERVICE: {
     Version: 'some_version',
     Id: 'SERVICE/User',
-    Type: 'SERVICE',
+    SchemaItemType: 'SERVICE',
     ServiceId: 'User',
-    Schema: { dummy: 123 },
+    Schema: introspectionFromSchema(SERVICE.Schema),
     Metadata: [{ dummy: 321 }],
     Endpoint: 'localhost',
     Stage: stage
@@ -49,14 +51,14 @@ const createPutRequests = ({ stage }) => ({
   METADATA1: {
     Version: 'some_version',
     Id: 'PLUGIN_METADATA/extension_builder',
-    Type: 'PLUGIN_METADATA',
+    SchemaItemType: 'PLUGIN_METADATA',
     PluginName: 'extension_builder',
     Metadata: { testKey1: 'test_value_1' }
   },
   METADATA2: {
     Version: 'some_version',
     Id: 'PLUGIN_METADATA/schema_transformer',
-    Type: 'PLUGIN_METADATA',
+    SchemaItemType: 'PLUGIN_METADATA',
     PluginName: 'schema_transformer',
     Metadata: { testKey2: 'test_value_2' }
   }

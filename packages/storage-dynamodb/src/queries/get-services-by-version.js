@@ -4,7 +4,7 @@ import { execute } from '../execute-dynamodb-operation';
 const createQueryParams = ({ version, tableName }) => ({
   TableName: tableName,
   KeyConditionExpression: 'Version = :version',
-  FilterExpression: 'Type = :type',
+  FilterExpression: 'SchemaItemType = :type',
   ExpressionAttributeValues:{
     ':version': version,
     ':type': ITEM_TYPE.SERVICE

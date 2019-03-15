@@ -3,7 +3,7 @@ import { buildFakeClientSchema } from './build-fake-client-schema';
 export const SERVICE = {
   Version: "1", // HashKey
   Id: "SERVICE/User", // SortKey
-  Type: "SERVICE",
+  SchemaItemType: "SERVICE",
   ServiceId: "User",
   Schema: buildFakeClientSchema(`
       type Query {
@@ -32,7 +32,7 @@ export const SERVICE = {
 export const PLUGIN_METADATA = {
   Version: "1", //HashKey
   Id: "PLUGIN_METADATA/ReferenceExtensionBuilder", // SortKey
-  Type: "PLUGIN_METADATA",
+  SchemaItemType: "PLUGIN_METADATA",
   PluginName: "ReferenceExtensionBuilder",
   Metadata: {
     extendTypes: [
