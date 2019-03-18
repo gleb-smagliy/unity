@@ -1,7 +1,23 @@
 import { introspectSchema, transformSchema, FilterRootFields } from 'graphql-tools';
 import { fetch } from 'node-fetch';
 import { HttpLink } from 'apollo-link-http';
+import { ApolloClient } from 'apollo-client';
 import { getTransforms } from '../metadata-subgraph-filter';
+import { InMemoryCache } from "apollo-cache-inmemory";
+import gql from 'graphql-tag';
+
+const createMetadataQuery = metadataQueryName => gql`
+  {
+    metadata: ${metadataQueryName} {
+      name,
+      location,
+      arguments {
+        name,
+        value
+      }
+    }
+  }
+`;
 
 export const DEFAULT_OPTIONS = {
   metadataQueryName: '_metadata'
@@ -17,6 +33,8 @@ export class GraphqlSchemaBuilder
       ...DEFAULT_OPTIONS,
       ...options
     };
+
+    this.metadataQuery = createMetadataQuery(this.options.metadataQueryName);
   }
 
   getApiDefinition = () => ({
@@ -52,14 +70,40 @@ export class GraphqlSchemaBuilder
         }
       }
     }
-    catch (e) {
+    catch (e)
+    {
       return {
         success: false,
         error: `GraphqlSchemaBuilder::buildServiceModel: <${e.message}>`
       };
     }
+  };
 
+  extractMetadata = async ({ options: { endpoint }}) =>
+  {
+    const cache = new InMemoryCache();
+    const link = new HttpLink({ uri: endpoint, fetch });
+    const client = new ApolloClient({ cache, link });
 
+    try
+    {
+      const response = await client.query({
+        query: this.metadataQuery
+      });
 
+      const metadata = response.data.metadata;
+
+      return {
+        success: true,
+        payload: { metadata }
+      }
+    }
+    catch (e)
+    {
+      return {
+        success: false,
+        error: `GraphqlSchemaBuilder::extractMetadata: <${e.message}>`
+      }
+    }
   };
 }

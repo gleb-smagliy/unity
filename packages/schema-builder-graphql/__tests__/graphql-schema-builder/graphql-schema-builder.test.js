@@ -34,7 +34,7 @@ describe('GraphqlSchemaBuilder', () =>
   it('Should return success with schema introspected from service endpoint (without metadata part)', async () =>
   {
     const builder = new GraphqlSchemaBuilder();
-    const { endpoint } = await createServer();
+    const { endpoint } = await createServer(DEFAULT_OPTIONS);
     const result = await builder.buildServiceModel({
       id,
       options: { endpoint }
@@ -59,44 +59,76 @@ describe('GraphqlSchemaBuilder', () =>
 
     expect(result).toBeFailed();
   });
-  //
-  // it('Should remove default metadata query from introspected schema', async () =>
-  // {
-  //   const builder = new GraphqlSchemaBuilder();
-  //   const { endpoint } = await createServer(DEFAULT_OPTIONS);
-  //   const result = await builder.buildServiceModel({
-  //     id,
-  //     options: { endpoint }
-  //   });
-  //
-  //   console.log('result.payload.schema', result.payload.schema.getQueryType().getFields());
-  //
-  //   expect(result).toBeSuccessful();
-  //   expect(result.payload.schema.getQueryType().getFields()).not.toHaveProperty(DEFAULT_OPTIONS.metadataQueryName);
-  // });
 
-  // it.skip('Should remove types from metadata graph from introspected schema', async () =>
-  // {
-  //   throw new Error();
-  // });
-
-  // it.skip('Should remove types from metadata graph with cycles from introspected schema', async () =>
-  // {
-  //   throw new Error();
-  // });
-
-  it.skip('Should return success with metadata information from remote service if metadata query is successful', async () =>
+  it('Should remove default metadata query from introspected schema', async () =>
   {
-    throw new Error();
+    const builder = new GraphqlSchemaBuilder();
+    const { endpoint } = await createServer(DEFAULT_OPTIONS);
+    const result = await builder.buildServiceModel({
+      id,
+      options: { endpoint }
+    });
+
+    expect(result).toBeSuccessful();
+    expect(result.payload.schema.getQueryType().getFields()).not.toHaveProperty(DEFAULT_OPTIONS.metadataQueryName);
   });
 
-  it.skip('Should return failure if metadata query is failed', async () =>
+  it('Should remove metadata query with custom name from introspected schema', async () =>
   {
-    throw new Error();
+    const metadataQueryName = '_custom_metadata_query_name'
+    const builder = new GraphqlSchemaBuilder({ metadataQueryName });
+    const { endpoint } = await createServer(DEFAULT_OPTIONS);
+    const result = await builder.buildServiceModel({
+      id,
+      options: { endpoint }
+    });
+
+    expect(result).toBeSuccessful();
+    expect(result.payload.schema.getQueryType().getFields()).not.toHaveProperty(metadataQueryName);
   });
 
-  it.skip('Should be able to query metadata with custom metadata query name', async () =>
+  it('Should remove types from metadata graph from introspected schema', async () =>
   {
-    throw new Error();
+    const builder = new GraphqlSchemaBuilder();
+    const { endpoint } = await createServer(DEFAULT_OPTIONS);
+    const result = await builder.buildServiceModel({
+      id,
+      options: { endpoint }
+    });
+
+    expect(result).toBeSuccessful();
+    expect(result.payload.schema.getTypeMap()).not.toHaveProperty('SpecificMetadata');
+  });
+
+  it('Should return success with metadata information from remote service if metadata query is successful', async () =>
+  {
+    const builder = new GraphqlSchemaBuilder();
+    const { endpoint, metadata } = await createServer(DEFAULT_OPTIONS);
+
+    const result = await builder.extractMetadata({ id, options: { endpoint }});
+
+    expect(result).toBeSuccessful();
+    expect(result.payload.metadata).toEqual(metadata);
+  });
+
+  it('Should return failure if metadata query is failed', async () =>
+  {
+    const builder = new GraphqlSchemaBuilder();
+
+    const result = await builder.extractMetadata({ id, options: { endpoint: 'not_exists' }});
+
+    expect(result).toBeFailed();
+  });
+
+  it('Should be able to query metadata with custom metadata query name', async () =>
+  {
+    const metadataQueryName = 'metaQueryName';
+    const builder = new GraphqlSchemaBuilder({ metadataQueryName });
+    const { endpoint, metadata } = await createServer({ ...DEFAULT_OPTIONS, metadataQueryName });
+
+    const result = await builder.extractMetadata({ id, options: { endpoint }});
+
+    expect(result).toBeSuccessful();
+    expect(result.payload.metadata).toEqual(metadata);
   });
 });
