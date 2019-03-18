@@ -42,12 +42,11 @@ describe('GraphqlSchemaBuilder', () =>
 
     expect(result).toBeSuccessful();
 
-    // console.log('buildClientSchema(typeDefs):', buil(typeDefs));
+    const actualSchemaIntrospection = result.payload.schema;
+    const expectedSchemaIntrospection = buildSchema(typeDefs);
 
-    const actualSchemaIntrospection = introspectionFromSchema(result.payload.schema);
-    const expectedSchemaIntrospection = introspectionFromSchema(buildSchema(typeDefs));
-
-    expect(actualSchemaIntrospection).toEqual(expectedSchemaIntrospection);
+    expect(Object.keys(actualSchemaIntrospection.getQueryType().getFields())).toEqual(Object.keys(expectedSchemaIntrospection.getQueryType().getFields()));
+    expect(Object.keys(actualSchemaIntrospection.getTypeMap())).toEqual(Object.keys(expectedSchemaIntrospection.getTypeMap()));
   });
 
   it('Should return failure if service is not available', async () =>

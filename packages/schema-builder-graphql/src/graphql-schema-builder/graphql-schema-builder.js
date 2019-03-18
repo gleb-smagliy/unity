@@ -1,6 +1,7 @@
 import { introspectSchema, transformSchema, FilterRootFields } from 'graphql-tools';
 import { fetch } from 'node-fetch';
 import { HttpLink } from 'apollo-link-http';
+import { getTransforms } from '../metadata-subgraph-filter';
 
 export const DEFAULT_OPTIONS = {
   metadataQueryName: '_metadata'
@@ -29,13 +30,11 @@ export class GraphqlSchemaBuilder
     `
   });
 
-  isNotMetadataQuery = (operation, fieldName) => operation !== 'Query' || fieldName !== this.options.metadataQueryName;
-
   transformSchema = (schema) =>
   {
-    const removeMetadataField = new FilterRootFields(this.isNotMetadataQuery);
+    const transforms = getTransforms({ metadataQueryName: this.options.metadataQueryName, schema });
 
-    return transformSchema(schema, [removeMetadataField]);
+    return transformSchema(schema, transforms);
   };
 
   buildServiceModel = async ({ options: { endpoint }}) =>
