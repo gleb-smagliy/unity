@@ -18,7 +18,10 @@ describe('metadata subgraph filter', () =>
 {
   for(let testCase of CASES)
   {
-    it(`should ${testCase.description}`, () =>
+    let run = testCase.skip ? it.skip : it;
+    run = testCase.only ? it.only : run;
+
+    run(testCase.description, () =>
     {
       const inputSchema = buildSchema(testCase.input);
       const transforms = getTransforms({

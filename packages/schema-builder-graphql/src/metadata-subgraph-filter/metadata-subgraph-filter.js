@@ -1,18 +1,22 @@
 import { FilterRootFields, FilterTypes } from 'graphql-tools';
 import {
-  isInterfaceType,
   isObjectType,
   isAbstractType,
   isScalarType,
-  getNamedType
+  getNamedType,
+  isInputType
 } from 'graphql';
 
 const QUERY_OPERATION = 'Query';
 
-const removeRootField = ({ metadataQueryName, schema }) =>
-  new FilterRootFields((operation, fieldName) => operation.toLowerCase() !== QUERY_OPERATION || fieldName !== metadataQueryName);
+const isRootLevelType = (type, schema) =>
+  type === schema.getQueryType() || type === schema.getMutationType() || type === schema.getSubscriptionType();
 
-const getFieldType = field => field.type;
+const removeRootField = ({ metadataQueryName }) =>
+  new FilterRootFields((operation, fieldName) => operation !== QUERY_OPERATION || fieldName !== metadataQueryName);
+
+
+const getFieldArgsTypes = field => field.args.map(a => a.type);
 
 const removeTypesSubgraph = ({ metadataQueryName, schema }) =>
 {
@@ -24,8 +28,8 @@ const removeTypesSubgraph = ({ metadataQueryName, schema }) =>
 
   if(query !== undefined)
   {
-    const returnType = schema.getType(query.type);
     types.push(query.type);
+    types.push(...getFieldArgsTypes(query))
   }
 
   while(types.length > 0)
@@ -61,7 +65,15 @@ const removeTypesSubgraph = ({ metadataQueryName, schema }) =>
 
       for(let field of Object.values(fields))
       {
-        types.push(schema.getType(field.type));
+        if(!isRootLevelType(field.type, schema))
+        {
+          types.push(field.type);
+        }
+
+        if(!isInputType(type))
+        {
+          types.push(...getFieldArgsTypes(field));
+        }
       }
 
       if(isObjectType(type))
@@ -70,7 +82,7 @@ const removeTypesSubgraph = ({ metadataQueryName, schema }) =>
 
         for(let typeInterface of interfaces)
         {
-          types.push(schema.getType(typeInterface));
+          types.push(typeInterface);
         }
       }
 
