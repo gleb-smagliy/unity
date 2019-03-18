@@ -107,3 +107,5 @@ export class GraphqlSchemaBuilder
     }
   };
 }
+
+export const graphqlSchemaBuilder = (options) => new GraphqlSchemaBuilder(options);

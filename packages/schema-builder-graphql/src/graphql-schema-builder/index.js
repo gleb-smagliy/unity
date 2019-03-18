@@ -1,1 +1,1 @@
-export { GraphqlSchemaBuilder } from './graphql-schema-builder';
+export { graphqlSchemaBuilder } from './graphql-schema-builder';

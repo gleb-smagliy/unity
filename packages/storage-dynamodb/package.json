@@ -24,7 +24,8 @@
     "test": "./node_modules/.bin/jest",
     "test:watch": "npm run test -- --watch",
     "build": "babel src --out-dir lib",
-    "build:watch": "npm run build -- --watch"
+    "build:watch": "npm run build -- --watch",
+    "uninstallPeers": "npm un graphql graphql-tools"
   },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/opportunity/issues"
@@ -35,11 +36,13 @@
     "@babel/plugin-proposal-class-properties": "^7.3.4",
     "@babel/plugin-syntax-object-rest-spread": "^7.2.0",
     "@babel/preset-env": "^7.3.4",
-    "graphql": "^14.1.1",
     "jest": "^24.1.0",
     "jest-fetch-mock": "^2.1.1"
   },
   "dependencies": {
     "aws-sdk": "^2.421.0"
+  },
+  "peerDependencies": {
+    "graphql": "^14.1.1"
   }
 }
