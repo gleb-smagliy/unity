@@ -1,0 +1,1 @@
+export { IncrementalVersioning } from './incremental-versioning';
