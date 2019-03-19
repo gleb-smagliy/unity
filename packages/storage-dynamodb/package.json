@@ -21,11 +21,12 @@
     "url": "git+https://github.com/gleb-smagliy/opportunity.git"
   },
   "scripts": {
+    "install-peers": "npm i graphql@14",
     "test": "./node_modules/.bin/jest",
     "test:watch": "npm run test -- --watch",
     "build": "babel src --out-dir lib",
     "build:watch": "npm run build -- --watch",
-    "prune-dev": "npm un graphql"
+    "prune-peers": "npm un graphql"
   },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/opportunity/issues"
