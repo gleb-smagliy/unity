@@ -6,7 +6,7 @@ import {ServiceRegistrationCommandHander} from "../../../../src/registration/com
 import {RenameRootFields} from "graphql-tools";
 import { GRAPHQL_COMMAND } from './graphql-command';
 import { createSuccessfulExtractorPlugin } from './fake-extractor-plugins';
-import { createFakeVersioning } from './fake-versioning';
+import { createSuccessfulFakeVersioning } from './fake-versioning';
 
 export const SERVICE_TRANSFORMS = {
   User: [new RenameRootFields((operation, name) => `User_${name}`),]
@@ -20,7 +20,7 @@ export const executeHandler = async ({
   serviceSchemaTransformers = [exampleServiceTransformer({ success: true, transforms: SERVICE_TRANSFORMS })],
   extensionBuilders = [createSuccessfulExtractorPlugin()],
   gatewaySchemaTransformers = [createSuccessfulExtractorPlugin()],
-  versioning = createFakeVersioning(),
+  versioning = createSuccessfulFakeVersioning(),
   command = GRAPHQL_COMMAND
 } = {}) =>
 {

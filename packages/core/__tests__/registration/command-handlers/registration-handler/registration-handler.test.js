@@ -2,7 +2,7 @@ import { executeHandler } from "./execute-handler";
 import { ServiceRegistrationCommandHander, SYSTEM_TAGS } from "../../../../src/registration/command-handlers/registration-handler";
 import { LOCK_STATUS } from "../../../../src/registration/modules/locking";
 import { createSuccessfulStorage, services, RETURN_VERSION as STABLE_VERSION } from "../../../fake-storage";
-import { NEW_VERSION } from './fake-versioning';
+import {createFailedFakeVersioning, NEW_VERSION} from './fake-versioning';
 import { exampleServiceTransformer } from '../../../fake-plugins';
 import { expectServiceNotToBeTransformeed, expectServiceToBeTransformeed } from "./transform-assertions";
 import {
@@ -286,6 +286,15 @@ describe('ServiceRegistrationCommandHander', () =>
     const { result, versioning } = await executeHandler();
 
     expect(result).toBeSuccessful();
+    expect(versioning.createVersion).toHaveBeenCalledTimes(1);
+    expect(versioning.createVersion).toHaveBeenCalledWith({ currentVersion: STABLE_VERSION });
+  });
+
+  it('should return failure if versioning returns failure', async () =>
+  {
+    const { result, versioning } = await executeHandler({ versioning: createFailedFakeVersioning() });
+
+    expect(result).toBeFailed();
     expect(versioning.createVersion).toHaveBeenCalledTimes(1);
     expect(versioning.createVersion).toHaveBeenCalledWith({ currentVersion: STABLE_VERSION });
   });
