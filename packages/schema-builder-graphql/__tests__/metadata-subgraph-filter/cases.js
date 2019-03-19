@@ -290,5 +290,28 @@ export const CASES = [
       type Subscription { action: Int } 
     `,
     description: 'should remove metadata subgraph when unerlying type returns Subscription type'
+  },
+  {
+    input: `   
+      enum MetadataLocation
+      {
+        FIELD
+        OBJECT
+        INTERFACE
+      }
+    
+      type Metadata {
+        location: MetadataLocation
+      }
+    
+      type Query {
+        name: String
+        ${DEFAULT_OPTIONS.metadataQueryName}: [Metadata]  
+      }
+    `,
+    expected: `
+      type Query { name: String }
+    `,
+    description: 'should remove metadata subgraph when unerlying type has enum types'
   }
 ];

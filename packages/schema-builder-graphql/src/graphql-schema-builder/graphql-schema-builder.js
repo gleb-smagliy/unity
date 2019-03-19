@@ -1,5 +1,5 @@
 import { introspectSchema, transformSchema, FilterRootFields } from 'graphql-tools';
-import { fetch } from 'node-fetch';
+import fetch from 'node-fetch';
 import { HttpLink } from 'apollo-link-http';
 import { ApolloClient } from 'apollo-client';
 import { getTransforms } from '../metadata-subgraph-filter';
@@ -20,7 +20,8 @@ const createMetadataQuery = metadataQueryName => gql`
 `;
 
 export const DEFAULT_OPTIONS = {
-  metadataQueryName: '_metadata'
+  metadataQueryName: '_metadata',
+  fetch
 };
 
 export class GraphqlSchemaBuilder
@@ -44,6 +45,7 @@ export class GraphqlSchemaBuilder
       input GraphqlSchemaBuilderInput
       {
         endpoint: String
+        skipMetadata: Boolean = false
       }
     `
   });
@@ -57,7 +59,9 @@ export class GraphqlSchemaBuilder
 
   buildServiceModel = async ({ options: { endpoint }}) =>
   {
-    const link = new HttpLink({ uri: endpoint, fetch });
+    const link = new HttpLink({ uri: endpoint, fetch: this.options.fetch });
+
+    // await new Promise(resolve => setTimeout(resolve, 50000))
 
     try
     {
@@ -79,15 +83,27 @@ export class GraphqlSchemaBuilder
     }
   };
 
-  extractMetadata = async ({ options: { endpoint }}) =>
+  extractMetadata = async ({ options: { endpoint, skipMetadata }}) =>
   {
+    if(skipMetadata)
+    {
+      return {
+        success: true,
+        payload: {
+          metadata: []
+        }
+      }
+    }
+
     const cache = new InMemoryCache();
     const link = new HttpLink({ uri: endpoint, fetch });
     const client = new ApolloClient({ cache, link });
 
+    let response;
+
     try
     {
-      const response = await client.query({
+      response = await client.query({
         query: this.metadataQuery
       });
 

@@ -44,7 +44,10 @@ const removeTypesSubgraph = ({
       continue;
     }
 
-    types.push(...(0, _utils.getTypeDependencies)(type, schema));
+    if ((0, _utils.canContainFields)(type)) {
+      types.push(...(0, _utils.getTypeDependencies)(type, schema));
+    }
+
     registry.setBanned(type);
   }
 

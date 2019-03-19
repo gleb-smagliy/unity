@@ -1,6 +1,6 @@
-import { getNamedType, isAbstractType, isScalarType } from "graphql";
+import { getNamedType, isAbstractType, isScalarType, isObjectType, isInterfaceType, isInputType } from "graphql";
 import { FilterTypes } from "graphql-tools";
-import { getFieldArgsTypes, getTypeDependencies } from './utils'
+import { getFieldArgsTypes, getTypeDependencies, canContainFields } from './utils'
 import { TypesRegistry } from "./types-registry";
 
 export const removeTypesSubgraph = ({ metadataQueryName, schema }) =>
@@ -39,7 +39,10 @@ export const removeTypesSubgraph = ({ metadataQueryName, schema }) =>
       continue;
     }
 
-    types.push(...getTypeDependencies(type, schema));
+    if(canContainFields(type))
+    {
+      types.push(...getTypeDependencies(type, schema));
+    }
 
     registry.setBanned(type);
   }

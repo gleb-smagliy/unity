@@ -8,7 +8,7 @@ describe('GraphqlSchemaBuilder', () =>
 {
   it('should have name property equals to returning from getApiDefinition', async () =>
   {
-    const builder = new GraphqlSchemaBuilder();
+    const builder = new GraphqlSchemaBuilder({ fetch: null });
     const apiDefinition = builder.getApiDefinition();
 
     expect(apiDefinition.name).toEqual(builder.name);
@@ -16,7 +16,7 @@ describe('GraphqlSchemaBuilder', () =>
 
   it('should return apiDefinition with only one input', async () =>
   {
-    const apiDefinition = new GraphqlSchemaBuilder().getApiDefinition();
+    const apiDefinition = new GraphqlSchemaBuilder({ fetch: undefined }).getApiDefinition();
     const { definitions } = parse(apiDefinition.definition);
 
     expect(definitions).toHaveLength(1);
@@ -25,7 +25,7 @@ describe('GraphqlSchemaBuilder', () =>
 
   it('should return apiDefinition with consistent type names', async () =>
   {
-    const apiDefinition = new GraphqlSchemaBuilder().getApiDefinition();
+    const apiDefinition = new GraphqlSchemaBuilder({ fetch: undefined }).getApiDefinition();
     const { definitions: [ definition ] } = parse(apiDefinition.definition);
 
     expect(definition.name.value).toEqual(apiDefinition.type);
@@ -33,7 +33,7 @@ describe('GraphqlSchemaBuilder', () =>
 
   it('Should return success with schema introspected from service endpoint (without metadata part)', async () =>
   {
-    const builder = new GraphqlSchemaBuilder();
+    const builder = new GraphqlSchemaBuilder({ fetch: undefined });
     const { endpoint } = await createServer(DEFAULT_OPTIONS);
     const result = await builder.buildServiceModel({
       id,
@@ -130,5 +130,17 @@ describe('GraphqlSchemaBuilder', () =>
 
     expect(result).toBeSuccessful();
     expect(result.payload.metadata).toEqual(metadata);
+  });
+
+  it('Should return empty array as metadata if metadata query does not exists and skipMetadata set to true', async () =>
+  {
+    const metadataQueryName = 'metaQueryName';
+    const builder = new GraphqlSchemaBuilder({ metadataQueryName });
+    const { endpoint } = await createServer({ ...DEFAULT_OPTIONS, metadataQueryName }, { includeMetadata: false });
+
+    const result = await builder.extractMetadata({ id, options: { endpoint, skipMetadata: true }});
+
+    expect(result).toBeSuccessful();
+    expect(result.payload.metadata).toEqual([]);
   });
 });

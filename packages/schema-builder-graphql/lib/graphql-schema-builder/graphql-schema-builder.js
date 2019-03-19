@@ -7,7 +7,7 @@ exports.graphqlSchemaBuilder = exports.GraphqlSchemaBuilder = exports.DEFAULT_OP
 
 var _graphqlTools = require("graphql-tools");
 
-var _nodeFetch = require("node-fetch");
+var _nodeFetch = _interopRequireDefault(require("node-fetch"));
 
 var _apolloLinkHttp = require("apollo-link-http");
 
@@ -37,7 +37,8 @@ const createMetadataQuery = metadataQueryName => _graphqlTag.default`
 `;
 
 const DEFAULT_OPTIONS = {
-  metadataQueryName: '_metadata'
+  metadataQueryName: '_metadata',
+  fetch: _nodeFetch.default
 };
 exports.DEFAULT_OPTIONS = DEFAULT_OPTIONS;
 
@@ -52,6 +53,7 @@ class GraphqlSchemaBuilder {
       input GraphqlSchemaBuilderInput
       {
         endpoint: String
+        skipMetadata: Boolean = false
       }
     `
     }));
@@ -71,8 +73,8 @@ class GraphqlSchemaBuilder {
     }) => {
       const link = new _apolloLinkHttp.HttpLink({
         uri: endpoint,
-        fetch: _nodeFetch.fetch
-      });
+        fetch: this.options.fetch
+      }); // await new Promise(resolve => setTimeout(resolve, 50000))
 
       try {
         const schema = await (0, _graphqlTools.introspectSchema)(link);
@@ -92,21 +94,32 @@ class GraphqlSchemaBuilder {
 
     _defineProperty(this, "extractMetadata", async ({
       options: {
-        endpoint
+        endpoint,
+        skipMetadata
       }
     }) => {
+      if (skipMetadata) {
+        return {
+          success: true,
+          payload: {
+            metadata: []
+          }
+        };
+      }
+
       const cache = new _apolloCacheInmemory.InMemoryCache();
       const link = new _apolloLinkHttp.HttpLink({
         uri: endpoint,
-        fetch: _nodeFetch.fetch
+        fetch: _nodeFetch.default
       });
       const client = new _apolloClient.ApolloClient({
         cache,
         link
       });
+      let response;
 
       try {
-        const response = await client.query({
+        response = await client.query({
           query: this.metadataQuery
         });
         const metadata = response.data.metadata;

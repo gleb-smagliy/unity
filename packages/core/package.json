@@ -25,7 +25,7 @@
     "test:watch": "npm run test -- --watch",
     "build": "babel src --out-dir lib",
     "build:watch": "npm run build -- --watch",
-    "uninstallPeers": "npm un graphql graphql-tools"
+    "prune-dev": "npm un graphql graphql-tools"
   },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/opportunity/issues"

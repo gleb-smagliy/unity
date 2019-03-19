@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getTypeDependencies = exports.isRootLevelType = exports.getFieldArgsTypes = void 0;
+exports.getTypeDependencies = exports.canContainFields = exports.isRootLevelType = exports.getFieldArgsTypes = void 0;
 
 var _graphql = require("graphql");
 
@@ -14,6 +14,10 @@ exports.getFieldArgsTypes = getFieldArgsTypes;
 const isRootLevelType = (type, schema) => type === schema.getQueryType() || type === schema.getMutationType() || type === schema.getSubscriptionType();
 
 exports.isRootLevelType = isRootLevelType;
+
+const canContainFields = type => typeof type.getFields === 'function';
+
+exports.canContainFields = canContainFields;
 
 const getTypeDependencies = (type, schema) => {
   const types = [];

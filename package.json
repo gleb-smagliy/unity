@@ -5,10 +5,10 @@
     "lerna": "^3.13.0"
   },
   "scripts": {
-    "before-link": "lerna bootstrap && npm run test && npm run build && npm run uninstallPeers",
+    "before-link": "lerna bootstrap && npm run test && npm run build && npm run prune-dev",
     "test": "lerna run test",
     "build": "lerna run build",
-    "uninstallPeers": "lerna run uninstallPeers"
+    "prune-dev": "lerna run prune-dev"
   },
   "dependencies": {}
 }
