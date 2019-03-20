@@ -1,0 +1,1 @@
+export { SchemaVersionTaggingHandler } from './schema-version-taging-handler';

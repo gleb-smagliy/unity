@@ -1,7 +1,12 @@
 import { success, error } from './service-registration-result';
 
-export const createResolvers = ({ registrationHandler }) => ({
-  Mutation: {
+export const createResolvers = ({
+  registrationHandler,
+  versionTaggingHandler,
+  schemaCommitingHandler
+}) => ({
+  Mutation:
+  {
     async register(_, { service })
     {
       const { id, schemaBuilder } = service;
@@ -25,6 +30,26 @@ export const createResolvers = ({ registrationHandler }) => ({
       };
 
       const result = await registrationHandler.execute(command);
+
+      return result.success ?
+        success(result.payload, result.warnings) :
+        error(result.error, result.warnings);
+    },
+    async tagVersion(_, { version, tag })
+    {
+      const command = { version, tag };
+
+      const result = await versionTaggingHandler.execute(command);
+
+      return result.success ?
+        success(result.payload, result.warnings) :
+        error(result.error, result.warnings);
+    },
+    async commitSchema(_, { version })
+    {
+      const command = { version, tag: SYSTEM_TAGS.STABLE };
+
+      const result = await schemaCommitingHandler.execute(command);
 
       return result.success ?
         success(result.payload, result.warnings) :
