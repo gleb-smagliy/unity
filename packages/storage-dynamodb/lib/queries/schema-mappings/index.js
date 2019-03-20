@@ -4,6 +4,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.toServices = exports.toPluginsMetadata = exports.ITEM_TYPE = void 0;
+
+var _graphql = require("graphql");
+
 const ITEM_TYPE = {
   PLUGIN_METADATA: 'PLUGIN_METADATA',
   SERVICE: 'SERVICE'
@@ -25,13 +28,16 @@ const pluginMetadataReducer = (result, item) => {
 
 const serviceMapper = item => ({
   id: item.ServiceId,
-  schema: item.Schema,
+  schema: (0, _graphql.buildClientSchema)(item.Schema),
   stage: item.Stage,
   metadata: item.Metadata,
   endpoint: item.Endpoint
 });
 
-const toPluginsMetadata = items => items.reduce(pluginMetadataReducer, {});
+const toPluginsMetadata = (items = []) => {
+  console.log('toPluginsMetadata:items', items);
+  return items.reduce(pluginMetadataReducer, {});
+};
 
 exports.toPluginsMetadata = toPluginsMetadata;
 

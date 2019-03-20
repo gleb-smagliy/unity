@@ -1,9 +1,9 @@
-const { buildSchema, buildClientSchema, graphqlSync, introspectionQuery } = require("graphql");
+const { buildSchema, buildClientSchema, graphqlSync, introspectionFromSchema } = require("graphql");
 
 export const buildFakeClientSchema = (typeDefs) =>
 {
   const graphqlSchemaObj = buildSchema(typeDefs);
-  const result = graphqlSync(graphqlSchemaObj, introspectionQuery).data;
+  return introspectionFromSchema(graphqlSchemaObj);
 
-  return buildClientSchema(result);
+  // return buildClientSchema(result);
 };

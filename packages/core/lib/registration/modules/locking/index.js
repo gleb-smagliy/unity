@@ -9,6 +9,12 @@ Object.defineProperty(exports, "LOCK_STATUS", {
     return _lockBarrier.LOCK_STATUS;
   }
 });
+Object.defineProperty(exports, "LOCK_STATE", {
+  enumerable: true,
+  get: function () {
+    return _lockBarrier.LOCK_STATE;
+  }
+});
 Object.defineProperty(exports, "lockBarrier", {
   enumerable: true,
   get: function () {

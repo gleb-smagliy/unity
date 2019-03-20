@@ -13,9 +13,9 @@ export const execute = async (operation, {
 {
   try
   {
-    const result = await  operation.promise();
+    const result = await operation.promise();
 
-    return transformResult(transformPayload(result));
+    return transformResult(transformPayload(result.Items));
   }
   catch(err)
   {

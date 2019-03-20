@@ -1,3 +1,5 @@
+import { buildClientSchema } from 'graphql';
+
 export const ITEM_TYPE = {
   PLUGIN_METADATA: 'PLUGIN_METADATA',
   SERVICE: 'SERVICE'
@@ -23,13 +25,16 @@ const pluginMetadataReducer = (result, item) =>
 
 const serviceMapper = item => ({
   id: item.ServiceId,
-  schema: item.Schema,
+  schema: buildClientSchema(item.Schema),
   stage: item.Stage,
   metadata: item.Metadata,
   endpoint: item.Endpoint
 });
 
-export const toPluginsMetadata = items => items.reduce(pluginMetadataReducer, {});
+export const toPluginsMetadata = (items = []) =>
+{
+ return items.reduce(pluginMetadataReducer, {});
+};
 
 export const toServices = items => items
   .filter(item => item.SchemaItemType === ITEM_TYPE.SERVICE)

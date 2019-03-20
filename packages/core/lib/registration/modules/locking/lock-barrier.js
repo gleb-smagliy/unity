@@ -3,13 +3,20 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.lockBarrier = exports.LOCK_STATUS = void 0;
+exports.lockBarrier = exports.LOCK_STATE = exports.LOCK_STATUS = void 0;
 const LOCK_STATUS = {
   ACQUIRED: 'ACQUIRED',
+  NOT_NEEDED: 'NOT_NEEDED',
   ALREADY_LOCKED: 'ALREADY_LOCKED',
   FAILURE: 'FAILURE'
 };
 exports.LOCK_STATUS = LOCK_STATUS;
+const LOCK_STATE = {
+  ACQUIRED: 'ACQUIRED',
+  NOT_NEEDED: 'NOT_NEEDED',
+  NOT_ACQURIED: 'NOT_ACQURIED'
+};
+exports.LOCK_STATE = LOCK_STATE;
 
 const successWithLockStatus = (lockPayload, payload) => ({
   success: true,

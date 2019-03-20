@@ -11,6 +11,10 @@ var _createSchema = require("./create-schema");
 
 var _registrationHandler = require("../command-handlers/registration-handler");
 
+var _schemaVersionTagingHandler = require("../command-handlers/schema-version-taging-handler");
+
+var _registrationCommitingHandler = require("../command-handlers/registration-commiting-handler");
+
 const createSchema = rawOptions => {
   const optionsPreparation = (0, _options.prepareOptions)(rawOptions);
 
@@ -19,9 +23,19 @@ const createSchema = rawOptions => {
   }
 
   const options = optionsPreparation.payload;
+  const {
+    schemaBuilders
+  } = options;
+  const schemaVersionTaggingHandler = new _schemaVersionTagingHandler.SchemaVersionTaggingHandler(options);
+  const registrationHandler = new _registrationHandler.ServiceRegistrationCommandHander(options);
+  const registrationCommitingHandler = new _registrationCommitingHandler.RegistrationCommitingHandler({
+    schemaVersionTaggingHandler
+  }, options);
   return (0, _createSchema.createSchema)({
-    schemaBuilders: options.schemaBuilders,
-    registrationHandler: new _registrationHandler.ServiceRegistrationCommandHander(options)
+    schemaBuilders,
+    registrationHandler,
+    schemaVersionTaggingHandler,
+    registrationCommitingHandler
   });
 };
 

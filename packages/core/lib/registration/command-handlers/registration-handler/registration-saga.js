@@ -15,7 +15,7 @@ var _services = require("../../modules/services");
 
 var _insertingServicesSaga = require("./inserting-services-saga");
 
-var _systemTags = require("./system-tags");
+var _systemTags = require("../constants/system-tags");
 
 function* registrationSaga({
   command,

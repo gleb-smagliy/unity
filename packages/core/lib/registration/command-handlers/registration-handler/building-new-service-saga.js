@@ -22,7 +22,8 @@ function* buildingNewServiceSaga({
     payload: {
       schema: builtService.schema,
       metadata: serviceMetadata.metadata,
-      id: serviceDefinition.id
+      id: serviceDefinition.id,
+      endpoint: builtService.endpoint
     }
   };
 }

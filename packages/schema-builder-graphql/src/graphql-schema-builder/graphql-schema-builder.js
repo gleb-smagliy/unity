@@ -85,7 +85,7 @@ export class GraphqlSchemaBuilder
     }
   };
 
-  extractMetadata = async ({ options: { endpoint, skipMetadata }, stage }) =>
+  extractMetadata = async ({ options: { endpoint,  stage, skipMetadata } }) =>
   {
     if(skipMetadata)
     {
@@ -98,7 +98,7 @@ export class GraphqlSchemaBuilder
     }
 
     const cache = new InMemoryCache();
-    const link = new HttpLink({ uri: buildUri(endpoint, stage), fetch });
+    const link = new HttpLink({ uri: buildUri({ endpoint, stage }), fetch });
     const client = new ApolloClient({ cache, link });
 
     let response;

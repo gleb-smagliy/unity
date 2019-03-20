@@ -15,8 +15,8 @@ export const createUpsertTagCommand = ({ docClient, tableName }) => async ({
   tag,
   version,
   stage
-}) => {
-
+}) =>
+{
   const params = createParams({ tableName, tag, version, stage });
 
   return execute(docClient.put(params), { transformError });

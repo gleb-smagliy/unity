@@ -1,3 +1,5 @@
+const toQueryResult = (items) => ({ Items: items });
+
 export const createSuccessfulBatchWriteClient = () => ({
   batchWrite: jest.fn().mockReturnValue({
     promise: jest.fn().mockResolvedValue({})
@@ -24,7 +26,7 @@ export const createFailedPutClient = () => ({
 
 export const createSuccessfulScanClient = (table) => ({
   scan: jest.fn().mockReturnValue({
-    promise: jest.fn().mockResolvedValue(table)
+    promise: jest.fn().mockResolvedValue(toQueryResult(table))
   })
 });
 
@@ -36,7 +38,7 @@ export const createFailedScanClient = () => ({
 
 export const createSuccessfulQueryClient = (table) => ({
   query: jest.fn().mockReturnValue({
-    promise: jest.fn().mockResolvedValue(table)
+    promise: jest.fn().mockResolvedValue(toQueryResult(table))
   })
 });
 

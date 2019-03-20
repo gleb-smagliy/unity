@@ -22,6 +22,7 @@ const buildServicesByTagQuery = ({
   const {
     version
   } = versionResult.payload;
+  console.log('buildServicesByTagQuery::version:', version);
 
   if (version === null) {
     return {
@@ -36,6 +37,7 @@ const buildServicesByTagQuery = ({
   const servicesResult = await getServicesByVersion({
     version
   });
+  console.log('servicesResult:', servicesResult, servicesResult.payload);
 
   if (!servicesResult.success) {
     return servicesResult;

@@ -5,10 +5,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.createResolvers = void 0;
 
+var _systemTags = require("../command-handlers/constants/system-tags");
+
 var _serviceRegistrationResult = require("./service-registration-result");
 
 const createResolvers = ({
-  registrationHandler
+  registrationHandler,
+  versionTaggingHandler,
+  registrationCommitingHandler
 }) => ({
   Mutation: {
     async register(_, {
@@ -32,6 +36,32 @@ const createResolvers = ({
         options
       };
       const result = await registrationHandler.execute(command);
+      return result.success ? (0, _serviceRegistrationResult.success)(result.payload, result.warnings) : (0, _serviceRegistrationResult.error)(result.error, result.warnings);
+    },
+
+    async tagVersion(_, {
+      version,
+      tag,
+      stage
+    }) {
+      const command = {
+        version,
+        tag,
+        stage
+      };
+      const result = await versionTaggingHandler.execute(command);
+      return result.success ? (0, _serviceRegistrationResult.success)(result.payload, result.warnings) : (0, _serviceRegistrationResult.error)(result.error, result.warnings);
+    },
+
+    async commitSchema(_, {
+      version,
+      stage
+    }) {
+      const command = {
+        version,
+        stage
+      };
+      const result = await registrationCommitingHandler.execute(command);
       return result.success ? (0, _serviceRegistrationResult.success)(result.payload, result.warnings) : (0, _serviceRegistrationResult.error)(result.error, result.warnings);
     }
 

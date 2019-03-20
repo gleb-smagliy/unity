@@ -1,3 +1,4 @@
+import { buildClientSchema } from 'graphql';
 import { createGetSchemaByVersionQuery } from "../../src/queries/get-schema-by-version";
 import { SCHEMA_TABLE, SERVICE, PLUGIN_METADATA } from '../fake-tables';
 import { createSuccessfulQueryClient, createFailedQueryClient } from '../fake-dynamodb-client';
@@ -13,14 +14,14 @@ const runQuery = async ({ docClient, version }) => {
 
 describe('getSchemaByVersionQuery', () =>
 {
-  it('should return success with properly mapped services if dynamodb query resolves successfully', async () =>
+  it.only('should return success with properly mapped services if dynamodb query resolves successfully', async () =>
   {
     const docClient = createSuccessfulQueryClient(SCHEMA_TABLE);
     const result = await runQuery({ docClient, version });
 
     const expectedService = {
       id: SERVICE.ServiceId,
-      schema: SERVICE.Schema,
+      schema: buildClientSchema(SERVICE.Schema),
       stage: SERVICE.Stage,
       metadata: SERVICE.Metadata,
       endpoint: SERVICE.Endpoint

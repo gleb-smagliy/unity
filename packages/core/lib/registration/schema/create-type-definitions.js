@@ -10,7 +10,7 @@ const REGISTER_MUTATION = `
     message: String
   }
   
-  type ServiceRegistrationError
+  type TextError
   {
     message: String
   }
@@ -39,13 +39,32 @@ const REGISTER_MUTATION = `
   {
     success: Boolean
     warnings: [ServiceRegistrationWarning]!
-    error: ServiceRegistrationError
+    error: TextError
     payload: ServiceRegistrationPayload
+  }
+
+  type RegistrationCommitResultPayload
+  {
+    lock: RegistrationLock
+  }
+
+  type RegistrationCommitResult
+  {
+    success: Boolean
+    error: TextError
+  }
+  
+  type VersionTaggingResult
+  {
+    success: Boolean
+    error: TextError
   }
 
   type Mutation
   {
     register(service: ServiceDefinitionInput!): ServiceRegistrationResult!
+    commitSchema(version: String!, stage: String): RegistrationCommitResult!
+    tagVersion(version: String!, tag: String!, stage: String): VersionTaggingResult!
   }
   
   type Query

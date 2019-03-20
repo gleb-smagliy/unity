@@ -1,3 +1,4 @@
+import { buildClientSchema } from 'graphql';
 import { createGetServicesByVersionQuery } from "../../src/queries/get-services-by-version";
 import { ITEM_TYPE } from "../../src/queries/schema-mappings";
 import { SERVICE, PLUGIN_METADATA } from '../fake-tables';
@@ -13,7 +14,7 @@ const runQuery = async ({ docClient, version }) =>
   return await query({ version });
 };
 
-describe('getSchemaByVersionQuery', () =>
+describe('getServicesByVersionQuery', () =>
 {
   it('should return success with properly mapped services if dynamodb query resolves successfully', async () =>
   {
@@ -23,7 +24,7 @@ describe('getSchemaByVersionQuery', () =>
     expect(result).toBeSuccessful([
       {
         id: SERVICE.ServiceId,
-        schema: SERVICE.Schema,
+        schema: buildClientSchema(SERVICE.Schema),
         stage: SERVICE.Stage,
         metadata: SERVICE.Metadata,
         endpoint: SERVICE.Endpoint
@@ -46,9 +47,8 @@ describe('getSchemaByVersionQuery', () =>
 
     expect(docClient.scan).toHaveBeenCalledWith({
       TableName: tableName,
-      KeyConditionExpression: 'Version = :version',
-      FilterExpression: 'SchemaItemType = :type',
-      ExpressionAttributeValues:{
+      FilterExpression: 'Version = :version and SchemaItemType = :type',
+      ExpressionAttributeValues: {
         ':version': version,
         ':type': ITEM_TYPE.SERVICE
       }

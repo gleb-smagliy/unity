@@ -1,3 +1,4 @@
+import { buildClientSchema } from 'graphql';
 import { createInsertSchemaCommand } from "../../src/commands";
 import { createSuccessfulBatchWriteClient, createFailedBatchWriteClient } from '../fake-dynamodb-client';
 import { SERVICE } from "../fake-tables";
@@ -20,7 +21,7 @@ const createPayload = ({ stage } = {}) => ({
   version: 'some_version',
   services: [{
     id: 'User',
-    schema: SERVICE.Schema,
+    schema: buildClientSchema(SERVICE.Schema),
     metadata: [{ dummy: 321 }],
     stage,
     endpoint: 'localhost'
@@ -43,7 +44,7 @@ const createPutRequests = ({ stage }) => ({
     Id: 'SERVICE/User',
     SchemaItemType: 'SERVICE',
     ServiceId: 'User',
-    Schema: introspectionFromSchema(SERVICE.Schema),
+    Schema: introspectionFromSchema(buildClientSchema(SERVICE.Schema)),
     Metadata: [{ dummy: 321 }],
     Endpoint: 'localhost',
     Stage: stage

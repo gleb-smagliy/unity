@@ -4,7 +4,7 @@ import { success, error } from './service-registration-result';
 export const createResolvers = ({
   registrationHandler,
   versionTaggingHandler,
-  schemaCommitingHandler
+  registrationCommitingHandler
 }) => ({
   Mutation:
   {
@@ -50,7 +50,7 @@ export const createResolvers = ({
     {
       const command = { version, stage };
 
-      const result = await schemaCommitingHandler.execute(command);
+      const result = await registrationCommitingHandler.execute(command);
 
       return result.success ?
         success(result.payload, result.warnings) :
