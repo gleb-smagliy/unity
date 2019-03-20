@@ -143,4 +143,16 @@ describe('GraphqlSchemaBuilder', () =>
     expect(result).toBeSuccessful();
     expect(result.payload.metadata).toEqual([]);
   });
+
+  it('Should return empty array as metadata if metadata query does not exists and skipMetadata set to true', async () =>
+  {
+    const metadataQueryName = 'metaQueryName';
+    const builder = new GraphqlSchemaBuilder({ metadataQueryName });
+    const { endpoint } = await createServer({ ...DEFAULT_OPTIONS, metadataQueryName }, { includeMetadata: false });
+
+    const result = await builder.extractMetadata({ id, options: { endpoint, skipMetadata: true }});
+
+    expect(result).toBeSuccessful();
+    expect(result.payload.metadata).toEqual([]);
+  });
 });

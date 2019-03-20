@@ -2,9 +2,10 @@ import { introspectSchema, transformSchema, FilterRootFields } from 'graphql-too
 import fetch from 'node-fetch';
 import { HttpLink } from 'apollo-link-http';
 import { ApolloClient } from 'apollo-client';
-import { getTransforms } from '../metadata-subgraph-filter';
 import { InMemoryCache } from "apollo-cache-inmemory";
 import gql from 'graphql-tag';
+import { getTransforms } from '../metadata-subgraph-filter';
+import { buildUri } from './build-uri';
 
 const createMetadataQuery = metadataQueryName => gql`
   {
@@ -45,6 +46,7 @@ export class GraphqlSchemaBuilder
       input GraphqlSchemaBuilderInput
       {
         endpoint: String
+        stage: String
         skipMetadata: Boolean = false
       }
     `
@@ -57,11 +59,10 @@ export class GraphqlSchemaBuilder
     return transformSchema(schema, transforms);
   };
 
-  buildServiceModel = async ({ options: { endpoint }}) =>
+  buildServiceModel = async ({ options: { endpoint, stage } }) =>
   {
+    const uri = buildUri({ endpoint, stage });
     const link = new HttpLink({ uri: endpoint, fetch: this.options.fetch });
-
-    // await new Promise(resolve => setTimeout(resolve, 50000))
 
     try
     {
@@ -70,7 +71,8 @@ export class GraphqlSchemaBuilder
       return {
         success: true,
         payload: {
-          schema: this.transformSchema(schema)
+          schema: this.transformSchema(schema),
+          endpoint: uri
         }
       }
     }
@@ -83,7 +85,7 @@ export class GraphqlSchemaBuilder
     }
   };
 
-  extractMetadata = async ({ options: { endpoint, skipMetadata }}) =>
+  extractMetadata = async ({ options: { endpoint, skipMetadata }, stage }) =>
   {
     if(skipMetadata)
     {
@@ -96,7 +98,7 @@ export class GraphqlSchemaBuilder
     }
 
     const cache = new InMemoryCache();
-    const link = new HttpLink({ uri: endpoint, fetch });
+    const link = new HttpLink({ uri: buildUri(endpoint, stage), fetch });
     const client = new ApolloClient({ cache, link });
 
     let response;
