@@ -1,3 +1,4 @@
+import { SYSTEM_TAGS } from '../command-handlers/constants/system-tags';
 import { success, error } from './service-registration-result';
 
 export const createResolvers = ({
@@ -35,7 +36,7 @@ export const createResolvers = ({
         success(result.payload, result.warnings) :
         error(result.error, result.warnings);
     },
-    async tagVersion(_, { version, tag })
+    async tagVersion(_, { version, tag, stage })
     {
       const command = { version, tag };
 
@@ -45,9 +46,9 @@ export const createResolvers = ({
         success(result.payload, result.warnings) :
         error(result.error, result.warnings);
     },
-    async commitSchema(_, { version })
+    async commitSchema(_, { version, stage })
     {
-      const command = { version, tag: SYSTEM_TAGS.STABLE };
+      const command = { version, stage };
 
       const result = await schemaCommitingHandler.execute(command);
 

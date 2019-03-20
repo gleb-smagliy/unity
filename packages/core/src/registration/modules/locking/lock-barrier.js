@@ -1,7 +1,14 @@
 export const LOCK_STATUS = {
   ACQUIRED: 'ACQUIRED',
+  NOT_NEEDED: 'NOT_NEEDED',
   ALREADY_LOCKED: 'ALREADY_LOCKED',
   FAILURE: 'FAILURE'
+};
+
+export const LOCK_STATE = {
+  ACQUIRED: 'ACQUIRED',
+  NOT_NEEDED: 'NOT_NEEDED',
+  NOT_ACQURIED: 'NOT_ACQURIED'
 };
 
 const successWithLockStatus = (lockPayload, payload) => ({

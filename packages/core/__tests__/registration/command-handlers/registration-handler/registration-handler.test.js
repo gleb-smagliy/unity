@@ -1,5 +1,6 @@
 import { executeHandler } from "./execute-handler";
-import { ServiceRegistrationCommandHander, SYSTEM_TAGS } from "../../../../src/registration/command-handlers/registration-handler";
+import { SYSTEM_TAGS } from "../../../../src/registration/command-handlers/constants/system-tags";
+import { ServiceRegistrationCommandHander } from "../../../../src/registration/command-handlers/registration-handler";
 import { LOCK_STATUS } from "../../../../src/registration/modules/locking";
 import { createSuccessfulStorage, services, RETURN_VERSION as STABLE_VERSION } from "../../../fake-storage";
 import {createFailedFakeVersioning, NEW_VERSION} from './fake-versioning';

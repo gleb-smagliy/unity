@@ -4,13 +4,20 @@ import { createResolvers } from './create-resolvers';
 
 export const createSchema = ({
   schemaBuilders,
-  registrationHandler
+  registrationHandler,
+  schemaVersionTaggingHandler,
+  registrationCommitingHandler
 }) =>
 {
   const apiDefinitions = schemaBuilders.map(b => b.getApiDefinition());
 
   return makeExecutableSchema({
     typeDefs: createTypeDefinitions(apiDefinitions),
-    resolvers: createResolvers({ apiDefinitions, registrationHandler })
+    resolvers: createResolvers({
+      apiDefinitions,
+      registrationHandler,
+      schemaVersionTaggingHandler,
+      registrationCommitingHandler
+    })
   });
 };

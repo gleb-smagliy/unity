@@ -1,27 +1,85 @@
+import {  SchemaVersionTaggingHandler } from '../../../../src/registration/command-handlers/schema-version-taging-handler/schema-version-taging-handler';
+import { createSuccessfulStorage } from '../../../fake-storage'
+
+const version = '1';
+const tag = 'alpha';
+const stage = 'preprod';
+
 describe('ServiceRegistrationCommitCommandHander', () =>
 {
-  it.skip('should check if there are services of specified version using storage', async () =>
+  it('should check if there are services of specified version using storage', async () =>
   {
-    throw new Error();
+    const storage = createSuccessfulStorage();
+
+    const handler = new SchemaVersionTaggingHandler({ storage });
+
+    const result = await handler.execute({ version, tag, stage });
+
+    expect(result).toBeSuccessful();
+    expect(storage.queries.getSchemaByVersion).toHaveBeenCalledWith({ version });
   });
 
-  it.skip('should return failure if getting services from storage returns failure', async () =>
+  it('should return failure if getting services from storage returns failure', async () =>
   {
-    throw new Error();
+    const storage = createSuccessfulStorage();
+    const getSchemaByVersion = jest.fn().mockResolvedValue({ success: false, error: 'some err' });
+    const handler = new SchemaVersionTaggingHandler({
+      storage: {
+        ...storage,
+        queries: { ...storage.queries, getSchemaByVersion }
+      }
+    });
+
+    const result = await handler.execute({ version, tag, stage });
+
+    expect(result).toBeFailed();
+    expect(getSchemaByVersion).toHaveBeenCalledWith({ version });
   });
 
-  it.skip('should not call storage.upsertTag if there are no services of specified version', async () =>
+  it('should set specified tag to the version using storage', async () =>
   {
-    throw new Error();
+    const storage = createSuccessfulStorage();
+    const handler = new SchemaVersionTaggingHandler({ storage });
+
+    const result = await handler.execute({ version, tag, stage });
+
+    expect(result).toBeSuccessful();
+    expect(storage.commands.upsertTag).toHaveBeenCalledWith({ version, tag, stage });
   });
 
-  it.skip('should set specified tag to the version using storage', async () =>
+  it('should not call storage.upsertTag and return failure if there are no services of specified version', async () =>
   {
-    throw new Error();
+    const storage = createSuccessfulStorage();
+
+    const getSchemaByVersion = jest.fn().mockResolvedValue({ success: true, payload: { services: [] }});
+    const upsertTag = jest.fn().mockResolvedValue({ success: false, error: 'some err' });
+    const handler = new SchemaVersionTaggingHandler({
+      storage: {
+        ...storage,
+        queries: { ...storage.queries, getSchemaByVersion },
+        commands: { ...storage.commands, upsertTag }
+      }
+    });
+
+    const result = await handler.execute({ version, tag, stage });
+
+    expect(result).toBeFailed();
+    expect(upsertTag).not.toHaveBeenCalled();
   });
 
-  it.skip('should return failure if storage.upsertTag returns failure', async () =>
+  it('should return failure if storage.upsertTag returns failure', async () =>
   {
-    throw new Error();
+    const storage = createSuccessfulStorage();
+    const upsertTag = jest.fn().mockResolvedValue({ success: false, error: 'some err' });
+    const handler = new SchemaVersionTaggingHandler({
+      storage: {
+        ...storage,
+        commands: { ...storage.commands, upsertTag }
+      }
+    });
+
+    const result = await handler.execute({ version, tag, stage });
+
+    expect(result).toBeFailed();
   });
 });

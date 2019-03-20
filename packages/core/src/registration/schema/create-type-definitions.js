@@ -46,7 +46,6 @@ const REGISTER_MUTATION = `
   {
     success: Boolean
     error: TextError
-    payload: RegistrationCommitResultPayload
   }
   
   type VersionTaggingResult

@@ -3,7 +3,7 @@ import { buildingNewServiceSaga } from "./building-new-service-saga";
 import { buildingServicesHashByTagSaga } from './building-services-hash-saga';
 import { transformServices } from "../../modules/services";
 import { insertingServicesSaga } from './inserting-services-saga';
-import { SYSTEM_TAGS } from './system-tags';
+import { SYSTEM_TAGS } from '../constants/system-tags';
 
 export function* registrationSaga({
   command,

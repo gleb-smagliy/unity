@@ -1,7 +1,1 @@
-export class RegistrationCommitingHandler
-{
-  constructor(options)
-  {
-    this.options = options;
-  }
-}
+export { RegistrationCommitingHandler } from './registration-commiting-handler';

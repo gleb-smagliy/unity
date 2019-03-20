@@ -1,1 +1,1 @@
-export { LOCK_STATUS, lockBarrier } from './lock-barrier';
+export { LOCK_STATUS, LOCK_STATE, lockBarrier } from './lock-barrier';

@@ -1,6 +1,8 @@
 import { prepareOptions } from "../../common-modules/options";
 import { createSchema as createSchemaImplementation } from './create-schema';
 import { ServiceRegistrationCommandHander } from '../command-handlers/registration-handler';
+import { SchemaVersionTaggingHandler } from '../command-handlers/schema-version-taging-handler';
+import { RegistrationCommitingHandler } from '../command-handlers/registration-commiting-handler';
 
 export const createSchema = rawOptions =>
 {
@@ -12,9 +14,19 @@ export const createSchema = rawOptions =>
   }
 
   const options = optionsPreparation.payload;
+  const { schemaBuilders } = options;
+
+  const schemaVersionTaggingHandler = new SchemaVersionTaggingHandler(options);
+  const registrationHandler = new ServiceRegistrationCommandHander(options);
+  const registrationCommitingHandler = new RegistrationCommitingHandler(
+    { schemaVersionTaggingHandler },
+    options
+  );
 
   return createSchemaImplementation({
-    schemaBuilders: options.schemaBuilders,
-    registrationHandler: new ServiceRegistrationCommandHander(options)
+    schemaBuilders,
+    registrationHandler,
+    schemaVersionTaggingHandler,
+    registrationCommitingHandler
   });
 };
