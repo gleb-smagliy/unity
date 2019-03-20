@@ -38,7 +38,7 @@ export const createResolvers = ({
     },
     async tagVersion(_, { version, tag, stage })
     {
-      const command = { version, tag };
+      const command = { version, tag, stage };
 
       const result = await versionTaggingHandler.execute(command);
 
