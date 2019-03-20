@@ -1,7 +1,7 @@
+import express from 'express';
 import { makeExecutableSchema } from 'graphql-tools';
-import { ApolloServer } from 'apollo-server';
+import { ApolloServer } from 'apollo-server-express';
 import GraphQLJSON from 'graphql-type-json';
-import { DEFAULT_OPTIONS } from "../../src/graphql-schema-builder/graphql-schema-builder";
 
 export const METADATA = [
   {
@@ -89,7 +89,22 @@ const resolvers = (metadataQueryName, { includeMetadata, metadata }) =>
   return resolversMap;
 };
 
-export const createServer = async ({ metadataQueryName }, { includeMetadata = true, metadata = METADATA } = {}) =>
+const runServer = (server, path) =>
+{
+  const app = express();
+
+  server.applyMiddleware({ app, path });
+
+  return new Promise(r =>
+  {
+    const listener = app.listen({ port: 0 }, () =>
+    {
+      r(`http://localhost:${listener.address().port}${path}`);
+    });
+  })
+};
+
+export const createServer = async ({ metadataQueryName }, { includeMetadata = true, metadata = METADATA, path = '/graphql' } = {}) =>
 {
   const schema = makeExecutableSchema({
     typeDefs: includeMetadata ?
@@ -98,9 +113,10 @@ export const createServer = async ({ metadataQueryName }, { includeMetadata = tr
     resolvers: resolvers(metadataQueryName, { metadata, includeMetadata }),
     resolverValidationOptions: { requireResolversForResolveType: false }
   });
-  const server = new ApolloServer({ schema });
 
-  const { url: endpoint } = await server.listen({ port: 0, playground: true });
+  const server = new ApolloServer({ schema, playground: true });
+
+  const endpoint = await runServer(server, path);
 
   return {
     endpoint,
