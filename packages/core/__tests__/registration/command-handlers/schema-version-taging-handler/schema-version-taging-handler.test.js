@@ -5,7 +5,12 @@ describe('ServiceRegistrationCommitCommandHander', () =>
     throw new Error();
   });
 
-  it.skip('should return failure if storage returns failure', async () =>
+  it.skip('should return failure if getting services from storage returns failure', async () =>
+  {
+    throw new Error();
+  });
+
+  it.skip('should not call storage.upsertTag if there are no services of specified version', async () =>
   {
     throw new Error();
   });
@@ -15,17 +20,7 @@ describe('ServiceRegistrationCommitCommandHander', () =>
     throw new Error();
   });
 
-  it.skip('should release lock if tagging is successful', async () =>
-  {
-    throw new Error();
-  });
-
-  it.skip('should return lock state in case of success', async () =>
-  {
-    throw new Error();
-  });
-
-  it.skip('should return failure and does not release lock if tag upserting failed', async () =>
+  it.skip('should return failure if storage.upsertTag returns failure', async () =>
   {
     throw new Error();
   });
