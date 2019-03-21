@@ -37,7 +37,7 @@ describe('GraphqlSchemaBuilder', () =>
     const { endpoint } = await createServer(DEFAULT_OPTIONS);
     const result = await builder.buildServiceModel({
       id,
-      options: { endpoint }
+      endpoint
     });
 
     expect(result).toBeSuccessful();
@@ -66,7 +66,7 @@ describe('GraphqlSchemaBuilder', () =>
     const { endpoint } = await createServer(DEFAULT_OPTIONS);
     const result = await builder.buildServiceModel({
       id,
-      options: { endpoint }
+      endpoint
     });
 
     expect(result).toBeSuccessful();
@@ -80,7 +80,7 @@ describe('GraphqlSchemaBuilder', () =>
     const { endpoint } = await createServer(DEFAULT_OPTIONS);
     const result = await builder.buildServiceModel({
       id,
-      options: { endpoint }
+      endpoint
     });
 
     expect(result).toBeSuccessful();
@@ -91,9 +91,10 @@ describe('GraphqlSchemaBuilder', () =>
   {
     const builder = new GraphqlSchemaBuilder();
     const { endpoint } = await createServer(DEFAULT_OPTIONS);
+
     const result = await builder.buildServiceModel({
       id,
-      options: { endpoint }
+      endpoint
     });
 
     expect(result).toBeSuccessful();
@@ -105,7 +106,7 @@ describe('GraphqlSchemaBuilder', () =>
     const builder = new GraphqlSchemaBuilder();
     const { endpoint, metadata } = await createServer(DEFAULT_OPTIONS);
 
-    const result = await builder.extractMetadata({ id, options: { endpoint }});
+    const result = await builder.extractMetadata({ id, endpoint });
 
     expect(result).toBeSuccessful();
     expect(result.payload.metadata).toEqual(metadata);
@@ -115,7 +116,7 @@ describe('GraphqlSchemaBuilder', () =>
   {
     const builder = new GraphqlSchemaBuilder();
 
-    const result = await builder.extractMetadata({ id, options: { endpoint: 'not_exists' }});
+    const result = await builder.extractMetadata({ id, endpoint: 'not_exists' });
 
     expect(result).toBeFailed();
   });
@@ -126,7 +127,7 @@ describe('GraphqlSchemaBuilder', () =>
     const builder = new GraphqlSchemaBuilder({ metadataQueryName });
     const { endpoint, metadata } = await createServer({ ...DEFAULT_OPTIONS, metadataQueryName });
 
-    const result = await builder.extractMetadata({ id, options: { endpoint }});
+    const result = await builder.extractMetadata({ id, endpoint });
 
     expect(result).toBeSuccessful();
     expect(result.payload.metadata).toEqual(metadata);
@@ -138,7 +139,7 @@ describe('GraphqlSchemaBuilder', () =>
     const builder = new GraphqlSchemaBuilder({ metadataQueryName });
     const { endpoint } = await createServer({ ...DEFAULT_OPTIONS, metadataQueryName }, { includeMetadata: false });
 
-    const result = await builder.extractMetadata({ id, options: { endpoint, skipMetadata: true }});
+    const result = await builder.extractMetadata({ id, endpoint, options: { skipMetadata: true }});
 
     expect(result).toBeSuccessful();
     expect(result.payload.metadata).toEqual([]);
@@ -150,7 +151,7 @@ describe('GraphqlSchemaBuilder', () =>
     const builder = new GraphqlSchemaBuilder({ metadataQueryName });
     const { endpoint } = await createServer({ ...DEFAULT_OPTIONS, metadataQueryName }, { includeMetadata: false });
 
-    const result = await builder.extractMetadata({ id, options: { endpoint, skipMetadata: true }});
+    const result = await builder.extractMetadata({ id, endpoint, options: { skipMetadata: true }});
 
     expect(result).toBeSuccessful();
     expect(result.payload.metadata).toEqual([]);
