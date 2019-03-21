@@ -1,4 +1,4 @@
-import { SYSTEM_TAGS } from '../command-handlers/constants/system-tags';
+import GraphQLJson from 'graphql-type-json';
 import { success, error } from './service-registration-result';
 
 export const createResolvers = ({
@@ -6,11 +6,12 @@ export const createResolvers = ({
   versionTaggingHandler,
   registrationCommitingHandler
 }) => ({
+  JSON: GraphQLJson,
   Mutation:
   {
     async register(_, { service })
     {
-      const { id, schemaBuilder } = service;
+      const { id, args = {}, endpoint, schemaBuilder } = service;
 
       const usedSchemaBuilders = Object
         .keys(schemaBuilder)
@@ -26,6 +27,8 @@ export const createResolvers = ({
 
       const command = {
         id,
+        args,
+        endpoint,
         schemaBuilder: builder,
         options
       };
@@ -36,9 +39,9 @@ export const createResolvers = ({
         success(result.payload, result.warnings) :
         error(result.error, result.warnings);
     },
-    async tagVersion(_, { version, tag, stage })
+    async tagVersion(_, { version, tag, args = {} })
     {
-      const command = { version, tag, stage };
+      const command = { version, tag, args };
 
       const result = await versionTaggingHandler.execute(command);
 

@@ -12,8 +12,13 @@ export function* registrationSaga({
 })
 {
   const { schemaBuilders, versioning, serviceSchemaTransformers, storage } = configOptions;
-  const { id: serviceId, schemaBuilder: schemaBuilderName, options: builderOptions } = command;
-  const serviceDefinition = { id: serviceId, options: builderOptions };
+  const { id: serviceId, endpoint, args, schemaBuilder: schemaBuilderName, options: builderOptions } = command;
+  const serviceDefinition = {
+    id: serviceId,
+    endpoint,
+    args,
+    options: builderOptions
+  };
 
   const upsert = yield effects.call(buildingNewServiceSaga, { serviceDefinition, schemaBuilders, schemaBuilderName });
 

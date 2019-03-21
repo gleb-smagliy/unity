@@ -58,7 +58,7 @@ const REGISTER_MUTATION = `
   {
     register(service: ServiceDefinitionInput!): ServiceRegistrationResult!
     commitSchema(version: String!, stage: String): RegistrationCommitResult!
-    tagVersion(version: String!, tag: String!, stage: String): VersionTaggingResult!
+    tagVersion(version: String!, tag: String!, args: JSON): VersionTaggingResult!
   }
   
   type Query
@@ -80,6 +80,8 @@ const composeBuildersUnion = (apiDefinitions) =>
     .join(' \n');
 
   return `
+    scalar JSON
+  
     input SchemaBuilderUnionInput
     {
       ${fields}
@@ -87,7 +89,9 @@ const composeBuildersUnion = (apiDefinitions) =>
   
     input ServiceDefinitionInput
     {
-      id: String
+      id: String!
+      endpoint: String!
+      args: JSON
       schemaBuilder: SchemaBuilderUnionInput!
     }
   `;

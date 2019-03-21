@@ -16,7 +16,8 @@ describe('schema, created by schema creator', () =>
 
     const service = {
       id: 'test_service',
-      schemaBuilder: { testBuilder: { endpoint: 'localhost' } }
+      endpoint: 'localhost',
+      schemaBuilder: { testBuilder: {  } }
     };
 
     const result = await executeRegistration(schema, service);
@@ -36,7 +37,8 @@ describe('schema, created by schema creator', () =>
 
     const service = {
       id: 'test_service',
-      schemaBuilder: { testBuilderNotExists: { endpoint: 'localhost' } }
+      endpoint: 'localhost',
+      schemaBuilder: { testBuilderNotExists: { } }
     };
 
     const { errors } = await executeRegistration(schema, service);
@@ -54,7 +56,8 @@ describe('schema, created by schema creator', () =>
 
     const service = {
       id: 'test_service',
-      schemaBuilder: { testBuilder: { endpoint: 'localhost' } }
+      endpoint: 'localhost',
+      schemaBuilder: { testBuilder: { } }
     };
 
     const result = await executeRegistration(schema, service);

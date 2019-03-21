@@ -80,7 +80,32 @@ describe('ServiceRegistrationCommandHander', () =>
 
     expect(result).toBeSuccessful();
     expect(builder.buildServiceModel).toHaveBeenCalledTimes(1);
-    expect(builder.buildServiceModel).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id, options: GRAPHQL_COMMAND.options });
+    expect(builder.buildServiceModel).toHaveBeenCalledWith({
+      id: GRAPHQL_COMMAND.id,
+      options: GRAPHQL_COMMAND.options,
+      endpoint: GRAPHQL_COMMAND.endpoint
+    });
+  });
+
+  it('should request schema from schema builder according to passed command if endpoint contains args', async () =>
+  {
+    const command = {
+      ...GRAPHQL_COMMAND,
+      endpoint: 'http://localhost/[stage]/graphql',
+      args: {
+        stage: 'prod'
+      }
+    };
+
+    const { builder, result } = await executeHandler({ command });
+
+    expect(result).toBeSuccessful();
+    expect(builder.buildServiceModel).toHaveBeenCalledTimes(1);
+    expect(builder.buildServiceModel).toHaveBeenCalledWith({
+      id: GRAPHQL_COMMAND.id,
+      options: GRAPHQL_COMMAND.options,
+      endpoint: 'http://localhost/prod/graphql'
+    });
   });
 
   it('should return failure and release lock if schema builder returns failure', async () =>
@@ -92,7 +117,11 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(result).toBeFailed();
     expect(builder.buildServiceModel).toHaveBeenCalledTimes(1);
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
-    expect(builder.buildServiceModel).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id, options: GRAPHQL_COMMAND.options });
+    expect(builder.buildServiceModel).toHaveBeenCalledWith({
+      id: GRAPHQL_COMMAND.id,
+      options: GRAPHQL_COMMAND.options,
+      endpoint: GRAPHQL_COMMAND.endpoint
+    });
   });
 
   it('should request version by stable tag from storage', async () =>
@@ -151,7 +180,32 @@ describe('ServiceRegistrationCommandHander', () =>
 
     expect(result).toBeSuccessful();
     expect(builder.extractMetadata).toHaveBeenCalledTimes(1);
-    expect(builder.extractMetadata).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id, options: GRAPHQL_COMMAND.options });
+    expect(builder.extractMetadata).toHaveBeenCalledWith({
+      id: GRAPHQL_COMMAND.id,
+      options: GRAPHQL_COMMAND.options,
+      endpoint: GRAPHQL_COMMAND.endpoint
+    });
+  });
+
+  it('should request service metadata from schema builder replacing args in endpoint if endpoint contains args', async () =>
+  {
+    const command = {
+      ...GRAPHQL_COMMAND,
+      endpoint: 'http://localhost/[stage]/graphql',
+      args: {
+        stage: 'prod'
+      }
+    };
+
+    const { builder, result } = await executeHandler({ command });
+
+    expect(result).toBeSuccessful();
+    expect(builder.extractMetadata).toHaveBeenCalledTimes(1);
+    expect(builder.extractMetadata).toHaveBeenCalledWith({
+      id: GRAPHQL_COMMAND.id,
+      options: GRAPHQL_COMMAND.options,
+      endpoint: 'http://localhost/prod/graphql'
+    });
   });
 
   it('should return failure and release lock if extracting metadata returns failure', async () =>
@@ -164,7 +218,11 @@ describe('ServiceRegistrationCommandHander', () =>
 
     expect(result).toBeFailed();
     expect(builder.extractMetadata).toHaveBeenCalledTimes(1);
-    expect(builder.extractMetadata).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id, options: GRAPHQL_COMMAND.options });
+    expect(builder.extractMetadata).toHaveBeenCalledWith({
+      id: GRAPHQL_COMMAND.id,
+      options: GRAPHQL_COMMAND.options,
+      endpoint: GRAPHQL_COMMAND.endpoint
+    });
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
@@ -267,6 +325,54 @@ describe('ServiceRegistrationCommandHander', () =>
 
     expect(version).toEqual(NEW_VERSION);
     expect(insertingServices).toHaveLength(services.length + 1);
+  });
+
+  it.only('should preserve args while inserting services to storage', async () =>
+  {
+    const args = {
+      stage: 'prod'
+    };
+
+    const command = {
+      ...GRAPHQL_COMMAND,
+      endpoint: 'http://localhost/[stage]/graphql',
+      args
+    };
+
+    const { result, storage } = await executeHandler({ command });
+
+    expect(result).toBeSuccessful();
+    expect(storage.commands.insertSchema).toHaveBeenCalledTimes(1);
+
+    const [{ services: insertingServices}] = storage.commands.insertSchema.mock.calls[0];
+
+    const newService = insertingServices.find(s => s.id === GRAPHQL_COMMAND.id);
+    expect(newService).not.toEqual(null);
+    expect(newService.args).toEqual(args);
+  });
+
+  it.only('should preserve string with placeholders for service endpoint while inserting services to storage', async () =>
+  {
+    const endpoint = 'http://localhost/[stage]/graphql';
+
+    const command = {
+      ...GRAPHQL_COMMAND,
+      endpoint,
+      args: {
+        stage: 'prod'
+      }
+    };
+
+    const { result, storage } = await executeHandler({ command });
+
+    expect(result).toBeSuccessful();
+    expect(storage.commands.insertSchema).toHaveBeenCalledTimes(1);
+
+    const [{ services: insertingServices}] = storage.commands.insertSchema.mock.calls[0];
+
+    const newService = insertingServices.find(s => s.id === GRAPHQL_COMMAND.id);
+    expect(newService).not.toEqual(null);
+    expect(newService.endpoint).toEqual(endpoint);
   });
 
   it('should insert plugins metadata under new version using storage', async () =>
