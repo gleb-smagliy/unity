@@ -29,7 +29,7 @@ const pluginMetadataReducer = (result, item) => {
 const serviceMapper = item => ({
   id: item.ServiceId,
   schema: (0, _graphql.buildClientSchema)(item.Schema),
-  stage: item.Stage,
+  args: item.Args,
   metadata: item.Metadata,
   endpoint: item.Endpoint
 });

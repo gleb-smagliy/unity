@@ -7,8 +7,6 @@ exports.createGetVersionByTagQuery = void 0;
 
 var _executeDynamodbOperation = require("../execute-dynamodb-operation");
 
-var _schemaMappings = require("./schema-mappings");
-
 const transformResult = items => {
   const item = items[0];
 
@@ -17,7 +15,7 @@ const transformResult = items => {
       success: true,
       payload: {
         version: null,
-        stage: null
+        args: {}
       }
     };
   }
@@ -26,7 +24,7 @@ const transformResult = items => {
     success: true,
     payload: {
       version: item.Version,
-      stage: item.Stage
+      args: item.Args || {}
     }
   };
 };

@@ -19,7 +19,7 @@ const toPutRequest = item => ({
 
 const toServiceItem = (version, service) => {
   const serviceId = service.id;
-  const stage = service.stage || null;
+  const args = service.args || {};
   return {
     Version: version,
     Id: `${_schemaMappings.ITEM_TYPE.SERVICE}/${serviceId}`,
@@ -28,7 +28,7 @@ const toServiceItem = (version, service) => {
     Schema: (0, _graphql.introspectionFromSchema)(service.schema),
     Metadata: service.metadata,
     Endpoint: service.endpoint,
-    Stage: stage
+    Args: args
   };
 };
 
@@ -68,9 +68,6 @@ const createInsertSchemaCommand = ({
   services,
   pluginsMetadata
 }) => {
-  // const params = JSON.parse(
-  //   JSON.stringify(createParams({ tableName, version, services, pluginsMetadata }))
-  // );
   const params = createParams({
     tableName,
     version,

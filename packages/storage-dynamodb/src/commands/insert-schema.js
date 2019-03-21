@@ -9,7 +9,7 @@ const toPutRequest = item => ({
 const toServiceItem = (version, service) =>
 {
   const serviceId = service.id;
-  const stage = service.stage || null;
+  const args = service.args || {};
 
   return {
     Version: version,
@@ -19,7 +19,7 @@ const toServiceItem = (version, service) =>
     Schema: introspectionFromSchema(service.schema),
     Metadata: service.metadata,
     Endpoint: service.endpoint,
-    Stage: stage
+    Args: args
   };
 };
 
@@ -59,10 +59,6 @@ export const createInsertSchemaCommand = ({ docClient, tableName }) => async ({
   pluginsMetadata
 }) =>
 {
-  // const params = JSON.parse(
-  //   JSON.stringify(createParams({ tableName, version, services, pluginsMetadata }))
-  // );
-
   const params = createParams({ tableName, version, services, pluginsMetadata });
 
   return execute(docClient.batchWrite(params), { transformError });

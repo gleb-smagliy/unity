@@ -20,7 +20,7 @@ describe('getSchemaByVersionQuery', () =>
 
     expect(result).toBeSuccessful({
       version: TAG.Version,
-      stage: TAG.Stage
+      args: TAG.Args
     });
   });
 
@@ -45,7 +45,7 @@ describe('getSchemaByVersionQuery', () =>
 
     expect(result).toBeSuccessful({
       version: null,
-      stage: null
+      args: {}
     });
   });
 

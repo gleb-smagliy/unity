@@ -8,7 +8,7 @@
 export const TAG = {
   Tag: 'STABLE', // HashKey
   Version: '1',
-  Stage: 'prod'
+  Args: { arg1: 'arg1_value' }
 };
 
 export const TAGS_TABLE = [TAG];

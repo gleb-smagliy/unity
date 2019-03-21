@@ -1,5 +1,4 @@
 import {execute} from "../execute-dynamodb-operation";
-import {toServices} from "./schema-mappings";
 
 const transformResult = (items) =>
 {
@@ -11,7 +10,7 @@ const transformResult = (items) =>
       success: true,
       payload: {
         version: null,
-        stage: null
+        args: {}
       }
     };
   }
@@ -20,7 +19,7 @@ const transformResult = (items) =>
     success: true,
     payload: {
       version: item.Version,
-      stage: item.Stage
+      args: item.Args || {}
     }
   };
 };

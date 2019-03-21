@@ -17,13 +17,13 @@ const putRequest = (...items) => items.map(item => ({
   PutRequest: { Item: item }
 }));
 
-const createPayload = ({ stage } = {}) => ({
+const createPayload = ({ args } = {}) => ({
   version: 'some_version',
   services: [{
     id: 'User',
     schema: buildClientSchema(SERVICE.Schema),
     metadata: [{ dummy: 321 }],
-    stage,
+    args,
     endpoint: 'localhost'
   }],
   pluginsMetadata: {
@@ -38,7 +38,7 @@ const createPayload = ({ stage } = {}) => ({
   }
 });
 
-const createPutRequests = ({ stage }) => ({
+const createPutRequests = ({ args }) => ({
   SERVICE: {
     Version: 'some_version',
     Id: 'SERVICE/User',
@@ -47,7 +47,7 @@ const createPutRequests = ({ stage }) => ({
     Schema: introspectionFromSchema(buildClientSchema(SERVICE.Schema)),
     Metadata: [{ dummy: 321 }],
     Endpoint: 'localhost',
-    Stage: stage
+    Args: args
   },
   METADATA1: {
     Version: 'some_version',
@@ -77,12 +77,12 @@ describe('insertSchema command', () =>
 
   it('should call batchWrite with right params', async () =>
   {
-    const stage = 'test';
+    const args = { argKey1: 'arg1_value' };
 
     const docClient = createSuccessfulBatchWriteClient();
-    await runCommand({ docClient, payload: createPayload({ stage }) });
+    await runCommand({ docClient, payload: createPayload({ args }) });
 
-    const PUT_REQUESTS = createPutRequests({ stage });
+    const PUT_REQUESTS = createPutRequests({ args });
 
     expect(docClient.batchWrite).toHaveBeenCalledWith({
       RequestItems: {
@@ -91,12 +91,12 @@ describe('insertSchema command', () =>
     });
   });
 
-  it('should call batchWrite with right params replaces service stage with null if it is undefined', async () =>
+  it('should call batchWrite with right params replaces service args with empty array if it is undefined', async () =>
   {
     const docClient = createSuccessfulBatchWriteClient();
     await runCommand({ docClient, payload: createPayload() });
 
-    const PUT_REQUESTS = createPutRequests({ stage: null });
+    const PUT_REQUESTS = createPutRequests({ args: {} });
 
     expect(docClient.batchWrite).toHaveBeenCalledWith({
       RequestItems: {
