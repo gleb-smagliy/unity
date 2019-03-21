@@ -30,11 +30,15 @@ function* registrationSaga({
   } = configOptions;
   const {
     id: serviceId,
+    endpoint,
+    args,
     schemaBuilder: schemaBuilderName,
     options: builderOptions
   } = command;
   const serviceDefinition = {
     id: serviceId,
+    endpoint,
+    args,
     options: builderOptions
   };
   const upsert = yield _sagaRunner.effects.call(_buildingNewServiceSaga.buildingNewServiceSaga, {

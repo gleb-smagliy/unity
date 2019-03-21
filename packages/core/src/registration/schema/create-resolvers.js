@@ -49,9 +49,9 @@ export const createResolvers = ({
         success(result.payload, result.warnings) :
         error(result.error, result.warnings);
     },
-    async commitSchema(_, { version, stage })
+    async commitSchema(_, { version, stage, args = {} })
     {
-      const command = { version, stage };
+      const command = { version, stage, args };
 
       const result = await registrationCommitingHandler.execute(command);
 

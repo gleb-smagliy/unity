@@ -327,7 +327,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(insertingServices).toHaveLength(services.length + 1);
   });
 
-  it.only('should preserve args while inserting services to storage', async () =>
+  it('should preserve args while inserting services to storage', async () =>
   {
     const args = {
       stage: 'prod'

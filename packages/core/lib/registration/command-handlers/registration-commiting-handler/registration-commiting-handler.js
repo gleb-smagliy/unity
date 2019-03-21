@@ -18,7 +18,7 @@ function* registrationCommitingSaga({
   tagSchema
 }, {
   version,
-  stage
+  args
 }) {
   const lockState = yield _sagaRunner.effects.call(locking.getLockState);
 
@@ -32,7 +32,7 @@ function* registrationCommitingSaga({
   yield _sagaRunner.effects.call(tagSchema, {
     version,
     tag: _systemTags.SYSTEM_TAGS.STABLE,
-    stage
+    args
   });
   yield _sagaRunner.effects.call(locking.releaseLock);
   return {
@@ -47,7 +47,7 @@ class RegistrationCommitingHandler {
     _defineProperty(this, "execute", async ({
       version,
       tag,
-      stage
+      args
     }) => {
       const {
         locking
@@ -58,7 +58,7 @@ class RegistrationCommitingHandler {
         tagSchema
       }, {
         version,
-        stage
+        args
       });
       return await (0, _sagaRunner.runSaga)(saga);
     });

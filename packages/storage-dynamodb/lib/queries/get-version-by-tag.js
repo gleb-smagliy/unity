@@ -11,7 +11,6 @@ var _schemaMappings = require("./schema-mappings");
 
 const transformResult = items => {
   const item = items[0];
-  console.log('createGetVersionByTagQuery:item:', item);
 
   if (typeof item !== 'object') {
     return {
@@ -55,7 +54,6 @@ const createGetVersionByTagQuery = ({
     tag,
     tableName
   });
-  console.log('createGetVersionByTagQuery', params);
   return (0, _executeDynamodbOperation.execute)(docClient.query(params), {
     transformResult,
     transformError

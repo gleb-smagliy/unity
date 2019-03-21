@@ -35,7 +35,6 @@ const serviceMapper = item => ({
 });
 
 const toPluginsMetadata = (items = []) => {
-  console.log('toPluginsMetadata:items', items);
   return items.reduce(pluginMetadataReducer, {});
 };
 

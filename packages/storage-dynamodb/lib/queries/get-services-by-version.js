@@ -33,7 +33,6 @@ const createGetServicesByVersionQuery = ({
     version,
     tableName
   });
-  console.log('createGetServicesByVersionQuery::params:', params);
   return (0, _executeDynamodbOperation.execute)(docClient.scan(params), {
     transformPayload: _schemaMappings.toServices,
     transformError

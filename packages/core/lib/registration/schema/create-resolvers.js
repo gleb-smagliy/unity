@@ -5,21 +5,26 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.createResolvers = void 0;
 
-var _systemTags = require("../command-handlers/constants/system-tags");
+var _graphqlTypeJson = _interopRequireDefault(require("graphql-type-json"));
 
 var _serviceRegistrationResult = require("./service-registration-result");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const createResolvers = ({
   registrationHandler,
   versionTaggingHandler,
   registrationCommitingHandler
 }) => ({
+  JSON: _graphqlTypeJson.default,
   Mutation: {
     async register(_, {
       service
     }) {
       const {
         id,
+        args = {},
+        endpoint,
         schemaBuilder
       } = service;
       const usedSchemaBuilders = Object.keys(schemaBuilder).filter(k => schemaBuilder[k] != null);
@@ -32,6 +37,8 @@ const createResolvers = ({
       const options = schemaBuilder[builder];
       const command = {
         id,
+        args,
+        endpoint,
         schemaBuilder: builder,
         options
       };
@@ -42,12 +49,12 @@ const createResolvers = ({
     async tagVersion(_, {
       version,
       tag,
-      stage
+      args = {}
     }) {
       const command = {
         version,
         tag,
-        stage
+        args
       };
       const result = await versionTaggingHandler.execute(command);
       return result.success ? (0, _serviceRegistrationResult.success)(result.payload, result.warnings) : (0, _serviceRegistrationResult.error)(result.error, result.warnings);
@@ -55,11 +62,13 @@ const createResolvers = ({
 
     async commitSchema(_, {
       version,
-      stage
+      stage,
+      args = {}
     }) {
       const command = {
         version,
-        stage
+        stage,
+        args
       };
       const result = await registrationCommitingHandler.execute(command);
       return result.success ? (0, _serviceRegistrationResult.success)(result.payload, result.warnings) : (0, _serviceRegistrationResult.error)(result.error, result.warnings);

@@ -49,7 +49,7 @@ describe('schemaComposer', () =>
     expect(storage.queries.getSchemaByVersion).toHaveBeenCalledWith({ version: VERSION });
   });
 
-  it('should return be able to query composed schema', async () =>
+  it('should be able to query composed schema', async () =>
   {
     const composeResult = await composeSchema({ version: VERSION });
 

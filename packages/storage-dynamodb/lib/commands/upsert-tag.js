@@ -31,7 +31,6 @@ const createUpsertTagCommand = ({
   version,
   stage
 }) => {
-  console.log('tag, version, stage:', tag, version, stage);
   const params = createParams({
     tableName,
     tag,

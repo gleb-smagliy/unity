@@ -20,11 +20,17 @@ export const AUTHOR_RESPONSE = {
   }
 };
 
-const AUTHOR_URI = 'http://localhost/authors';
+const AUTHOR_ENDPOINT = 'http://localhost/authors';
 
 export const authorService =
 {
   id: 'Author',
-  uri: AUTHOR_URI,
+  endpoint: AUTHOR_ENDPOINT,
+  args: {},
   schema: AUTHOR_SCHEMA
 };
+
+export const createAuthorService = (overrides = {}) => ({
+  ...authorService,
+  ...overrides
+});

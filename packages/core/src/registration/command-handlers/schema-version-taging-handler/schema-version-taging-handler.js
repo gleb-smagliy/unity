@@ -3,7 +3,7 @@ import { runSaga, effects } from "../../../common-modules/saga-runner";
 function* schemaTaggingSaga({
   upsertTag,
   getSchemaByVersion,
-  args: { version, tag, stage }
+  args: { version, tag, args }
 })
 {
   const { services } = yield effects.call(getSchemaByVersion, { version });
@@ -16,7 +16,7 @@ function* schemaTaggingSaga({
     }
   }
 
-  yield effects.call(upsertTag, { version, tag, stage });
+  yield effects.call(upsertTag, { version, tag, args });
 
   return {
     success: true
@@ -30,7 +30,7 @@ export class SchemaVersionTaggingHandler
     this.options = options;
   }
 
-  execute = async ({ version, tag, stage }) =>
+  execute = async ({ version, tag, args }) =>
   {
     const { upsertTag } = this.options.storage.commands;
     const { getSchemaByVersion } = this.options.storage.queries;
@@ -41,7 +41,7 @@ export class SchemaVersionTaggingHandler
       args: {
         version,
         tag,
-        stage
+        args
       }
     });
 

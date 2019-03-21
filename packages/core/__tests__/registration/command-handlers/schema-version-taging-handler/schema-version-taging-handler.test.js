@@ -3,9 +3,9 @@ import { createSuccessfulStorage } from '../../../fake-storage'
 
 const version = '1';
 const tag = 'alpha';
-const stage = 'preprod';
+const args = { arg1: 'arg1_value' };
 
-describe('ServiceRegistrationCommitCommandHander', () =>
+describe('ServiceVersionTaggingCommandHander', () =>
 {
   it('should check if there are services of specified version using storage', async () =>
   {
@@ -13,7 +13,7 @@ describe('ServiceRegistrationCommitCommandHander', () =>
 
     const handler = new SchemaVersionTaggingHandler({ storage });
 
-    const result = await handler.execute({ version, tag, stage });
+    const result = await handler.execute({ version, tag, args });
 
     expect(result).toBeSuccessful();
     expect(storage.queries.getSchemaByVersion).toHaveBeenCalledWith({ version });
@@ -30,7 +30,7 @@ describe('ServiceRegistrationCommitCommandHander', () =>
       }
     });
 
-    const result = await handler.execute({ version, tag, stage });
+    const result = await handler.execute({ version, tag, args });
 
     expect(result).toBeFailed();
     expect(getSchemaByVersion).toHaveBeenCalledWith({ version });
@@ -41,10 +41,10 @@ describe('ServiceRegistrationCommitCommandHander', () =>
     const storage = createSuccessfulStorage();
     const handler = new SchemaVersionTaggingHandler({ storage });
 
-    const result = await handler.execute({ version, tag, stage });
+    const result = await handler.execute({ version, tag, args });
 
     expect(result).toBeSuccessful();
-    expect(storage.commands.upsertTag).toHaveBeenCalledWith({ version, tag, stage });
+    expect(storage.commands.upsertTag).toHaveBeenCalledWith({ version, tag, args });
   });
 
   it('should not call storage.upsertTag and return failure if there are no services of specified version', async () =>
@@ -61,7 +61,7 @@ describe('ServiceRegistrationCommitCommandHander', () =>
       }
     });
 
-    const result = await handler.execute({ version, tag, stage });
+    const result = await handler.execute({ version, tag, args });
 
     expect(result).toBeFailed();
     expect(upsertTag).not.toHaveBeenCalled();
@@ -78,7 +78,7 @@ describe('ServiceRegistrationCommitCommandHander', () =>
       }
     });
 
-    const result = await handler.execute({ version, tag, stage });
+    const result = await handler.execute({ version, tag, args });
 
     expect(result).toBeFailed();
   });

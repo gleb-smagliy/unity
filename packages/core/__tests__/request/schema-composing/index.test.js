@@ -18,7 +18,7 @@ const createComposer = ({
   ...plugins
 });
 
-describe('schemaComposer', () =>
+describe('Deccorated schemaComposer', () =>
 {
   beforeEach(() =>
   {

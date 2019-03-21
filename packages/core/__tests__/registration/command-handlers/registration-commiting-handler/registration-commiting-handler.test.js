@@ -4,7 +4,7 @@ import { SYSTEM_TAGS } from '../../../../src/registration/command-handlers/const
 import { createSuccessfulLocking } from "../registration-handler/fake-locking";
 
 const version = 'test';
-const stage = 'prod';
+const args = { arg1: 'arg1_value', arg2: 'arg2_value' };
 
 describe('RegistrationCommitingHandler', () =>
 {
@@ -17,10 +17,10 @@ describe('RegistrationCommitingHandler', () =>
 
     const handler = new RegistrationCommitingHandler({ schemaVersionTaggingHandler }, { locking });
 
-    const result = await  handler.execute({ version, stage });
+    const result = await  handler.execute({ version, args });
 
     expect(result).toBeSuccessful();
-    expect(schemaVersionTaggingHandler.execute).toHaveBeenCalledWith({ version, tag: SYSTEM_TAGS.STABLE, stage });
+    expect(schemaVersionTaggingHandler.execute).toHaveBeenCalledWith({ version, tag: SYSTEM_TAGS.STABLE, args });
   });
 
   it('should return failure if VersionTaggingHandler returns failure', async () =>
@@ -32,10 +32,10 @@ describe('RegistrationCommitingHandler', () =>
 
     const handler = new RegistrationCommitingHandler({ schemaVersionTaggingHandler }, { locking });
 
-    const result = await  handler.execute({ version, stage });
+    const result = await  handler.execute({ version, args });
 
     expect(result).toBeFailed();
-    expect(schemaVersionTaggingHandler.execute).toHaveBeenCalledWith({ version, tag: SYSTEM_TAGS.STABLE, stage });
+    expect(schemaVersionTaggingHandler.execute).toHaveBeenCalledWith({ version, tag: SYSTEM_TAGS.STABLE, args });
   });
 
   it('should return failure and do not tag schema version if lock is not acquired', async () =>
@@ -50,7 +50,7 @@ describe('RegistrationCommitingHandler', () =>
 
     const handler = new RegistrationCommitingHandler({ schemaVersionTaggingHandler }, { locking });
 
-    const result = await  handler.execute({ version, stage });
+    const result = await  handler.execute({ version, args });
 
     expect(result).toBeFailed();
     expect(schemaVersionTaggingHandler.execute).not.toHaveBeenCalled();
@@ -65,7 +65,7 @@ describe('RegistrationCommitingHandler', () =>
 
     const handler = new RegistrationCommitingHandler({ schemaVersionTaggingHandler }, { locking });
 
-    const result = await  handler.execute({ version, stage });
+    const result = await  handler.execute({ version, args });
 
     expect(result).toBeSuccessful();
     expect(locking.releaseLock).toHaveBeenCalledWith();
@@ -80,10 +80,10 @@ describe('RegistrationCommitingHandler', () =>
 
     const handler = new RegistrationCommitingHandler({ schemaVersionTaggingHandler }, { locking });
 
-    const result = await  handler.execute({ version, stage });
+    const result = await  handler.execute({ version, args });
 
     expect(result).toBeFailed();
-    expect(schemaVersionTaggingHandler.execute).toHaveBeenCalledWith({ version, tag: SYSTEM_TAGS.STABLE, stage });
+    expect(schemaVersionTaggingHandler.execute).toHaveBeenCalledWith({ version, tag: SYSTEM_TAGS.STABLE, args });
     expect(locking.releaseLock).not.toHaveBeenCalled();
   });
 
@@ -96,9 +96,9 @@ describe('RegistrationCommitingHandler', () =>
 
     const handler = new RegistrationCommitingHandler({ schemaVersionTaggingHandler }, { locking });
 
-    const result = await  handler.execute({ version, stage });
+    const result = await  handler.execute({ version, args });
 
     expect(result).toBeSuccessful();
-    expect(schemaVersionTaggingHandler.execute).toHaveBeenCalledWith({ version, tag: SYSTEM_TAGS.STABLE, stage });
+    expect(schemaVersionTaggingHandler.execute).toHaveBeenCalledWith({ version, tag: SYSTEM_TAGS.STABLE, args });
   });
 });

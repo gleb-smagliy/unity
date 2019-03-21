@@ -19,8 +19,6 @@ var _graphqlTag = _interopRequireDefault(require("graphql-tag"));
 
 var _metadataSubgraphFilter = require("../metadata-subgraph-filter");
 
-var _buildUri = require("./build-uri");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -54,8 +52,6 @@ class GraphqlSchemaBuilder {
       definition: `
       input GraphqlSchemaBuilderInput
       {
-        endpoint: String
-        stage: String
         skipMetadata: Boolean = false
       }
     `
@@ -70,15 +66,8 @@ class GraphqlSchemaBuilder {
     });
 
     _defineProperty(this, "buildServiceModel", async ({
-      options: {
-        endpoint,
-        stage
-      }
+      endpoint
     }) => {
-      const uri = (0, _buildUri.buildUri)({
-        endpoint,
-        stage
-      });
       const link = new _apolloLinkHttp.HttpLink({
         uri: endpoint,
         fetch: this.options.fetch
@@ -89,8 +78,7 @@ class GraphqlSchemaBuilder {
         return {
           success: true,
           payload: {
-            schema: this.transformSchema(schema),
-            endpoint: uri
+            schema: this.transformSchema(schema)
           }
         };
       } catch (e) {
@@ -102,11 +90,10 @@ class GraphqlSchemaBuilder {
     });
 
     _defineProperty(this, "extractMetadata", async ({
+      endpoint,
       options: {
-        endpoint,
-        stage,
         skipMetadata
-      }
+      } = {}
     }) => {
       if (skipMetadata) {
         return {
@@ -119,10 +106,7 @@ class GraphqlSchemaBuilder {
 
       const cache = new _apolloCacheInmemory.InMemoryCache();
       const link = new _apolloLinkHttp.HttpLink({
-        uri: (0, _buildUri.buildUri)({
-          endpoint,
-          stage
-        }),
+        uri: endpoint,
         fetch: _nodeFetch.default
       });
       const client = new _apolloClient.ApolloClient({

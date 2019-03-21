@@ -4,7 +4,7 @@ import { LOCK_STATE } from "../../modules/locking";
 
 function* registrationCommitingSaga(
   { locking, tagSchema },
-  { version, stage }
+  { version, args }
 )
 {
   const lockState = yield effects.call(locking.getLockState);
@@ -17,7 +17,7 @@ function* registrationCommitingSaga(
     }
   }
 
-  yield effects.call(tagSchema, { version, tag: SYSTEM_TAGS.STABLE, stage });
+  yield effects.call(tagSchema, { version, tag: SYSTEM_TAGS.STABLE, args });
 
   yield effects.call(locking.releaseLock);
 
@@ -34,14 +34,14 @@ export class RegistrationCommitingHandler
     this.tagSchema = schemaVersionTaggingHandler.execute;
   }
 
-  execute = async ({ version, tag, stage }) =>
+  execute = async ({ version, tag, args }) =>
   {
     const { locking } = this.options;
     const tagSchema = this.tagSchema;
 
     const saga = registrationCommitingSaga(
       { locking, tagSchema },
-      { version, stage }
+      { version, args }
     );
 
     return await runSaga(saga);

@@ -15,7 +15,7 @@ function* schemaTaggingSaga({
   args: {
     version,
     tag,
-    stage
+    args
   }
 }) {
   const {
@@ -34,7 +34,7 @@ function* schemaTaggingSaga({
   yield _sagaRunner.effects.call(upsertTag, {
     version,
     tag,
-    stage
+    args
   });
   return {
     success: true
@@ -46,7 +46,7 @@ class SchemaVersionTaggingHandler {
     _defineProperty(this, "execute", async ({
       version,
       tag,
-      stage
+      args
     }) => {
       const {
         upsertTag
@@ -60,7 +60,7 @@ class SchemaVersionTaggingHandler {
         args: {
           version,
           tag,
-          stage
+          args
         }
       });
       return await (0, _sagaRunner.runSaga)(saga);

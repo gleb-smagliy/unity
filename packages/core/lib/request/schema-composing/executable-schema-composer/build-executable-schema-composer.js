@@ -19,11 +19,13 @@ const buildExecutableSchemaComposer = options => {
   const gatewayTransformer = (0, _buildCompositeGatewayTransformer.buildCompositeGatewayTransformer)(options.gatewaySchemaTransformers);
   return ({
     services,
-    pluginsMetadata
+    pluginsMetadata,
+    args
   }) => {
     const schemaSpecification = {
       services,
-      pluginsMetadata
+      pluginsMetadata,
+      args
     };
     const buildServicesTransformations = servicesTransformer(schemaSpecification);
     if (!buildServicesTransformations.success) return buildServicesTransformations;

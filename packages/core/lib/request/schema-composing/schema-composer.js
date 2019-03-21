@@ -13,10 +13,12 @@ const buildSchemaComposer = options => {
   const schemaRetriever = (0, _data.buildSchemaRetriever)(options);
   const composeExecutableSchema = (0, _executableSchemaComposer.buildExecutableSchemaComposer)(options);
   return async ({
-    version
+    version,
+    args
   }) => {
     const schemasRetrieval = await schemaRetriever({
-      version
+      version,
+      args
     });
     if (!schemasRetrieval.success) return schemasRetrieval;
     return composeExecutableSchema(schemasRetrieval.payload);

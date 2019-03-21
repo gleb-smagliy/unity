@@ -1,4 +1,5 @@
 import { buildFakeClientSchema } from '../fake-schema';
+import {authorService} from "./authors";
 
 const BOOK_SCHEMA = buildFakeClientSchema(`
   type Book {
@@ -18,11 +19,17 @@ export const BOOK_RESPONSE = {
   }
 };
 
-const BOOK_URI = 'http://localhost/books';
+const BOOK_ENDPOINT = 'http://localhost/books';
 
 export const bookService =
 {
   id: 'Book',
-  uri: BOOK_URI,
+  endpoint: BOOK_ENDPOINT,
+  args: {},
   schema: BOOK_SCHEMA
 };
+
+export const createBookService = (overrides = {}) => ({
+  ...bookService,
+  ...overrides
+});

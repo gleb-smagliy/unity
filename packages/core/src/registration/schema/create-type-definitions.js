@@ -57,7 +57,7 @@ const REGISTER_MUTATION = `
   type Mutation
   {
     register(service: ServiceDefinitionInput!): ServiceRegistrationResult!
-    commitSchema(version: String!, stage: String): RegistrationCommitResult!
+    commitSchema(version: String!, args: JSON): RegistrationCommitResult!
     tagVersion(version: String!, tag: String!, args: JSON): VersionTaggingResult!
   }
   
