@@ -1,6 +1,7 @@
 import { cacheDecorator } from "../../../src/request/schema-composing/schema-composer-cache-decorator";
 
 const version = 'abcd-efdf';
+const args = { sccdArg1: 'arg1_value_sccd' };
 const otherVersion = 'abcd-efdf-1111';
 
 const successfulResult = (payload) => ({ success: true, payload });
@@ -24,9 +25,9 @@ describe('cacheDecorator', () =>
 
     const composer = cacheDecorator({ schemasCache, composeSchema });
 
-    await composer({ version });
+    await composer({ version, args });
 
-    expect(composeSchema).toHaveBeenCalledWith({ version });
+    expect(composeSchema).toHaveBeenCalledWith({ version, args });
   });
 
   it('should call composeSchema with version if schema is in cache but other version is requested', async () =>
@@ -36,11 +37,11 @@ describe('cacheDecorator', () =>
 
     const composer = cacheDecorator({ schemasCache, composeSchema });
 
-    await composer({ version });
-    await composer({ version: otherVersion });
+    await composer({ version, args });
+    await composer({ version: otherVersion, args });
 
-    expect(composeSchema).toHaveBeenCalledWith({ version });
-    expect(composeSchema).toHaveBeenCalledWith({ version: otherVersion });
+    expect(composeSchema).toHaveBeenCalledWith({ version, args });
+    expect(composeSchema).toHaveBeenCalledWith({ version: otherVersion, args });
     expect(composeSchema).toHaveBeenCalledTimes(2);
   });
 
@@ -51,7 +52,7 @@ describe('cacheDecorator', () =>
 
     const composer = cacheDecorator({ schemasCache, composeSchema });
 
-    await composer({ version });
+    await composer({ version, args });
 
     expect(composeSchema).not.toHaveBeenCalled();
   });
@@ -63,7 +64,7 @@ describe('cacheDecorator', () =>
 
     const composer = cacheDecorator({ schemasCache, composeSchema });
 
-    const result = await composer({ version });
+    const result = await composer({ version, args });
 
     expect(result).toBeSuccessful(SCHEMA);
   });
@@ -75,9 +76,13 @@ describe('cacheDecorator', () =>
 
     const composer = cacheDecorator({ schemasCache, composeSchema });
 
-    await composer({ version });
+    const args = { a: '1' };
+    const version = '123';
+    const key = '123|a|1';
 
-    expect(schemasCache.tryGetItem).toHaveBeenCalledWith(version);
+    await composer({ version, args });
+
+    expect(schemasCache.tryGetItem).toHaveBeenCalledWith(key);
   });
 
   it('should call setItem on cache with version and composed schema', async () =>
@@ -87,9 +92,13 @@ describe('cacheDecorator', () =>
 
     const composer = cacheDecorator({ schemasCache, composeSchema });
 
-    await composer({ version });
+    const args = { a: '1' };
+    const version = '123';
+    const key = '123|a|1';
 
-    expect(schemasCache.setItem).toHaveBeenCalledWith(version, SCHEMA);
+    await composer({ version, args });
+
+    expect(schemasCache.setItem).toHaveBeenCalledWith(key, SCHEMA);
   });
 
   it('should not call setItem on cache if schema failed to compose', async () =>
@@ -99,7 +108,7 @@ describe('cacheDecorator', () =>
 
     const composer = cacheDecorator({ schemasCache, composeSchema });
 
-    await composer({ version });
+    await composer({ version, args });
 
     expect(schemasCache.setItem).not.toHaveBeenCalled();
   });
@@ -111,7 +120,7 @@ describe('cacheDecorator', () =>
 
     const composer = cacheDecorator({ schemasCache, composeSchema });
 
-    const result = await composer({ version });
+    const result = await composer({ version, args });
 
     expect(result).toBeFailed();
   });

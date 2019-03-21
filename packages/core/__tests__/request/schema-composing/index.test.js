@@ -6,6 +6,7 @@ import {BOOK_RESPONSE, mockFetch} from "../../fake-data";
 import fetch from "node-fetch";
 
 const VERSION = 'abcd-edzx';
+const args = { arg1Key: 'arg1_value' };
 
 const createComposer = ({
   storage = createSuccessfulStorage(),
@@ -29,12 +30,10 @@ describe('Deccorated schemaComposer', () =>
 
   it('should call storage with version on the first call if caching is enabled', async () =>
   {
-    const storage = createSuccessfulStorage({
-      cache: true
-    });
+    const storage = createSuccessfulStorage();
 
     const composeSchema = createComposer({ storage, cache: false });
-    const composeResult = await composeSchema({ version: VERSION });
+    const composeResult = await composeSchema({ version: VERSION, args });
 
     expect(composeResult).toBeSuccessful();
     expect(storage.queries.getSchemaByVersion).toHaveBeenCalledWith({ version: VERSION });
@@ -45,7 +44,7 @@ describe('Deccorated schemaComposer', () =>
     const storage = createSuccessfulStorage();
 
     const composeSchema = createComposer({ storage, cache: false });
-    const composeResult = await composeSchema({ version: VERSION });
+    const composeResult = await composeSchema({ version: VERSION, args });
 
     expect(composeResult).toBeSuccessful();
     expect(storage.queries.getSchemaByVersion).toHaveBeenCalledWith({ version: VERSION });
@@ -57,8 +56,8 @@ describe('Deccorated schemaComposer', () =>
 
     const composeSchema = createComposer({ storage, cache: false });
 
-    const composeResult1 = await composeSchema({ version: VERSION });
-    const composeResult2 = await composeSchema({ version: VERSION });
+    const composeResult1 = await composeSchema({ version: VERSION, args });
+    const composeResult2 = await composeSchema({ version: VERSION, args });
 
     expect(composeResult1).toBeSuccessful();
     expect(composeResult2).toBeSuccessful();
@@ -67,14 +66,14 @@ describe('Deccorated schemaComposer', () =>
     expect(storage.queries.getSchemaByVersion).toHaveBeenCalledTimes(2);
   });
 
-  it('should not call storage with version on the second call if caching is enabled', async () =>
+  it.only('should not call storage with version on the second call if caching is enabled', async () =>
   {
     const storage = createSuccessfulStorage();
 
     const composeSchema = createComposer({ storage, cache: true });
 
-    const composeResult1 = await composeSchema({ storage, version: VERSION });
-    const composeResult2 = await composeSchema({ storage, version: VERSION });
+    const composeResult1 = await composeSchema({ storage, version: VERSION, args });
+    const composeResult2 = await composeSchema({ storage, version: VERSION, args });
 
     expect(composeResult1).toBeSuccessful();
     expect(composeResult2).toBeSuccessful();
@@ -87,7 +86,7 @@ describe('Deccorated schemaComposer', () =>
   {
     const composeSchema = createComposer({ cache: true });
 
-    const composeResult = await composeSchema({ version: VERSION });
+    const composeResult = await composeSchema({ version: VERSION, args });
 
     expect(composeResult).toBeSuccessful();
 
@@ -101,7 +100,7 @@ describe('Deccorated schemaComposer', () =>
   {
     const composeSchema = createComposer({ cache: false });
 
-    const composeResult = await composeSchema({ version: VERSION });
+    const composeResult = await composeSchema({ version: VERSION, args });
 
     expect(composeResult).toBeSuccessful();
 

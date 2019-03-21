@@ -18,6 +18,9 @@ export const getSchemaVersion = async ({ version, tag, getVersionByTag }) =>
 
   return {
     success: true,
-    payload: version
+    payload: {
+      version,
+      args: {}
+    }
   }
 };

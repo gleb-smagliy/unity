@@ -36,9 +36,13 @@ const buildExecutableSchemaQuery = options => {
       throw new Error(schemaVersionResult.error);
     }
 
-    const schemaVersion = schemaVersionResult.payload;
+    const {
+      args,
+      version: resultVersion
+    } = schemaVersionResult.payload;
     const result = await composeSchema({
-      version: schemaVersion
+      version: resultVersion,
+      args
     });
 
     if (!result.success) {

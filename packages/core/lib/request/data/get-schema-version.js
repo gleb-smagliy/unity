@@ -27,7 +27,10 @@ const getSchemaVersion = async ({
 
   return {
     success: true,
-    payload: version
+    payload: {
+      version,
+      args: {}
+    }
   };
 };
 

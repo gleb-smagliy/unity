@@ -5,25 +5,32 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.cacheDecorator = void 0;
 
+const serializeArgs = args => Object.keys(args).reduce((s, k) => s + '|' + k + '|' + args[k], '');
+
+const cacheKey = (version, args) => `${version}${serializeArgs(args)}`;
+
 const cacheDecorator = ({
   schemasCache,
   composeSchema
 }) => async ({
-  version
+  version,
+  args
 }) => {
-  const fromCacheResult = schemasCache.tryGetItem(version);
+  const key = cacheKey(version, args);
+  const fromCacheResult = schemasCache.tryGetItem(key);
 
   if (fromCacheResult.success) {
     return fromCacheResult;
   }
 
   const schemaComposition = await composeSchema({
-    version
+    version,
+    args
   });
 
   if (schemaComposition.success) {
     const schema = schemaComposition.payload;
-    schemasCache.setItem(version, schema);
+    schemasCache.setItem(key, schema);
     return {
       success: true,
       payload: schema
