@@ -1,6 +1,6 @@
 {
   "name": "@opportunity/extension-references",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "> TODO: description",
   "author": "gsmagliy <gsmagliy@wildapricot.com>",
   "homepage": "https://github.com/gleb-smagliy/opportunity#readme",
@@ -21,8 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/gleb-smagliy/opportunity.git"
   },
-  "scripts": {
-  },
+  "scripts": {},
   "bugs": {
     "url": "https://github.com/gleb-smagliy/opportunity/issues"
   }
