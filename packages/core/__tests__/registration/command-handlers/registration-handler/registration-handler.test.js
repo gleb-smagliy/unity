@@ -351,7 +351,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(newService.args).toEqual(args);
   });
 
-  it.only('should preserve string with placeholders for service endpoint while inserting services to storage', async () =>
+  it('should preserve string with placeholders for service endpoint while inserting services to storage', async () =>
   {
     const endpoint = 'http://localhost/[stage]/graphql';
 

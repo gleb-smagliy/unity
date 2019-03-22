@@ -26,10 +26,10 @@ const createContextLink = contextSetter => (0, _apolloLinkContext.setContext)(co
 
 const makeServiceSchema = ({
   schema,
-  uri,
+  endpoint,
   contextSetter = null
 }) => {
-  const links = contextSetter != null ? [createContextLink(contextSetter), createHttpLink(uri)] : [createHttpLink(uri)];
+  const links = contextSetter != null ? [createContextLink(contextSetter), createHttpLink(endpoint)] : [createHttpLink(endpoint)];
 
   const link = _apolloLink.ApolloLink.from(links);
 

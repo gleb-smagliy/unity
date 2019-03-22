@@ -25,7 +25,7 @@ describe('makeServiceSchema', () =>
 
   it('should execute query against remote service without context trasnformations', async () =>
   {
-    const remoteSchema = makeServiceSchema({ schema: CLIENT_SCHEMA, uri: SERVICE_URI });
+    const remoteSchema = makeServiceSchema({ schema: CLIENT_SCHEMA, endpoint: SERVICE_URI });
 
     await querySchema(remoteSchema);
 

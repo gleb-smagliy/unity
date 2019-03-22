@@ -8,11 +8,11 @@ const createHttpLink = uri => new HttpLink({ uri, fetch });
 
 const createContextLink = contextSetter => setContext(contextSetter);
 
-export const makeServiceSchema = ({ schema, uri, contextSetter = null }) =>
+export const makeServiceSchema = ({ schema, endpoint, contextSetter = null }) =>
 {
   const links = contextSetter != null ?
-    [createContextLink(contextSetter), createHttpLink(uri)] :
-    [createHttpLink(uri)];
+    [createContextLink(contextSetter), createHttpLink(endpoint)] :
+    [createHttpLink(endpoint)];
 
   const link = ApolloLink.from(links);
 

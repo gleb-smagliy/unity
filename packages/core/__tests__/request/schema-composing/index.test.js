@@ -66,7 +66,7 @@ describe('Deccorated schemaComposer', () =>
     expect(storage.queries.getSchemaByVersion).toHaveBeenCalledTimes(2);
   });
 
-  it.only('should not call storage with version on the second call if caching is enabled', async () =>
+  it('should not call storage with version on the second call if caching is enabled', async () =>
   {
     const storage = createSuccessfulStorage();
 
