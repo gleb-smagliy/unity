@@ -2,6 +2,6 @@
 
 const cli = require('..');
 
-describe('@opportunity/cli', () => {
+describe('@soyuz/cli', () => {
     it('needs tests');
 });

@@ -1,9 +1,9 @@
 {
-  "name": "@opportunity/versioning-incremental",
+  "name": "@soyuz/versioning-incremental",
   "version": "0.0.1",
   "description": "> TODO: description",
   "author": "gsmagliy <gsmagliy@wildapricot.com>",
-  "homepage": "https://github.com/gleb-smagliy/opportunity#readme",
+  "homepage": "https://github.com/gleb-smagliy/soyuz#readme",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "directories": {
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gleb-smagliy/opportunity.git"
+    "url": "git+https://github.com/gleb-smagliy/soyuz.git"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -36,6 +36,7 @@
     "build:watch": "npm run build -- --watch"
   },
   "bugs": {
-    "url": "https://github.com/gleb-smagliy/opportunity/issues"
-  }
+    "url": "https://github.com/gleb-smagliy/soyuz/issues"
+  },
+  "gitHead": "9c8e9840bb47052ad11d6adea12c18806e40d171"
 }

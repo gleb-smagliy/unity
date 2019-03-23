@@ -1,11 +1,11 @@
-# `@opportunity/versioning-incremental`
+# `@soyuz/versioning-incremental`
 
 > TODO: description
 
 ## Usage
 
 ```
-const versioningIncremental = require('@opportunity/versioning-incremental');
+const versioningIncremental = require('@soyuz/versioning-incremental');
 
 // TODO: DEMONSTRATE API
 ```

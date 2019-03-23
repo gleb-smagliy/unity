@@ -1,9 +1,9 @@
 {
-  "name": "@opportunity/context-enchancer-passing-headers",
+  "name": "@soyuz/context-enchancer-passing-headers",
   "version": "0.0.1",
   "description": "> TODO: description",
   "author": "gsmagliy <gsmagliy@wildapricot.com>",
-  "homepage": "https://github.com/gleb-smagliy/opportunity#readme",
+  "homepage": "https://github.com/gleb-smagliy/soyuz#readme",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "directories": {
@@ -19,10 +19,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gleb-smagliy/opportunity.git"
+    "url": "git+https://github.com/gleb-smagliy/soyuz.git"
   },
   "scripts": {},
   "bugs": {
-    "url": "https://github.com/gleb-smagliy/opportunity/issues"
+    "url": "https://github.com/gleb-smagliy/soyuz/issues"
   }
 }

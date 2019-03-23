@@ -1,11 +1,11 @@
-# `@opportunity/schema-builder-graphql`
+# `@soyuz/schema-builder-graphql`
 
 > TODO: description
 
 ## Usage
 
 ```
-const schemaBuilderGraphql = require('@opportunity/schema-builder-graphql');
+const schemaBuilderGraphql = require('@soyuz/schema-builder-graphql');
 
 // TODO: DEMONSTRATE API
 ```

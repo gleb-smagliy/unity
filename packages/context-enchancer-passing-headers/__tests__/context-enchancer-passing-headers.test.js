@@ -2,6 +2,6 @@
 
 const contextEnchancerPassingHeaders = require('..');
 
-describe('@opportunity/context-enchancer-passing-headers', () => {
+describe('@soyuz/context-enchancer-passing-headers', () => {
     it('needs tests');
 });

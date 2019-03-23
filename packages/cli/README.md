@@ -1,11 +1,11 @@
-# `@opportunity/cli`
+# `@soyuz/cli`
 
 > TODO: description
 
 ## Usage
 
 ```
-const cli = require('@opportunity/cli');
+const cli = require('@soyuz/cli');
 
 // TODO: DEMONSTRATE API
 ```

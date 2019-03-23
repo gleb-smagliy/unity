@@ -2,6 +2,6 @@
 
 const extensionReferences = require('..');
 
-describe('@opportunity/extension-references', () => {
+describe('@soyuz/extension-references', () => {
     it('needs tests');
 });

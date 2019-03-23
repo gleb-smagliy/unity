@@ -1,11 +1,11 @@
-# `@opportunity/service-transformer-namespacing`
+# `@soyuz/service-transformer-namespacing`
 
 > TODO: description
 
 ## Usage
 
 ```
-const serviceTransformerNamespacing = require('@opportunity/service-transformer-namespacing');
+const serviceTransformerNamespacing = require('@soyuz/service-transformer-namespacing');
 
 // TODO: DEMONSTRATE API
 ```

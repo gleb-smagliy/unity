@@ -1,11 +1,11 @@
-# `@opportunity/storage-dynamodb`
+# `@soyuz/storage-dynamodb`
 
 > TODO: description
 
 ## Usage
 
 ```
-const storageDynamodb = require('@opportunity/storage-dynamodb');
+const storageDynamodb = require('@soyuz/storage-dynamodb');
 
 // TODO: DEMONSTRATE API
 ```

@@ -1,11 +1,11 @@
-# `@opportunity/core`
+# `@soyuz/core`
 
 > TODO: description
 
 ## Usage
 
 ```
-const core = require('@opportunity/core');
+const core = require('@soyuz/core');
 
 // TODO: DEMONSTRATE API
 ```
