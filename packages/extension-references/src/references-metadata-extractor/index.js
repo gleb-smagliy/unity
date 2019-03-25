@@ -1,0 +1,1 @@
+export { ReferencesMetadataExtractor } from './src/references-metadata-extractor';

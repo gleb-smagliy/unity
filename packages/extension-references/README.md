@@ -1,11 +1,5 @@
 # `@soyuz/extension-references`
 
-> TODO: description
+__TODO:__ Docs
 
-## Usage
-
-```
-const extensionReferences = require('@soyuz/extension-references');
-
-// TODO: DEMONSTRATE API
-```
+__TODO:__ extract saga-runner from core and this packages to it's own package

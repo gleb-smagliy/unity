@@ -1,0 +1,1 @@
+export { extractMetadataSaga } from './extract-metadata-saga';

@@ -26,7 +26,8 @@ export const exampleGatewayTransformer = ({ success, name = PLUGINS_NAMES.GATEWA
 
 export const exampleServiceTransformer = ({ success = true, name = PLUGINS_NAMES.SERVICE_TRANSFORMER, transforms } = {}) => ({
   name,
-  getTransforms: jest.fn().mockImplementation(({ service }) => {
+  getTransforms: jest.fn().mockImplementation(({ service }) =>
+  {
     if(!success) return errorResult();
 
     return successResult(transforms[service.id]);

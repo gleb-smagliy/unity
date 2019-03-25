@@ -21,7 +21,23 @@
     "type": "git",
     "url": "git+https://github.com/gleb-smagliy/soyuz.git"
   },
-  "scripts": {},
+  "scripts": {
+    "install-peers": "npm i graphql@14",
+    "test": "./node_modules/.bin/jest",
+    "test:watch": "npm run test -- --watch",
+    "build": "babel src --out-dir lib",
+    "build:watch": "npm run build -- --watch",
+    "prune-peers": "npm un graphql"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/plugin-proposal-class-properties": "^7.3.4",
+    "@babel/plugin-syntax-object-rest-spread": "^7.2.0",
+    "@babel/preset-env": "^7.3.4",
+    "jest": "^24.1.0",
+    "jest-fetch-mock": "^2.1.1"
+  },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/soyuz/issues"
   }
