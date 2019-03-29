@@ -36,9 +36,21 @@ function* getType({ typeName, schema })
   };
 }
 
-function* isFieldExists({ type, field })
+function* checkFieldInUse({ type, field })
 {
-  if()
+  const field = type.getFields()[field];
+
+  if(field !== null || field !== undefined)
+  {
+    return {
+      success: false,
+      error: `Field <${field}> alrady exists on type <${type}>`
+    }
+  }
+
+  return {
+    success: true
+  };
 }
 
 function* processReference({ reference, servicesHash })
@@ -51,7 +63,8 @@ function* processReference({ reference, servicesHash })
   const { onType, onField } = reference;
   const type = yield call(getType, { typeName: onType, schema });
 
-  yield call(isFieldExists, { type, field: alias });
+  yield call(checkFieldInUse, { type, field: alias });
+
 
 }
 
