@@ -24,7 +24,7 @@ describe('ReferencesExtensionBuilder:buildSchemaExtensions', () =>
   {
     throw new Error()
   });
-  
+
   it('should return resolver, which query schema by key from parent and using additional args', async () =>
   {
     throw new Error()
