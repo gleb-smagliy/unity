@@ -16,9 +16,37 @@
   };
  */
 
+const executeObjectValue = (args, value) =>
+{
+  if(typeof(value) === 'function')
+  {
+    return value(...args);
+  }
 
-export const composeContextEnhancers = ({
+  return value;
+};
 
-}) => ({
+const executeObjectEnhancer = (args, enhancer) =>
+  Object
+    .keys(enhancer)
+    .reduce((result, key) =>
+    {
+      result[key] = executeObjectValue(args, enhancer[key]);
 
-});
+      return result;
+    }, {});
+
+export const composeContextEnhancers = (enhancers) => (...args) =>
+{
+  if(typeof(enhancers) === 'function')
+  {
+    return enhancers(...args);
+  }
+
+  if(typeof(enhancers) === 'object')
+  {
+    return executeObjectEnhancer(args, enhancers);
+  }
+
+  return {};
+};

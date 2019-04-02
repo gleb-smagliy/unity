@@ -46,7 +46,6 @@ describe('GraphqlSchemaBuilder', () =>
     const expectedSchemaIntrospection = buildSchema(typeDefs);
 
     expect(Object.keys(actualSchemaIntrospection.getQueryType().getFields())).toEqual(Object.keys(expectedSchemaIntrospection.getQueryType().getFields()));
-    expect(Object.keys(actualSchemaIntrospection.getTypeMap())).toEqual(Object.keys(expectedSchemaIntrospection.getTypeMap()));
   });
 
   it('Should return failure if service is not available', async () =>

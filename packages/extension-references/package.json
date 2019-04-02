@@ -40,5 +40,6 @@
   },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/soyuz/issues"
-  }
+  },
+  "dependencies": {}
 }

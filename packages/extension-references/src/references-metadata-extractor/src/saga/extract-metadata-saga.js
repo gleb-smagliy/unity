@@ -36,9 +36,9 @@ function* getType({ typeName, schema })
   };
 }
 
-function* checkFieldInUse({ type, field })
+function* checkFieldInUse({ type, field: fieldName })
 {
-  const field = type.getFields()[field];
+  const field = type.getFields()[fieldName];
 
   if(field !== null || field !== undefined)
   {
