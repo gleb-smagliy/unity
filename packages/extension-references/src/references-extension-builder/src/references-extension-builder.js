@@ -1,5 +1,6 @@
-import { createResolver } from './create-resolver';
 import { ReferencesMetadataExtractor } from '../../references-metadata-extractor';
+import { createResolver } from './create-resolver';
+import { createTypeDefs } from './create-type-defs';
 
 const METADATA_NAME = 'ref';
 
@@ -21,16 +22,26 @@ export class ReferencesExtensionBuilder
 
   buildSchemaExtensions = ({ model }) =>
   {
-    const resolvers = {
-      [model.aliasField.name]: createResolver(model),
-    };
+    const buildResolvers = createResolver(model);
+
+    if(!buildResolvers.success)
+    {
+      return buildResolvers;
+    }
+
+    const buildTypeDefs = createTypeDefs(model);
+
+    if(!buildTypeDefs.success)
+    {
+      return buildTypeDefs;
+    }
 
     return {
       success: true,
       payload: {
-        typeDefs: ``,
-        resolvers
+        typeDefs: buildTypeDefs.payload,
+        resolvers: buildResolvers.payload
       }
-    }
+    };
   };
 }

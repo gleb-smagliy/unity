@@ -1,7 +1,7 @@
 import { ReferencesExtensionBuilder } from '../../src/references-extension-builder/src/references-extension-builder';
 import { model } from './metadata-model';
 import { schemaContextEnhancer } from '@soyuz/core';
-import { createInfo, dataLoaderWait } from './resolver-utils';
+import { createInfo } from './resolver-utils';
 
 describe('ReferencesExtensionBuilder::resolvers', () =>
 {
@@ -63,6 +63,7 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
     const delegationInfo = info.mergeInfo.delegateToSchema.mock.calls[0][0];
 
     expect(delegationInfo.args).toEqual({ ids: parent.levelsIds });
+    expect(delegationInfo.fieldName).toEqual(model.targetQuery.name);
   });
 
   it('should return resolver for alias field, which query schema by sourceKey from parent (when resolves single value)', async () =>
@@ -85,7 +86,7 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
     expect(result).toEqual(delegationResult[0]);
   });
 
-  it('should return resolver for alias field, which query schema with right args (when resolves single value)', async () =>
+  it('should return resolver for alias field, which query schema with right query and args (when resolves single value)', async () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
@@ -104,5 +105,17 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
     const delegationInfo = info.mergeInfo.delegateToSchema.mock.calls[0][0];
 
     expect(delegationInfo.args).toEqual({ ids: [parent.levelsIds] });
+    expect(delegationInfo.fieldName).toEqual(model.targetQuery.name);
+  });
+
+  it('should return failure when model is invalid (e.g. empty)', async () =>
+  {
+    const model = {};
+
+    const builder = new ReferencesExtensionBuilder();
+
+    const result = builder.buildSchemaExtensions({ model });
+
+    expect(result).toBeFailed();
   });
 });

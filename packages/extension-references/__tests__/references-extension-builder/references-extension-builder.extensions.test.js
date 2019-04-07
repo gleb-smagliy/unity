@@ -1,57 +1,88 @@
+import { parse, Kind, print } from 'graphql';
+
+import { model } from './metadata-model';
+import {ReferencesExtensionBuilder} from "../../src/references-extension-builder";
+
 describe('ReferencesExtensionBuilder:buildSchemaExtensions', () =>
 {
-  it.skip('should return extensions with ref field name equal to alias name', async () =>
+  it('should return success if model is valid', async () =>
   {
-    throw new Error()
+    const builder = new ReferencesExtensionBuilder();
+
+    const result = builder.buildSchemaExtensions({ model });
+
+    expect(result).toBeSuccessful();
   });
 
-  it.skip('should return extensions with ref field of nullable type equal to type from metadata', async () =>
+  it('should return typeDefs of type string', async () =>
   {
-    throw new Error()
+    const builder = new ReferencesExtensionBuilder();
+
+    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+
+    expect(typeof(typeDefs)).toEqual('string');
   });
 
-  it.skip('should return extensions with ref field of non-nullable type equal to type from metadata', async () =>
+  it('should return valid graphql document as typeDefs', async () =>
   {
-    throw new Error()
+    const builder = new ReferencesExtensionBuilder();
+
+    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const typeDefsAst = parse(typeDefs);
+
+    expect(typeDefsAst.kind).toEqual(Kind.DOCUMENT);
   });
 
-  it.skip('should return extensions with ref field with additional args equal to args from metadata', async () =>
+  it('should return type defs with single definition', async () =>
   {
-    throw new Error()
+    const builder = new ReferencesExtensionBuilder();
+
+    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const { definitions } = parse(typeDefs);
+
+    expect(definitions).toHaveLength(1);
   });
 
-  it.skip('should return resolver, which query schema by key from parent', async () =>
+  it('should return type defs extending specified type', async () =>
   {
-    throw new Error()
+    const builder = new ReferencesExtensionBuilder();
+
+    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const { definitions: [definition] } = parse(typeDefs);
+
+    expect(definition.kind).toEqual(Kind.OBJECT_TYPE_EXTENSION);
+    expect(definition.name.value).toEqual('Availability');
   });
 
-  it.skip('should return resolver, which query schema by key from parent and using additional args', async () =>
+  it('should return extensions with single field', async () =>
   {
-    throw new Error()
+    const builder = new ReferencesExtensionBuilder();
+
+    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const { definitions: [definition] } = parse(typeDefs);
+    const { fields } = definition;
+
+    expect(fields).toHaveLength(1);
   });
 
-  it.skip('should return failure if type is not valid in metadata model', async () =>
+  it('should return extensions with specified field name', async () =>
   {
-    throw new Error()
+    const builder = new ReferencesExtensionBuilder();
+
+    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const { definitions: [{ fields: [field] }] } = parse(typeDefs);
+
+    expect(field.kind).toEqual(Kind.FIELD_DEFINITION);
+    expect(field.name.value).toEqual('levels');
+    expect(print(field.type)).toEqual('[Level]');
   });
 
-  it.skip('should return failure if alias is not valid in metadata model', async () =>
+  it.skip('should return failure when metadata model is invalid (e.g. empty)', async () =>
   {
-    throw new Error()
-  });
+    const builder = new ReferencesExtensionBuilder();
 
-  it.skip('should return failure if alias does is not valid in metadata model', async () =>
-  {
-    throw new Error()
-  });
+    const result = builder.buildSchemaExtensions({ model });
 
-  it.skip('should return failure if key field is not valid in metadata model', async () =>
-  {
-    throw new Error()
-  });
-
-  it.skip('should return failure if key arg is not valid in metadata model', async () =>
-  {
-    throw new Error()
+    expect(result).toBeFailed();
   });
 });

@@ -1,0 +1,1 @@
+export { createResolver } from './create-resolver';

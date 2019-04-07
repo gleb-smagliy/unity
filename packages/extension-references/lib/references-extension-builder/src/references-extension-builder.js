@@ -7,6 +7,10 @@ exports.ReferencesExtensionBuilder = void 0;
 
 var _referencesMetadataExtractor = require("../../references-metadata-extractor");
 
+var _createResolver = require("./create-resolver");
+
+var _createTypeDefs = require("./create-type-defs");
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 const METADATA_NAME = 'ref';
@@ -26,13 +30,23 @@ class ReferencesExtensionBuilder {
     _defineProperty(this, "buildSchemaExtensions", ({
       model
     }) => {
+      const buildResolvers = (0, _createResolver.createResolver)(model);
+
+      if (!buildResolvers.success) {
+        return buildResolvers;
+      }
+
+      const buildTypeDefs = (0, _createTypeDefs.createTypeDefs)(model);
+
+      if (!buildTypeDefs.success) {
+        return buildTypeDefs;
+      }
+
       return {
         success: true,
         payload: {
-          typeDefs: ``,
-          resolvers: {
-            Query: () => ({})
-          }
+          typeDefs: buildTypeDefs.payload,
+          resolvers: buildResolvers.payload
         }
       };
     });

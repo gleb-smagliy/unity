@@ -45,7 +45,7 @@ const createDataLoader = ({
       }
     }
 
-    const ret = await info.mergeInfo.delegateToSchema({
+    return await info.mergeInfo.delegateToSchema({
       schema: info.schema,
       operation: 'query',
       fieldName: query,
@@ -53,8 +53,6 @@ const createDataLoader = ({
       context,
       info
     });
-
-    return ret;
   };
 
   return new DataLoader(delegateToSchema, {
