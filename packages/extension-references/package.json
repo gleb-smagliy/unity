@@ -1,6 +1,6 @@
 {
   "name": "@soyuz/extension-references",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "> TODO: description",
   "author": "gsmagliy <gsmagliy@wildapricot.com>",
   "homepage": "https://github.com/gleb-smagliy/soyuz#readme",
@@ -39,11 +39,10 @@
     "jest-fetch-mock": "^2.1.1"
   },
   "peerDependencies": {
-    "graphql": "^14.2.1",
-    "@soyuz/core": "^0.0.2"
+    "@soyuz/core": "^0.0.2",
+    "graphql": "^14.2.1"
   },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/soyuz/issues"
-  },
-  "dependencies": {}
+  }
 }
