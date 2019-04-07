@@ -41,7 +41,8 @@
     "jest-fetch-mock": "^2.1.1"
   },
   "dependencies": {
-    "aws-sdk": "^2.421.0"
+    "aws-sdk": "^2.421.0",
+    "graphql": "^14.2.1"
   },
   "peerDependencies": {
     "graphql": "^14.1.1"

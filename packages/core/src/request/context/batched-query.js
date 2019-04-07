@@ -34,7 +34,7 @@ const createDataLoader = ({ query, args, context, info }) =>
       }
     }
 
-    const ret = await info.mergeInfo.delegateToSchema({
+    return await info.mergeInfo.delegateToSchema({
       schema: info.schema,
       operation: 'query',
       fieldName: query,
@@ -42,8 +42,6 @@ const createDataLoader = ({ query, args, context, info }) =>
       context,
       info
     });
-
-    return ret;
   };
 
   return new DataLoader(delegateToSchema, { cacheKeyFn });

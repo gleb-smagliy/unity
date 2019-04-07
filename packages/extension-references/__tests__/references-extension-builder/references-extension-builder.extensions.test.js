@@ -1,6 +1,6 @@
 describe('ReferencesExtensionBuilder:buildSchemaExtensions', () =>
 {
-  it.skip('should return extensions with ref field name equal to alias', async () =>
+  it.skip('should return extensions with ref field name equal to alias name', async () =>
   {
     throw new Error()
   });

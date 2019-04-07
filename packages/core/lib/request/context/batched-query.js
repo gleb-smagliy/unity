@@ -53,6 +53,7 @@ const createDataLoader = ({
       context,
       info
     });
+
     return ret;
   };
 

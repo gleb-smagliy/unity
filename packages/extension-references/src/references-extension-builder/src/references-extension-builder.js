@@ -1,3 +1,4 @@
+import { createResolver } from './create-resolver';
 import { ReferencesMetadataExtractor } from '../../references-metadata-extractor';
 
 const METADATA_NAME = 'ref';
@@ -20,13 +21,15 @@ export class ReferencesExtensionBuilder
 
   buildSchemaExtensions = ({ model }) =>
   {
+    const resolvers = {
+      [model.aliasField.name]: createResolver(model),
+    };
+
     return {
       success: true,
       payload: {
         typeDefs: ``,
-        resolvers: {
-          Query: () => ({})
-        }
+        resolvers
       }
     }
   };
