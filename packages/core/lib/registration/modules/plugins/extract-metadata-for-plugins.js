@@ -9,14 +9,16 @@ var _plugins = require("../../../common-modules/plugins");
 
 const extractMetadataForPlugins = async ({
   plugins,
-  args
+  servicesHash
 }) => {
   const metadata = {};
 
   for (let plugin of plugins) {
     const name = (0, _plugins.tryGetName)(plugin).payload;
     const extractor = plugin.getMetadataExtractor();
-    const extractMetadataResult = await extractor.extractMetadata(...args);
+    const extractMetadataResult = await extractor.extractMetadata({
+      servicesHash
+    });
 
     if (!extractMetadataResult.success) {
       return extractMetadataResult;

@@ -1,4 +1,4 @@
-import { isListType } from 'graphql';
+import { isListType, getNullableType } from 'graphql';
 import { getSubType } from './get-sub-type';
 
 export function* getTargetKeys({ schema, query })
@@ -37,7 +37,7 @@ export function* getTargetKeys({ schema, query })
   const keyName = key.name;
   const keyType = key.type;
 
-  if(!isListType(keyType))
+  if(!isListType(getNullableType(keyType)))
   {
     return {
       success: false,

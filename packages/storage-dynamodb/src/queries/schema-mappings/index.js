@@ -12,13 +12,15 @@ const pluginMetadataReducer = (result, item) =>
     return result;
   }
 
-  const metadata =
-    {
-      pluginName: item.PluginName,
-      metadata: item.Metadata
-    };
+  const pluginName = item.PluginName;
+  const metadata = item.Metadata;
 
-  result[metadata.pluginName] = metadata;
+  if(!result[pluginName])
+  {
+    result[pluginName] = [];
+  }
+
+  result[pluginName].push(...metadata);
 
   return result;
 };

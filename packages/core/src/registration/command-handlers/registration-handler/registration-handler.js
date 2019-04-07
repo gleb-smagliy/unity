@@ -25,6 +25,6 @@ export class ServiceRegistrationCommandHander
 
   extractPluginsMetadata = async (servicesHash) => await extractMetadataForPlugins({
     plugins: [ ...this.options.extensionBuilders, ...this.options.gatewaySchemaTransformers ],
-    args: [servicesHash]
+    servicesHash
   });
 }

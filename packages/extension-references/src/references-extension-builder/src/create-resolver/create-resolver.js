@@ -12,7 +12,7 @@ export const createResolver = (model) =>
     return parseResult;
   }
 
-  const { query, sourceKey, targetKey } = parseResult.payload;
+  const { query, sourceType, sourceKey, targetKey } = parseResult.payload;
 
   const resolver = async (parent, args, context, info) =>
   {
@@ -35,7 +35,9 @@ export const createResolver = (model) =>
   return {
     success: true,
     payload: {
-      [model.aliasField.name]: resolver
+      [sourceType]: {
+        [model.aliasField.name]: resolver
+      }
     }
   }
 };

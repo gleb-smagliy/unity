@@ -22,6 +22,7 @@ const createResolver = model => {
 
   const {
     query,
+    sourceType,
     sourceKey,
     targetKey
   } = parseResult.payload;
@@ -54,7 +55,9 @@ const createResolver = model => {
   return {
     success: true,
     payload: {
-      [model.aliasField.name]: resolver
+      [sourceType]: {
+        [model.aliasField.name]: resolver
+      }
     }
   };
 };

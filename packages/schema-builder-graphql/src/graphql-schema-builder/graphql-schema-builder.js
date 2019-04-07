@@ -11,6 +11,8 @@ const createMetadataQuery = metadataQueryName => gql`
     metadata: ${metadataQueryName} {
       name,
       location,
+      fieldName,
+      typeName,
       arguments {
         name,
         value

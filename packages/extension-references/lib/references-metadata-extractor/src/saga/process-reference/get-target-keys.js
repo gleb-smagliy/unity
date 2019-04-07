@@ -44,7 +44,7 @@ function* getTargetKeys({
   const keyName = key.name;
   const keyType = key.type;
 
-  if (!(0, _graphql.isListType)(keyType)) {
+  if (!(0, _graphql.isListType)((0, _graphql.getNullableType)(keyType))) {
     return {
       success: false,
       error: `ExtractReferenceMetadata: expected query ${query} to accept list as a first argument, instead got: ${keyType}.

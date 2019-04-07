@@ -5,7 +5,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ServicesHash = void 0;
 
+var _graphqlTools = require("graphql-tools");
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+const convertMetadataItem = metadataItem => ({ ...metadataItem,
+  arguments: metadataItem.arguments.map(arg => ({ ...arg,
+    value: JSON.parse(arg.value)
+  }))
+});
 
 const getMetadata = services => {
   const serviceKeys = Object.keys(services);
@@ -24,12 +32,14 @@ const getMetadata = services => {
         result[name] = [];
       }
 
-      result[name].push(metadataItem);
+      result[name].push(convertMetadataItem(metadataItem));
     }
   }
 
   return result;
 };
+
+const getSchemas = servicesHash => Object.keys(servicesHash).map(k => servicesHash[k].schema);
 
 class ServicesHash {
   constructor({
@@ -44,11 +54,13 @@ class ServicesHash {
       return this.version;
     });
 
-    _defineProperty(this, "getTransformedClientSchema", () => null);
+    _defineProperty(this, "getTransformedClientSchema", () => (0, _graphqlTools.mergeSchemas)({
+      schemas: getSchemas(this.servicesHash)
+    }));
 
     _defineProperty(this, "getMetadata", ({
       name
-    }) => this.servicesMetadata[name]);
+    }) => this.servicesMetadata[name] || []);
 
     this.servicesHash = servicesHash;
     this.version = version;

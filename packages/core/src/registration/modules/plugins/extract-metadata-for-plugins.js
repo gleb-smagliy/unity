@@ -1,6 +1,6 @@
 import { tryGetName } from "../../../common-modules/plugins";
 
-export const extractMetadataForPlugins = async ({ plugins, args }) =>
+export const extractMetadataForPlugins = async ({ plugins, servicesHash }) =>
 {
   const metadata = {};
 
@@ -9,7 +9,7 @@ export const extractMetadataForPlugins = async ({ plugins, args }) =>
     const name = tryGetName(plugin).payload;
     const extractor = plugin.getMetadataExtractor();
 
-    const extractMetadataResult = await extractor.extractMetadata(...args);
+    const extractMetadataResult = await extractor.extractMetadata({ servicesHash });
 
     if(!extractMetadataResult.success)
     {

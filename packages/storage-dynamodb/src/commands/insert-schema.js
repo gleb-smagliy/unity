@@ -23,16 +23,14 @@ const toServiceItem = (version, service) =>
   };
 };
 
-const toPluginMetadataItem = (version, pluginMetadata) =>
+const toPluginMetadataItem = (pluginName, version, pluginMetadata) =>
 {
-  const pluginName = pluginMetadata.pluginName;
-
   return {
     Version: version,
     Id: `${ITEM_TYPE.PLUGIN_METADATA}/${pluginName}`,
     SchemaItemType: ITEM_TYPE.PLUGIN_METADATA,
     PluginName: pluginName,
-    Metadata: pluginMetadata.metadata
+    Metadata: pluginMetadata
   };
 };
 
@@ -40,7 +38,7 @@ const putServices = (version, services) =>
   services.map(service => toPutRequest(toServiceItem(version, service)));
 
 const putPluginsMetadata = (version, pluginsMetadata) =>
-  Object.values(pluginsMetadata).map(pluginMetadata => toPutRequest(toPluginMetadataItem(version, pluginMetadata)));
+  Object.keys(pluginsMetadata).map(key => toPutRequest(toPluginMetadataItem(key, version, pluginsMetadata[key])));
 
 const createParams = ({ tableName, version, services, pluginsMetadata }) => ({
   RequestItems: {

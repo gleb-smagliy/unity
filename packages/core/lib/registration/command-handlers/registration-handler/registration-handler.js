@@ -31,7 +31,7 @@ class ServiceRegistrationCommandHander {
 
     _defineProperty(this, "extractPluginsMetadata", async servicesHash => await (0, _plugins.extractMetadataForPlugins)({
       plugins: [...this.options.extensionBuilders, ...this.options.gatewaySchemaTransformers],
-      args: [servicesHash]
+      servicesHash
     }));
 
     this.options = options;

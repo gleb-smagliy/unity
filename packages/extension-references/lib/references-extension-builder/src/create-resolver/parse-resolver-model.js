@@ -62,13 +62,22 @@ const parseResolverModel = model => {
     };
   }
 
+  if (typeof model.sourceType !== 'string') {
+    return {
+      success: false,
+      error: `ReferencesExtensionBuilder: Expected model.sourceType to be a string, but got: ${model.sourceType}`
+    };
+  }
+
   const sourceKey = model.sourceKeys[0];
   const targetKey = model.targetKeys[0];
   const query = model.targetQuery.name;
   const resolverName = model.aliasField.name;
+  const sourceType = model.sourceType;
   return {
     success: true,
     payload: {
+      sourceType,
       resolverName,
       sourceKey,
       targetKey,

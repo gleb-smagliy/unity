@@ -28,6 +28,8 @@ const createMetadataQuery = metadataQueryName => _graphqlTag.default`
     metadata: ${metadataQueryName} {
       name,
       location,
+      fieldName,
+      typeName,
       arguments {
         name,
         value
