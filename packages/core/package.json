@@ -32,10 +32,13 @@
     "url": "https://github.com/gleb-smagliy/soyuz/issues"
   },
   "dependencies": {
+    "@types/graphql": "^14.2.0",
     "apollo-link": "^1.2.8",
     "apollo-link-context": "^1.0.14",
     "apollo-link-http": "^1.5.11",
     "apollo-server": "^2.4.8",
+    "dataloader": "^1.4.0",
+    "graphql": "^14.2.1",
     "graphql-tools": "^4.0.4",
     "graphql-type-json": "^0.2.2",
     "lru-cache": "^5.1.1",

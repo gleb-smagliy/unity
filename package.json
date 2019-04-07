@@ -11,5 +11,8 @@
     "build": "lerna run build",
     "prune-peers": "lerna run prune-peers"
   },
+  "pre-commit": [
+    "before-link"
+  ],
   "dependencies": {}
 }
