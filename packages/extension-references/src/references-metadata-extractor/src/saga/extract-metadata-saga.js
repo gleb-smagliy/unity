@@ -1,71 +1,77 @@
 import { effects } from '../../../saga-runner';
+import { getRefArguments } from './get-ref-arguments';
 
-const getArgument = (args, name) =>
+function* getTargetKeys({ schema, query })
 {
-  const arg = args[name];
-
-  if(typeof(arg) !== 'object')
-  {
-    return {
-      success: false,
-      error: `Arguments <${args}> does not contain argument <${name}>`
+  return {
+    success: true,
+    payload: {
+      keys: ['ids'],
+      targetKeySubtype: 'ID!',
+      targetKeyType: '[ID!]'
     }
-  }
-
-  return {
-    success: true,
-    payload: arg.value
-  };
-};
-
-function* getType({ typeName, schema })
-{
-  const type = schema.getType(typeName);
-
-  if(type === null)
-  {
-    return {
-      success: false,
-      error: `Type <${typeName}> not found in schema`
-    };
-  }
-
-  return {
-    success: true,
-    payload: type
   };
 }
 
-function* checkFieldInUse({ type, field: fieldName })
+function* getSourceKeys({ schema, typeObject, fieldName })
 {
-  const field = type.getFields()[fieldName];
-
-  if(field !== null || field !== undefined)
-  {
-    return {
-      success: false,
-      error: `Field <${field}> alrady exists on type <${type}>`
-    }
-  }
-
   return {
-    success: true
+    success: true,
+    payload: {
+      keys: ['levelsIds'],
+      sourceKeySubtype: 'ID!',
+      sourceKeyType: '[ID!]'
+    }
+  };
+}
+
+function* getAliasField({ targetKeysDefinition, sourceKeysDefinition, aliasName })
+{
+  return {
+    success: true,
+    payload: {
+      name: aliasName,
+      type: '[Level]'
+    }
   };
 }
 
 function* processReference({ reference, servicesHash })
 {
+  const {
+    typeName,
+    fieldName,
+    args
+  } = reference;
+
+  const { aliasName, query } = yield effects.call(getRefArguments(args));
+
   const schema = servicesHash.getTransformedClientSchema();
 
-  const alias = yield effects.call(getArgument, reference.args, 'as');
-  const query = yield effects.call(getArgument, reference.args, 'query');
+  const { typeObject } = yield effects.call(getSource, { schema, typeName });
+  const targetKeysDefinition = yield effects.call(getTargetKeys, { schema, query });
+  const sourceKeysDefinition = yield effects.call(getSourceKeys, { schema, typeObject, fieldName });
 
-  const { onType, onField } = reference;
-  const type = yield call(getType, { typeName: onType, schema });
+  const aliasField = effects.call(getAliasField, { targetKeysDefinition, sourceKeysDefinition, aliasName });
 
-  yield call(checkFieldInUse, { type, field: alias });
+  const { keys: targetKeys } = targetKeysDefinition;
+  const { keys: sourceKeys } = sourceKeysDefinition;
 
-
+  return {
+    success: true,
+    payload: {
+      sourceType: typeName,
+      targetKeys,
+      targetQuery: {
+        name: query
+      },
+      sourceKeys,
+      aliasField: {
+        type: aliasField.type,
+        name: aliasField.name
+      }
+    }
+  }
 }
 
 export function* extractMetadataSaga({ servicesHash, metadataName })
@@ -75,7 +81,7 @@ export function* extractMetadataSaga({ servicesHash, metadataName })
 
   for(let reference of references)
   {
-    const { metadata } = yield call(processReference, { reference, servicesHash })
+    const { metadata } = yield call(processReference, { reference, servicesHash });
     metadatas.push(metadata);
   }
 
