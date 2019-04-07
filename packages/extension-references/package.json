@@ -45,7 +45,5 @@
   "bugs": {
     "url": "https://github.com/gleb-smagliy/soyuz/issues"
   },
-  "dependencies": {
-    "graphql": "^14.2.1"
-  }
+  "dependencies": {}
 }
