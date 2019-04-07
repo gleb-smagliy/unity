@@ -1,13 +1,18 @@
-const getMetadataArgument = (args, name) =>
-{
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getReferenceArguments = void 0;
+
+const getMetadataArgument = (args, name) => {
   const arg = args.find(a => a.name === name);
 
-  if(typeof(arg) !== 'object')
-  {
+  if (typeof arg !== 'object') {
     return {
       success: false,
       error: `Arguments <${args}> does not contain argument <${name}>`
-    }
+    };
   }
 
   return {
@@ -16,19 +21,16 @@ const getMetadataArgument = (args, name) =>
   };
 };
 
-export const getRefArguments = (args) =>
-{
+const getReferenceArguments = args => {
   const aliasNameArg = getMetadataArgument(args, 'as');
 
-  if(!aliasNameArg.success)
-  {
+  if (!aliasNameArg.success) {
     return aliasNameArg;
   }
 
   const queryArg = getMetadataArgument(args, 'query');
 
-  if(!queryArg.success)
-  {
+  if (!queryArg.success) {
     return queryArg;
   }
 
@@ -40,3 +42,5 @@ export const getRefArguments = (args) =>
     }
   };
 };
+
+exports.getReferenceArguments = getReferenceArguments;

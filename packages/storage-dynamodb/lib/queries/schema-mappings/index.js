@@ -30,7 +30,7 @@ const serviceMapper = item => ({
   id: item.ServiceId,
   schema: (0, _graphql.buildClientSchema)(item.Schema),
   args: item.Args,
-  metadata: item.Metadata,
+  metadata: item.Metadata || [],
   endpoint: item.Endpoint
 });
 

@@ -27,7 +27,8 @@ export const authorService =
   id: 'Author',
   endpoint: AUTHOR_ENDPOINT,
   args: {},
-  schema: AUTHOR_SCHEMA
+  schema: AUTHOR_SCHEMA,
+  metadata: [{ name: 'ref' }]
 };
 
 export const createAuthorService = (overrides = {}) => ({

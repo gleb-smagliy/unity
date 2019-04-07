@@ -9,7 +9,7 @@ describe('ReferencesExtensionBuilder:buildSchemaExtensions', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const result = builder.buildSchemaExtensions({ model });
+    const result = builder.buildSchemaExtensions({ model: [model] });
 
     expect(result).toBeSuccessful();
   });
@@ -18,16 +18,16 @@ describe('ReferencesExtensionBuilder:buildSchemaExtensions', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const typeDefs = builder.buildSchemaExtensions({ model: [model] }).payload.typeDefs[0];
 
-    expect(typeof(typeDefs)).toEqual('string');
+    expect(typeof(typeDefs[0])).toEqual('string');
   });
 
   it('should return valid graphql document as typeDefs', async () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const typeDefs = builder.buildSchemaExtensions({ model: [model] }).payload.typeDefs[0];
     const typeDefsAst = parse(typeDefs);
 
     expect(typeDefsAst.kind).toEqual(Kind.DOCUMENT);
@@ -37,7 +37,7 @@ describe('ReferencesExtensionBuilder:buildSchemaExtensions', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const typeDefs = builder.buildSchemaExtensions({ model: [model] }).payload.typeDefs[0];
     const { definitions } = parse(typeDefs);
 
     expect(definitions).toHaveLength(1);
@@ -47,7 +47,7 @@ describe('ReferencesExtensionBuilder:buildSchemaExtensions', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const typeDefs = builder.buildSchemaExtensions({ model: [model] }).payload.typeDefs[0];
     const { definitions: [definition] } = parse(typeDefs);
 
     expect(definition.kind).toEqual(Kind.OBJECT_TYPE_EXTENSION);
@@ -58,7 +58,7 @@ describe('ReferencesExtensionBuilder:buildSchemaExtensions', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const typeDefs = builder.buildSchemaExtensions({ model: [model] }).payload.typeDefs[0];
     const { definitions: [definition] } = parse(typeDefs);
     const { fields } = definition;
 
@@ -69,7 +69,7 @@ describe('ReferencesExtensionBuilder:buildSchemaExtensions', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { typeDefs } = builder.buildSchemaExtensions({ model }).payload;
+    const typeDefs = builder.buildSchemaExtensions({ model: [model] }).payload.typeDefs[0];
     const { definitions: [{ fields: [field] }] } = parse(typeDefs);
 
     expect(field.kind).toEqual(Kind.FIELD_DEFINITION);
@@ -81,7 +81,7 @@ describe('ReferencesExtensionBuilder:buildSchemaExtensions', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const result = builder.buildSchemaExtensions({ model });
+    const result = builder.buildSchemaExtensions({ model: [model] });
 
     expect(result).toBeFailed();
   });

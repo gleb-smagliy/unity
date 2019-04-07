@@ -36,6 +36,10 @@ const runSaga = async generator => {
     const stepValue = step.value;
 
     if (stepValue.operation === _effects.EFFECTS.CALL) {
+      if (typeof stepValue.func !== 'function') {
+        throw new Error(`Expected ${JSON.stringify(stepValue.func)} to be a function`);
+      }
+
       result = await getResult(stepValue.func(...stepValue.args));
       let nextStepArg = result;
 

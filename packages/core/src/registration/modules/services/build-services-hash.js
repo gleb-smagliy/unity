@@ -1,28 +1,4 @@
-class ServicesHash
-{
-  constructor({ servicesHash, version })
-  {
-    this.servicesHash = servicesHash;
-    this.version = version;
-  }
-
-  getServicesList = () =>
-  {
-    return Object.values(this.servicesHash);
-  };
-
-  getVersion = () =>
-  {
-    return this.version;
-  };
-
-  // pluginsMetadata: {[string]: any}
-  setPluginsMetadata = (pluginsMetadata) =>
-  {
-    this.pluginsMetadata = pluginsMetadata;
-  };
-}
-
+import { ServicesHash } from './services-hash';
 
 const servicesReducer = (hash, service) => ({
   ...hash,

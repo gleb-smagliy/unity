@@ -28,25 +28,33 @@ class ReferencesExtensionBuilder {
     });
 
     _defineProperty(this, "buildSchemaExtensions", ({
-      model
+      model: models
     }) => {
-      const buildResolvers = (0, _createResolver.createResolver)(model);
+      const resolvers = [];
+      const typeDefs = [];
 
-      if (!buildResolvers.success) {
-        return buildResolvers;
-      }
+      for (let model of models) {
+        const buildResolvers = (0, _createResolver.createResolver)(model);
 
-      const buildTypeDefs = (0, _createTypeDefs.createTypeDefs)(model);
+        if (!buildResolvers.success) {
+          return buildResolvers;
+        }
 
-      if (!buildTypeDefs.success) {
-        return buildTypeDefs;
+        resolvers.push(buildResolvers.payload);
+        const buildTypeDefs = (0, _createTypeDefs.createTypeDefs)(model);
+
+        if (!buildTypeDefs.success) {
+          return buildTypeDefs;
+        }
+
+        typeDefs.push(buildTypeDefs.payload);
       }
 
       return {
         success: true,
         payload: {
-          typeDefs: buildTypeDefs.payload,
-          resolvers: buildResolvers.payload
+          typeDefs,
+          resolvers
         }
       };
     });

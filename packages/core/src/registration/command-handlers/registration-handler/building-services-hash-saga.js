@@ -15,7 +15,7 @@ export function* buildingServicesHashByTagSaga({ tag, upsert, transform, storage
     transform
   });
 
-  servicesHash.setPluginsMetadata(servicesHash);
+  // servicesHash.setPluginsMetadata(servicesHash);
 
   return {
     success: true,

@@ -9,7 +9,7 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const result = builder.buildSchemaExtensions({ model });
+    const result = builder.buildSchemaExtensions({ model: [model] });
 
     expect(result).toBeSuccessful();
   });
@@ -18,7 +18,7 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { resolvers } = builder.buildSchemaExtensions({ model }).payload;
+    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0];
     const resolver = resolvers['levels'];
 
     expect(typeof(resolver)).toEqual('function');
@@ -28,7 +28,7 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { resolvers } = builder.buildSchemaExtensions({ model }).payload;
+    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0];
     const resolver = resolvers[model.aliasField.name];
 
     const parent = {
@@ -48,7 +48,7 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { resolvers } = builder.buildSchemaExtensions({ model }).payload;
+    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0];
     const resolver = resolvers[model.aliasField.name];
 
     const parent = {
@@ -70,7 +70,7 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { resolvers } = builder.buildSchemaExtensions({ model }).payload;
+    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0];
     const resolver = resolvers[model.aliasField.name];
 
     const parent = {
@@ -90,7 +90,7 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const { resolvers } = builder.buildSchemaExtensions({ model }).payload;
+    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0];
     const resolver = resolvers[model.aliasField.name];
 
     const parent = {
@@ -114,7 +114,7 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
 
     const builder = new ReferencesExtensionBuilder();
 
-    const result = builder.buildSchemaExtensions({ model });
+    const result = builder.buildSchemaExtensions({ model: [model] });
 
     expect(result).toBeFailed();
   });

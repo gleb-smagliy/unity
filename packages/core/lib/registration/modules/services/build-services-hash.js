@@ -5,30 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.buildServicesHash = void 0;
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-class ServicesHash {
-  constructor({
-    servicesHash,
-    version
-  }) {
-    _defineProperty(this, "getServicesList", () => {
-      return Object.values(this.servicesHash);
-    });
-
-    _defineProperty(this, "getVersion", () => {
-      return this.version;
-    });
-
-    _defineProperty(this, "setPluginsMetadata", pluginsMetadata => {
-      this.pluginsMetadata = pluginsMetadata;
-    });
-
-    this.servicesHash = servicesHash;
-    this.version = version;
-  }
-
-}
+var _servicesHash = require("./services-hash");
 
 const servicesReducer = (hash, service) => ({ ...hash,
   [service.id]: service
@@ -50,7 +27,7 @@ const buildServicesHash = ({
   const servicesHash = hashingServices.payload;
   return {
     success: true,
-    payload: new ServicesHash({
+    payload: new _servicesHash.ServicesHash({
       servicesHash,
       version
     })

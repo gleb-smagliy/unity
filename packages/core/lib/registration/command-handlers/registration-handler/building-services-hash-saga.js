@@ -29,8 +29,8 @@ function* buildingServicesHashByTagSaga({
     version,
     upsert,
     transform
-  });
-  servicesHash.setPluginsMetadata(servicesHash);
+  }); // servicesHash.setPluginsMetadata(servicesHash);
+
   return {
     success: true,
     payload: servicesHash

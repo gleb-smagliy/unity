@@ -15,7 +15,6 @@ const getResult = async (value) =>
     default:
       return value;
   }
-
 };
 
 const isOperationResult = value => typeof(value.success) === 'boolean';
@@ -33,6 +32,11 @@ export const runSaga = async (generator) =>
 
     if(stepValue.operation === EFFECTS.CALL)
     {
+      if(typeof(stepValue.func) !== 'function')
+      {
+        throw new Error(`Expected ${JSON.stringify(stepValue.func)} to be a function`);
+      }
+
       result = await getResult(stepValue.func(...stepValue.args));
 
       let nextStepArg = result;

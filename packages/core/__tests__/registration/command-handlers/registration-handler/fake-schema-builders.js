@@ -13,9 +13,10 @@ export const USER_SCHEMA = buildFakeClientSchema(`
   }
 `);
 
-export const SOME_SERVICE_METADATA = {
+export const SOME_SERVICE_METADATA = [{
+  name: 'some_metadata_name',
   'SOME_SERVICE_METADATA_KEY': 'SOME_SERVICE_METADATA_VALUE'
-};
+}];
 
 export const DEFAULT_BUILDER = {
   name: 'graphql',

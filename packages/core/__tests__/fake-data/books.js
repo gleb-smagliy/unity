@@ -26,7 +26,8 @@ export const bookService =
   id: 'Book',
   endpoint: BOOK_ENDPOINT,
   args: {},
-  schema: BOOK_SCHEMA
+  schema: BOOK_SCHEMA,
+  metadata: [{ name: 'ref' }]
 };
 
 export const createBookService = (overrides = {}) => ({

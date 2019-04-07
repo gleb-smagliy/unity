@@ -20,27 +20,37 @@ export class ReferencesExtensionBuilder
     });
   };
 
-  buildSchemaExtensions = ({ model }) =>
+  buildSchemaExtensions = ({ model: models }) =>
   {
-    const buildResolvers = createResolver(model);
+    const resolvers = [];
+    const typeDefs = [];
 
-    if(!buildResolvers.success)
+    for(let model of models)
     {
-      return buildResolvers;
-    }
+      const buildResolvers = createResolver(model);
 
-    const buildTypeDefs = createTypeDefs(model);
+      if(!buildResolvers.success)
+      {
+        return buildResolvers;
+      }
 
-    if(!buildTypeDefs.success)
-    {
-      return buildTypeDefs;
+      resolvers.push(buildResolvers.payload);
+
+      const buildTypeDefs = createTypeDefs(model);
+
+      if(!buildTypeDefs.success)
+      {
+        return buildTypeDefs;
+      }
+
+      typeDefs.push(buildTypeDefs.payload);
     }
 
     return {
       success: true,
       payload: {
-        typeDefs: buildTypeDefs.payload,
-        resolvers: buildResolvers.payload
+        typeDefs,
+        resolvers
       }
     };
   };
