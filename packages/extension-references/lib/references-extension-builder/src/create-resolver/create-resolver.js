@@ -27,7 +27,7 @@ const createResolver = model => {
     targetKey
   } = parseResult.payload;
 
-  const resolver = async (parent, args, context, info) => {
+  const resolve = async (parent, args, context, info) => {
     const sourceFieldValues = parent[sourceKey];
     const schema = (0, _core.getSchemaFromContext)(context);
 
@@ -56,7 +56,10 @@ const createResolver = model => {
     success: true,
     payload: {
       [sourceType]: {
-        [model.aliasField.name]: resolver
+        [model.aliasField.name]: {
+          fragment: `... on ${sourceType} { ${sourceKey} }`,
+          resolve
+        }
       }
     }
   };
