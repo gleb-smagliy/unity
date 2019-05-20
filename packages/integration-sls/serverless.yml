@@ -1,0 +1,125 @@
+service: GraphqlDispatcher
+
+frameworkVersion: ">=1.11.0 <2.0.0"
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-plugin-additional-stacks
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: us-east-1
+  type: ${opt:type, 'local'}
+  stage: ${opt:stage, self:provider.type}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        Fn::ImportValue: GraphqlDispatcher-Schemas-Table-Arn
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        Fn::ImportValue: GraphqlDispatcher-Tags-Table-Arn
+  environment:
+    STAGE: ${self:provider.stage}
+    SCHEMAS_TABLE: Schemas
+    TAGS_TABLE: Tags
+    DYNAMODB_PORT: ${self:custom.dynamodb.start.port}
+
+
+functions:
+  Request:
+    name: Request
+    handler: src/dispatcher/request.handler
+    events:
+      - http:
+          path: /
+          method: post
+          cors: true
+      - http:
+          path: /
+          method: get
+          cors: true
+  Registration:
+    name: Registration
+    handler: src/dispatcher/registration.handler
+    events:
+      - http:
+          path: registration
+          method: post
+          cors: true
+      - http:
+          path: registration
+          method: get
+          cors: true
+
+custom:
+  dynamodb:
+    start:
+      port: 8874
+      inMemory: true
+      migrate: true
+  additionalStacks:
+    dynamodb:
+      Deploy: Before
+      Outputs:
+        SchemasDynamodbTableArn:
+          Value:
+            Fn::GetAtt:
+              - SchemasDynamodbTable
+              - Arn
+          Export:
+            Name: GraphqlDispatcher-Schemas-Table-Arn
+        TagsDynamodbTableArn:
+          Value:
+            Fn::GetAtt:
+              - TagsDynamodbTable
+              - Arn
+          Export:
+            Name: GraphqlDispatcher-Tags-Table-Arn
+      Resources:
+        SchemasDynamodbTable:
+          Type: 'AWS::DynamoDB::Table'
+          Properties:
+            AttributeDefinitions:
+              - AttributeName: Version
+                AttributeType: S
+              - AttributeName: Id
+                AttributeType: S
+            KeySchema:
+              - AttributeName: Version
+                KeyType: HASH
+              - AttributeName: Id
+                KeyType: RANGE
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+            TableName: ${self:provider.environment.SCHEMAS_TABLE}
+        TagsDynamodbTable:
+          Type: 'AWS::DynamoDB::Table'
+          Properties:
+            AttributeDefinitions:
+              - AttributeName: Tag
+                AttributeType: S
+            KeySchema:
+              - AttributeName: Tag
+                KeyType: HASH
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+            TableName: ${self:provider.environment.TAGS_TABLE}
+

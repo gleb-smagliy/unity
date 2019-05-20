@@ -1,0 +1,43 @@
+{
+  "name": "@soyuz/integration-sls",
+  "version": "0.1.1",
+  "description": "Integration with serverless framework",
+  "author": "Gleb Smagliy <glebsmag@gmail.com>",
+  "homepage": "https://github.com/gleb-smagliy/soyuz#readme",
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "private": true,
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gleb-smagliy/soyuz.git"
+  },
+  "scripts": {
+    "start:dev": "node --preserve-symlinks ./node_modules/serverless/bin/serverless offline start",
+    "start": "serverless dynamodb install && serverless offline start"
+  },
+  "bugs": {
+    "url": "https://github.com/gleb-smagliy/soyuz/issues"
+  },
+  "devDependencies": {
+    "@soyuz/core": "^0.1.0",
+    "@soyuz/extension-references": "^0.1.1",
+    "@soyuz/schema-builder-graphql": "^0.1.0",
+    "@soyuz/storage-dynamodb": "^0.1.0",
+    "@soyuz/versioning-incremental": "^0.1.0",
+    "serverless": "^1.43.0",
+    "serverless-dynamodb-local": "0.2.35",
+    "serverless-offline": "^4.10.5",
+    "serverless-plugin-additional-stacks": "^1.2.0"
+  },
+  "dependencies": {
+    "apollo-server-lambda": "^2.5.0",
+    "graphql": "^14.3.0"
+  }
+}
