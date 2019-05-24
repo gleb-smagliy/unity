@@ -27,14 +27,8 @@ const createPayload = ({ args } = {}) => ({
     endpoint: 'localhost'
   }],
   pluginsMetadata: {
-    'extension_builder': {
-      pluginName: 'extension_builder',
-      metadata: { testKey1: 'test_value_1' }
-    },
-    'schema_transformer': {
-      pluginName: 'schema_transformer',
-      metadata: { testKey2: 'test_value_2' }
-    },
+    'extension_builder': { testKey1: 'test_value_1' },
+    'schema_transformer': { testKey2: 'test_value_2' }
   }
 });
 

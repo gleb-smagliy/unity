@@ -20,7 +20,14 @@ const pluginMetadataReducer = (result, item) =>
     result[pluginName] = [];
   }
 
-  result[pluginName].push(...metadata);
+  if(Array.isArray(metadata))
+  {
+    result[pluginName].push(...metadata);
+  }
+  else
+  {
+    result[pluginName].push(metadata);
+  }
 
   return result;
 };

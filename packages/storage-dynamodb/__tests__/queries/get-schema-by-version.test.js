@@ -14,7 +14,7 @@ const runQuery = async ({ docClient, version }) => {
 
 describe('getSchemaByVersionQuery', () =>
 {
-  it.only('should return success with properly mapped services if dynamodb query resolves successfully', async () =>
+  it('should return success with properly mapped services if dynamodb query resolves successfully', async () =>
   {
     const docClient = createSuccessfulQueryClient(SCHEMA_TABLE);
     const result = await runQuery({ docClient, version });
@@ -36,14 +36,9 @@ describe('getSchemaByVersionQuery', () =>
     const docClient = createSuccessfulQueryClient(SCHEMA_TABLE);
     const result = await runQuery({ docClient, version });
 
-    const expectedMetadata = {
-      pluginName: PLUGIN_METADATA.PluginName,
-      metadata: PLUGIN_METADATA.Metadata
-    };
-
     expect(result).toBeSuccessful();
     expect(result.payload.pluginsMetadata).toEqual({
-      [PLUGIN_METADATA.PluginName]: expectedMetadata
+      [PLUGIN_METADATA.PluginName]: [PLUGIN_METADATA.Metadata]
     });
   });
 
