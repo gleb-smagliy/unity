@@ -8,6 +8,7 @@
     "before-link": "lerna bootstrap && npm run install-peers && npm run test && npm run build && npm run prune-peers",
     "install-peers": "lerna run install-peers",
     "test": "lerna run test",
+    "test:int": "lerna run test:integration",
     "build": "lerna run build",
     "prune-peers": "lerna run prune-peers"
   },

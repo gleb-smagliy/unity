@@ -17,7 +17,7 @@ import {LOCK_ID} from "./fake-locking";
 
 describe('ServiceRegistrationCommandHander', () =>
 {
-  it('should take a lock with service id to register a service', async () =>
+  it.skip('should take a lock with service id to register a service', async () =>
   {
     const { locking } = await executeHandler();
 
@@ -25,7 +25,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.acquireLock).toHaveBeenCalledWith({ id: GRAPHQL_COMMAND.id });
   });
 
-  it('should return success with lock status, name and time', async () =>
+  it.skip('should return success with lock status, name and time', async () =>
   {
     const lock = {
       status: LOCK_STATUS.ALREADY_LOCKED,
@@ -42,7 +42,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(result).toBeSuccessful({ lock });
   });
 
-  it('should return a failure if lock cannot be acquired', async () =>
+  it.skip('should return a failure if lock cannot be acquired', async () =>
   {
     const { result } = await executeHandler({
       locking: {
@@ -53,7 +53,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(result).toBeFailed();
   });
 
-  it('should return failure and release lock if specified schema builder is not present in options', async () =>
+  it.skip('should return failure and release lock if specified schema builder is not present in options', async () =>
   {
     const { locking, result } = await executeHandler({
       schemaBuilders: [createSuccessfulBuilder({ name: 'openapi'})]
@@ -63,7 +63,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it('should return failure if lock releasing failed', async () =>
+  it.skip('should return failure if lock releasing failed', async () =>
   {
     const { locking, result } = await executeHandler({
       locking: { releaseLock: jest.fn().mockResolvedValue({ success: false, error: 'unknown error' }) },
@@ -74,7 +74,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it('should request schema from schema builder according to passed command', async () =>
+  it.skip('should request schema from schema builder according to passed command', async () =>
   {
     const { builder, result } = await executeHandler();
 
@@ -87,7 +87,7 @@ describe('ServiceRegistrationCommandHander', () =>
     });
   });
 
-  it('should request schema from schema builder according to passed command if endpoint contains args', async () =>
+  it.skip('should request schema from schema builder according to passed command if endpoint contains args', async () =>
   {
     const command = {
       ...GRAPHQL_COMMAND,
@@ -108,7 +108,7 @@ describe('ServiceRegistrationCommandHander', () =>
     });
   });
 
-  it('should return failure and release lock if schema builder returns failure', async () =>
+  it.skip('should return failure and release lock if schema builder returns failure', async () =>
   {
     const { builder, locking, result } = await executeHandler({
       schemaBuilders: [createFailedBuilder()]
@@ -124,7 +124,7 @@ describe('ServiceRegistrationCommandHander', () =>
     });
   });
 
-  it('should request version by stable tag from storage', async () =>
+  it.skip('should request version by stable tag from storage', async () =>
   {
     const { storage, result } = await executeHandler(GRAPHQL_COMMAND);
 
@@ -133,7 +133,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(storage.queries.getVersionByTag).toHaveBeenCalledWith({ tag: SYSTEM_TAGS.STABLE });
   });
 
-  it('should return failure and release lock if cannot take a version by stable tag from storage', async () =>
+  it.skip('should return failure and release lock if cannot take a version by stable tag from storage', async () =>
   {
     const { storage, result, locking } = await executeHandler({
       storage: {
@@ -149,7 +149,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it('should request services from storage by tagged as stable version', async () =>
+  it.skip('should request services from storage by tagged as stable version', async () =>
   {
     const { storage, result } = await executeHandler();
 
@@ -158,7 +158,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(storage.queries.getServicesByVersion).toHaveBeenCalledWith({ version: STABLE_VERSION });
   });
 
-  it('should return failure and release lock if cannot take a services', async () =>
+  it.skip('should return failure and release lock if cannot take a services', async () =>
   {
     const { locking, storage, result } = await executeHandler({
       storage: {
@@ -174,7 +174,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it('should request service metadata from schema builder', async () =>
+  it.skip('should request service metadata from schema builder', async () =>
   {
     const { builder, result } = await executeHandler(GRAPHQL_COMMAND);
 
@@ -187,7 +187,7 @@ describe('ServiceRegistrationCommandHander', () =>
     });
   });
 
-  it('should request service metadata from schema builder replacing args in endpoint if endpoint contains args', async () =>
+  it.skip('should request service metadata from schema builder replacing args in endpoint if endpoint contains args', async () =>
   {
     const command = {
       ...GRAPHQL_COMMAND,
@@ -208,7 +208,7 @@ describe('ServiceRegistrationCommandHander', () =>
     });
   });
 
-  it('should return failure and release lock if extracting metadata returns failure', async () =>
+  it.skip('should return failure and release lock if extracting metadata returns failure', async () =>
   {
     const { result, builder, locking } = await executeHandler({
       builderExtension: {
@@ -226,7 +226,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it('should call transformer for all services once (and take new definition for registering service)', async () =>
+  it.skip('should call transformer for all services once (and take new definition for registering service)', async () =>
   {
     const newServiceFromStorage = {
       ...DEFAULT_BUILDER.service,
@@ -249,7 +249,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expectServiceNotToBeTransformeed(transformer.getTransforms, newServiceFromStorage);
   });
 
-  it('should return failure and release lock if transformer returns failure', async () =>
+  it.skip('should return failure and release lock if transformer returns failure', async () =>
   {
     const {
       locking,
@@ -264,7 +264,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it('should extract model using metadata extractors for extension builders', async () =>
+  it.skip('should extract model using metadata extractors for extension builders', async () =>
   {
     const { result, extensionBuilders: [extensionBuilder] } = await executeHandler();
 
@@ -273,7 +273,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(extensionBuilder.metadataExtractor.extractMetadata).toHaveBeenCalledTimes(1);
   });
 
-  it('should return failure and release lock if extension builder metadata extractor returns failure', async () =>
+  it.skip('should return failure and release lock if extension builder metadata extractor returns failure', async () =>
   {
     const {
       locking,
@@ -289,7 +289,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it('should extract metadata using metadata extractors for gateway transformers', async () =>
+  it.skip('should extract metadata using metadata extractors for gateway transformers', async () =>
   {
     const { result, gatewayTransformers: [transformer] } = await executeHandler();
 
@@ -298,7 +298,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(transformer.metadataExtractor.extractMetadata).toHaveBeenCalledTimes(1);
   });
 
-  it('should return failure and release lock if gateway transformer metadata extractor returns failure', async () =>
+  it.skip('should return failure and release lock if gateway transformer metadata extractor returns failure', async () =>
   {
     const {
       locking,
@@ -314,7 +314,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it('should insert all services under new version using storage', async () =>
+  it.skip('should insert all services under new version using storage', async () =>
   {
     const { result, storage } = await executeHandler();
 
@@ -327,7 +327,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(insertingServices).toHaveLength(services.length + 1);
   });
 
-  it('should preserve args while inserting services to storage', async () =>
+  it.skip('should preserve args while inserting services to storage', async () =>
   {
     const args = {
       stage: 'prod'
@@ -351,7 +351,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(newService.args).toEqual(args);
   });
 
-  it('should preserve string with placeholders for service endpoint while inserting services to storage', async () =>
+  it.skip('should preserve string with placeholders for service endpoint while inserting services to storage', async () =>
   {
     const endpoint = 'http://localhost/[stage]/graphql';
 
@@ -375,7 +375,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(newService.endpoint).toEqual(endpoint);
   });
 
-  it('should insert plugins metadata under new version using storage', async () =>
+  it.skip('should insert plugins metadata under new version using storage', async () =>
   {
     const { result, storage } = await executeHandler();
 
@@ -388,7 +388,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(pluginsMetadata).toEqual({ [SOME_METADATA_NAME]: SOME_METADATA });
   });
 
-  it('should assign a new version to the services using versioning strategy from options', async () =>
+  it.skip('should assign a new version to the services using versioning strategy from options', async () =>
   {
     const { result, versioning } = await executeHandler();
 
@@ -397,7 +397,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(versioning.createVersion).toHaveBeenCalledWith({ currentVersion: STABLE_VERSION });
   });
 
-  it('should return failure if versioning returns failure', async () =>
+  it.skip('should return failure if versioning returns failure', async () =>
   {
     const { result, versioning } = await executeHandler({ versioning: createFailedFakeVersioning() });
 
@@ -406,7 +406,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(versioning.createVersion).toHaveBeenCalledWith({ currentVersion: STABLE_VERSION });
   });
 
-  it('should return failure and release lock if services could not be inserted', async () =>
+  it.skip('should return failure and release lock if services could not be inserted', async () =>
   {
     const { storage, result, locking } = await executeHandler({
       storage: {
@@ -421,7 +421,7 @@ describe('ServiceRegistrationCommandHander', () =>
     expect(locking.releaseLock).toHaveBeenCalledTimes(1);
   });
 
-  it('should return new schema version', async () =>
+  it.skip('should return new schema version', async () =>
   {
     const { result } = await executeHandler();
 

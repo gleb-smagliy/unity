@@ -43,5 +43,9 @@
   },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/soyuz/issues"
+  },
+  "dependencies": {
+    "@soyuz/core": "^0.1.0",
+    "graphql": "^14.3.1"
   }
 }

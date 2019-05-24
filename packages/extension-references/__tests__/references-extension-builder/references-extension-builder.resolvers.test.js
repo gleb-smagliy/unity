@@ -14,12 +14,13 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
     expect(result).toBeSuccessful();
   });
 
-  it('should return resolver for alias field, which is a function', async () =>
+  it.only('should return resolver for alias field, which is a function', async () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0];
-    const resolver = resolvers['levels'];
+    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0][model.sourceType];
+
+    const resolver = resolvers['levels'].resolve;
 
     expect(typeof(resolver)).toEqual('function');
   });
@@ -28,8 +29,8 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0];
-    const resolver = resolvers[model.aliasField.name];
+    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0][model.sourceType];
+    const resolver = resolvers[model.aliasField.name].resolve;
 
     const parent = {
       levelsIds: [1, 2, 3]
@@ -48,8 +49,8 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0];
-    const resolver = resolvers[model.aliasField.name];
+    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0][model.sourceType];
+    const resolver = resolvers[model.aliasField.name].resolve;
 
     const parent = {
       levelsIds: [1, 2, 3]
@@ -70,8 +71,8 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0];
-    const resolver = resolvers[model.aliasField.name];
+    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0][model.sourceType];
+    const resolver = resolvers[model.aliasField.name].resolve;
 
     const parent = {
       levelsIds: 1
@@ -90,8 +91,8 @@ describe('ReferencesExtensionBuilder::resolvers', () =>
   {
     const builder = new ReferencesExtensionBuilder();
 
-    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0];
-    const resolver = resolvers[model.aliasField.name];
+    const resolvers = builder.buildSchemaExtensions({ model: [model] }).payload.resolvers[0][model.sourceType];
+    const resolver = resolvers[model.aliasField.name].resolve;
 
     const parent = {
       levelsIds: 1

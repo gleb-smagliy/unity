@@ -3,8 +3,8 @@ import { execute } from '../execute-dynamodb-operation';
 
 const createQueryParams = ({ version, tableName }) => ({
   TableName: tableName,
-  FilterExpression: 'Version = :version and SchemaItemType = :type',
-  ExpressionAttributeValues:{
+  KeyConditionExpression: 'Version = :version and begins_with(Id, :type)',
+  ExpressionAttributeValues: {
     ':version': version,
     ':type': ITEM_TYPE.SERVICE
   },
@@ -16,5 +16,5 @@ export const createGetServicesByVersionQuery = ({ docClient, tableName }) => asy
 {
   const params = createQueryParams({ version, tableName });
 
-  return execute(docClient.scan(params), { transformPayload: toServices, transformError });
+  return execute(docClient.query(params), { transformPayload: toServices, transformError });
 };
