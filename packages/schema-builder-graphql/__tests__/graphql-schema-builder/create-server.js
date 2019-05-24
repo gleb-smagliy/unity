@@ -8,6 +8,8 @@ export const METADATA = [
     "__typename": "Metadata",
     "name": "key",
     "location": "OBJECT_TYPE",
+    "typeName": "User",
+    "fieldName": null,
     "arguments": [
       {
         "__typename": "MetadataArgument",
@@ -20,6 +22,8 @@ export const METADATA = [
     "__typename": "Metadata",
     "name": "ref",
     "location": "OBJECT_FIELD",
+    "fieldName": "firstName",
+    "typeName": "User",
     "arguments": [
       {
         "__typename": "MetadataArgument",
@@ -64,6 +68,8 @@ const metadataTypeDefs = (metadataQueryName) => `
   type Metadata {
     name: String,
     location: String
+    fieldName: String
+    typeName: String
     arguments: [MetadataArgument] 
   }
 `;

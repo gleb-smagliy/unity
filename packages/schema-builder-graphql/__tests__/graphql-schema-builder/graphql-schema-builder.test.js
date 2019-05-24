@@ -1,6 +1,7 @@
 import { createServer, typeDefs } from './create-server';
 import { GraphqlSchemaBuilder, DEFAULT_OPTIONS } from '../../src/graphql-schema-builder/graphql-schema-builder';
 import { parse, Kind, introspectionFromSchema, buildClientSchema, buildSchema } from 'graphql';
+import wait from 'waait';
 
 const id = 'TEST_SERVICE';
 
@@ -125,6 +126,10 @@ describe('GraphqlSchemaBuilder', () =>
     const metadataQueryName = 'metaQueryName';
     const builder = new GraphqlSchemaBuilder({ metadataQueryName });
     const { endpoint, metadata } = await createServer({ ...DEFAULT_OPTIONS, metadataQueryName });
+
+    // await wait(100000);
+    //
+    // console.log('endpoint:', endpoint);
 
     const result = await builder.extractMetadata({ id, endpoint });
 
