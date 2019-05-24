@@ -14,7 +14,7 @@ const createQueryParams = ({
   tableName
 }) => ({
   TableName: tableName,
-  FilterExpression: 'Version = :version and SchemaItemType = :type',
+  KeyConditionExpression: 'Version = :version and begins_with(Id, :type)',
   ExpressionAttributeValues: {
     ':version': version,
     ':type': _schemaMappings.ITEM_TYPE.SERVICE
@@ -33,7 +33,7 @@ const createGetServicesByVersionQuery = ({
     version,
     tableName
   });
-  return (0, _executeDynamodbOperation.execute)(docClient.scan(params), {
+  return (0, _executeDynamodbOperation.execute)(docClient.query(params), {
     transformPayload: _schemaMappings.toServices,
     transformError
   });
