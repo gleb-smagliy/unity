@@ -16,7 +16,7 @@ const toServiceItem = (version, service) =>
     Id: `${ITEM_TYPE.SERVICE}/${serviceId}`,
     SchemaItemType: ITEM_TYPE.SERVICE,
     ServiceId: serviceId,
-    Schema: introspectionFromSchema(service.schema),
+    Schema: JSON.stringify(introspectionFromSchema(service.schema)),
     Metadata: service.metadata,
     Endpoint: service.endpoint,
     Args: args

@@ -25,7 +25,7 @@ const toServiceItem = (version, service) => {
     Id: `${_schemaMappings.ITEM_TYPE.SERVICE}/${serviceId}`,
     SchemaItemType: _schemaMappings.ITEM_TYPE.SERVICE,
     ServiceId: serviceId,
-    Schema: (0, _graphql.introspectionFromSchema)(service.schema),
+    Schema: JSON.stringify((0, _graphql.introspectionFromSchema)(service.schema)),
     Metadata: service.metadata,
     Endpoint: service.endpoint,
     Args: args
