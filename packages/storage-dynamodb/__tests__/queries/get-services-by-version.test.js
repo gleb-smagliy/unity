@@ -24,7 +24,7 @@ describe('getServicesByVersionQuery', () =>
     expect(result).toBeSuccessful([
       {
         id: SERVICE.ServiceId,
-        schema: buildClientSchema(SERVICE.Schema),
+        schema: buildClientSchema(JSON.parse(SERVICE.Schema)),
         args: SERVICE.Args,
         metadata: SERVICE.Metadata,
         endpoint: SERVICE.Endpoint

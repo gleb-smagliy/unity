@@ -21,7 +21,7 @@ const createPayload = ({ args } = {}) => ({
   version: 'some_version',
   services: [{
     id: 'User',
-    schema: buildClientSchema(SERVICE.Schema),
+    schema: buildClientSchema(JSON.parse(SERVICE.Schema)),
     metadata: [{ dummy: 321 }],
     args,
     endpoint: 'localhost'
@@ -38,7 +38,7 @@ const createPutRequests = ({ args }) => ({
     Id: 'SERVICE/User',
     SchemaItemType: 'SERVICE',
     ServiceId: 'User',
-    Schema: introspectionFromSchema(buildClientSchema(SERVICE.Schema)),
+    Schema: JSON.stringify(introspectionFromSchema(buildClientSchema(JSON.parse(SERVICE.Schema)))),
     Metadata: [{ dummy: 321 }],
     Endpoint: 'localhost',
     Args: args

@@ -5,11 +5,11 @@ export const SERVICE = {
   Id: "SERVICE/User", // SortKey
   SchemaItemType: "SERVICE",
   ServiceId: "User",
-  Schema: buildFakeClientSchema(`
+  Schema: JSON.stringify(buildFakeClientSchema(`
       type Query {
         dummy: String
       }
-    `),
+    `)),
   Metadata: [
     {
       name: 'ref', location: 'OBJECT_FIELD',
