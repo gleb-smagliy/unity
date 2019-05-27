@@ -37,6 +37,7 @@ const createGetSchemaByVersionQuery = ({
     version,
     tableName
   });
+  console.log('GetSchemaByVersionQuery::params:', params);
   return (0, _executeDynamodbOperation.execute)(docClient.query(params), {
     transformPayload,
     transformError

@@ -54,16 +54,16 @@ functions:
           path: /
           method: get
           cors: true
-  Registration:
-    name: Registration
+  Register:
+    name: Register
     handler: src/dispatcher/registration.handler
     events:
       - http:
-          path: registration
+          path: register
           method: post
           cors: true
       - http:
-          path: registration
+          path: register
           method: get
           cors: true
 
@@ -73,6 +73,8 @@ custom:
       port: 8874
       inMemory: true
       migrate: true
+  serverless-offline:
+    port: ${opt:offlinePort, '3003'}
   additionalStacks:
     dynamodb:
       Deploy: Before

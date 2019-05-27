@@ -19,6 +19,8 @@ export const execute = async (operation, {
   }
   catch(err)
   {
+    console.log(err.stack);
+
     return {
       success: false,
       error: transformError(err)
