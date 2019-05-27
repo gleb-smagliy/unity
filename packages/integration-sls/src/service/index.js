@@ -3,45 +3,7 @@ const { makeExecutableSchema } = require('graphql-tools');
 const { ApolloServer } = require('apollo-server-express');
 const GraphQLJSON  = require('graphql-type-json');
 
-const METADATA = [
-  {
-    "__typename": "Metadata",
-    "name": "key",
-    "location": "OBJECT_TYPE",
-    "typeName": "User",
-    "fieldName": null,
-    "arguments": [
-      {
-        "__typename": "MetadataArgument",
-        "name": "fields",
-        "value": ["id", "name"]
-      }
-    ]
-  },
-  {
-    "__typename": "Metadata",
-    "name": "ref",
-    "location": "OBJECT_FIELD",
-    "fieldName": "firstName",
-    "typeName": "User",
-    "arguments": [
-      {
-        "__typename": "MetadataArgument",
-        "name": "query",
-        "value": "friendById"
-      },
-      {
-        "__typename": "MetadataArgument",
-        "name": "as",
-        "value": "friend"
-      }
-    ]
-  }
-];
-
 const typeDefs = `
-  scalar JSON
-  
   type User {
     id: ID!
     someCount: Int!
@@ -55,25 +17,6 @@ const typeDefs = `
   }
 `;
 
-const metadataTypeDefs = (metadataQueryName) => `
-  extend type Query {
-    ${metadataQueryName}: [Metadata]
-  }
-  
-  type MetadataArgument {
-    name: String
-    value: JSON
-  }
-  
-  type Metadata {
-    name: String,
-    location: String
-    fieldName: String
-    typeName: String
-    arguments: [MetadataArgument] 
-  }
-`;
-
 const resolvers = (metadataQueryName, { includeMetadata, metadata }) =>
 {
   const resolversMap ={
@@ -84,8 +27,7 @@ const resolvers = (metadataQueryName, { includeMetadata, metadata }) =>
         lastName: 'Not existent last name',
         someCount: 123
       })
-    },
-    JSON: GraphQLJSON
+    }
   };
 
   if(includeMetadata)

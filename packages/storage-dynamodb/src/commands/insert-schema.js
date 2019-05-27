@@ -11,16 +11,18 @@ const toServiceItem = (version, service) =>
   const serviceId = service.id;
   const args = service.args || {};
 
-  return {
+  const ret = {
     Version: version,
     Id: `${ITEM_TYPE.SERVICE}/${serviceId}`,
     SchemaItemType: ITEM_TYPE.SERVICE,
     ServiceId: serviceId,
-    Schema: introspectionFromSchema(service.schema),
+    Schema: JSON.stringify(introspectionFromSchema(service.schema)),
     Metadata: service.metadata,
     Endpoint: service.endpoint,
     Args: args
   };
+
+  return ret;
 };
 
 const toPluginMetadataItem = (pluginName, version, pluginMetadata) =>
