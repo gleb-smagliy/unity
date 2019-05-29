@@ -17,26 +17,16 @@ const typeDefs = `
   }
 `;
 
-const resolvers = (metadataQueryName, { includeMetadata, metadata }) =>
-{
-  const resolversMap ={
-    Query: {
-      me: () => ({
-        id: 1,
-        firstName: 'Not existent first name',
-        lastName: 'Not existent last name',
-        someCount: 123
-      })
-    }
-  };
-
-  if(includeMetadata)
-  {
-    resolversMap.Query[metadataQueryName] = () => metadata;
+const resolvers = () => ({
+  Query: {
+    me: () => ({
+      id: 1,
+      firstName: 'Not existent first name',
+      lastName: 'Not existent last name',
+      someCount: 123
+    })
   }
-
-  return resolversMap;
-};
+});
 
 const runServer = (server, path, port) =>
 {
@@ -53,14 +43,11 @@ const runServer = (server, path, port) =>
   })
 };
 
-const createServer = async ({ metadataQueryName = "_metadata", port = 0 } = {}, { includeMetadata = true, metadata = METADATA, path = '/graphql' } = {}) =>
+const createServer = async ({ port = 0 } = {}, { path = '/graphql' } = {}) =>
 {
   const schema = makeExecutableSchema({
-    typeDefs: includeMetadata ?
-      [typeDefs, metadataTypeDefs(metadataQueryName)] :
-      typeDefs,
-    resolvers: resolvers(metadataQueryName, { metadata, includeMetadata }),
-    resolverValidationOptions: { requireResolversForResolveType: false }
+    typeDefs,
+    resolvers: resolvers()
   });
 
   const server = new ApolloServer({ schema, playground: true });
@@ -69,13 +56,11 @@ const createServer = async ({ metadataQueryName = "_metadata", port = 0 } = {}, 
 
   return {
     endpoint,
-    metadata,
     schema
   }
 };
 
 module.exports = {
-  METADATA,
   createServer,
   typeDefs
 };
