@@ -3,6 +3,7 @@ import { HttpLink } from 'apollo-link-http';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from "apollo-cache-inmemory";
 const { createApolloClient } = require('./create-apollo-client');
+const { REGISTER } = require('./mutations');
 
 class SoyuzClient
 {

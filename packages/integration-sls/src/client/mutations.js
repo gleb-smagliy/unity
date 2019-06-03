@@ -11,3 +11,7 @@ const REGISTER = gql`
     }
   }
 `;
+
+module.exports = {
+    REGISTER
+};
