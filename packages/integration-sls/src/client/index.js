@@ -1,45 +1,53 @@
-import fetch from 'node-fetch';
-import { HttpLink } from 'apollo-link-http';
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from "apollo-cache-inmemory";
 const { createApolloClient } = require('./create-apollo-client');
 const { REGISTER } = require('./mutations');
 
-class SoyuzClient
-{
-  constructor({ endpoint })
-  {
+class SoyuzClient {
+  constructor({ endpoint }) {
     this.register = this.register.bind(this);
 
-    this.apolloClient = createApolloClient({ endpoint });
+    this.apolloClient = createApolloClient({endpoint});
   }
 
   async register({ service })
   {
-    const cache = new InMemoryCache();
-    const link = new HttpLink({ uri: endpoint, fetch });
-    const client = new ApolloClient({ cache, link });
-
-    let response;
-
     try
     {
-      response = await client.query({
-        query: this.metadataQuery
+      const response = await this.apolloClient.mutate({
+        mutation: REGISTER,
+        variables: {
+          service
+        }
       });
 
-      const metadata = response.data.metadata;
-
-      return {
-        success: true,
-        payload: { metadata }
-      }
+      return response.data ? response.data.registration : { success: false, error: JSON.stringify(response.error, null, 2) }
     }
     catch (e)
     {
       return {
         success: false,
-        error: `GraphqlSchemaBuilder::extractMetadata: <${e.message}>`
+        error: `SoyuzClient::register: ${e.message}`
+      }
+    }
+  }
+
+  async commit({ version })
+  {
+    try
+    {
+      const response = await this.apolloClient.mutate({
+        mutation: COMMIT,
+        variables: {
+          version
+        }
+      });
+
+      return response.data ? response.data.commit : { success: false, error: JSON.stringify(response.error, null, 2) }
+    }
+    catch (e)
+    {
+      return {
+        success: false,
+        error: `SoyuzClient::commit: ${e.message}`
       }
     }
   }

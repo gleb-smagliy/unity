@@ -1,7 +1,16 @@
-'use strict';
+const { startDispatcher } = require('../src/startup');
 
-const integrationTesting = require('..');
+describe('Dispatcher on AWS', () =>
+{
+  let service = {};
 
-describe('integration-sls', () => {
-    it('needs tests');
+  beforeEach(async () =>
+  {
+    service = await startDispatcher({ debug: true });
+  });
+
+  it('should run', () =>
+  {
+    console.log('From test endpoint: ', endpoint);
+  });
 });
