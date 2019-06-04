@@ -3,19 +3,28 @@ const { REGISTER } = require('./mutations');
 
 class SoyuzClient {
   constructor({ endpoint }) {
-    this.register = this.register.bind(this);
+    this.registerGraphqlService = this.registerGraphqlService.bind(this);
+    this.commit = this.commit.bind(this);
 
     this.apolloClient = createApolloClient({endpoint});
   }
 
-  async register({ service })
+  async registerGraphqlService({ id, endpoint }, { skipMetadata })
   {
     try
     {
       const response = await this.apolloClient.mutate({
         mutation: REGISTER,
         variables: {
-          service
+          service: {
+            id,
+            endpoint,
+            schemaBuilder: {
+              GraphqlSchemaBuilder: {
+                skipMetadata
+              }
+            }
+          }
         }
       });
 

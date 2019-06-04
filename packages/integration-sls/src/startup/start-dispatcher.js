@@ -31,7 +31,7 @@ const startDispatcher = async ({ port, debug = false } = {}) =>
   const endpoint = getEndpoint(offlinePort);
   const pattern = getStartedPattern(endpoint);
 
-  console.log('get free port:', offlinePort);
+  debug && console.log('get free port:', offlinePort);
 
   const cp = spawn('node', ['--preserve-symlinks', './node_modules/serverless/bin/serverless', 'offline', 'start', '--offlinePort', offlinePort]);
 
@@ -55,8 +55,11 @@ const startDispatcher = async ({ port, debug = false } = {}) =>
 
   cp.on('close', (code) =>
   {
-    shouldClose = true;
-    console.log(`child process on ${endpoint} exited with code ${code}`);
+    if(code !== null)
+    {
+      shouldClose = true;
+      console.log(`child process on ${endpoint} exited with code ${code}`);
+    }
   });
 
   while(tries < MAX_TRIES)
@@ -67,12 +70,14 @@ const startDispatcher = async ({ port, debug = false } = {}) =>
       {
         return {
           close: () => {
-            
+            cp.kill();
           },
-          endpoint
+          registerEndpoint: `${endpoint}/register`,
+          gatewayEndpoint: endpoint
         }
       }
       case shouldClose:
+        cp.kill();
         throw new Error('Process exited: process error');
       default:
         await wait(WAIT_INTERVAL);

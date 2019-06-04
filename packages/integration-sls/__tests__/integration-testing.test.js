@@ -1,16 +1,29 @@
-const { startDispatcher } = require('../src/startup');
+const { startDispatcher, startService } = require('../src/startup');
+const { registerNewService } = require('./register-service');
+const wait = require('waait');
 
 describe('Dispatcher on AWS', () =>
 {
-  let service = {};
+  let dispatcher = null;
+  let service = null;
 
   beforeEach(async () =>
   {
-    service = await startDispatcher({ debug: true });
+    dispatcher = await startDispatcher({ debug: false });
   });
 
-  it('should run', () =>
+  afterEach(async () => {
+    dispatcher.close();
+    service && service.close();
+  });
+
+  it('should be able to register service without metadata successfully', async () =>
   {
-    console.log('From test endpoint: ', endpoint);
+    const registration = await registerNewService(dispatcher, { skipMetadata: true });
+
+    service = registration.service;
+    const { result } = registration;
+
+    expect(result.success).toEqual(true);
   });
 });

@@ -38,29 +38,39 @@ const runServer = (server, path, port) =>
   {
     const listener = app.listen({ port }, () =>
     {
-      r(`http://localhost:${listener.address().port}${path}`);
+      r({
+        endpoint: `http://localhost:${listener.address().port}${path}`,
+        close: () => listener.close()
+      });
     });
-  })
+  });
 };
 
-const createServer = async ({ port = 0 } = {}, { path = '/graphql' } = {}) =>
+const startService = async (options = {}, { path = '/graphql' } = {}) =>
 {
+  const {
+    port = 0,
+    typeDefs: schemaTypeDefs = typeDefs,
+    resolvers: schemaResolvers = resolvers()
+  } = options;
+
   const schema = makeExecutableSchema({
-    typeDefs,
-    resolvers: resolvers()
+    typeDefs: schemaTypeDefs,
+    resolvers: schemaResolvers
   });
 
   const server = new ApolloServer({ schema, playground: true });
 
-  const endpoint = await runServer(server, path, port);
+  const { endpoint, close } = await runServer(server, path, port);
 
   return {
     endpoint,
-    schema
+    close,
+    resolvers: schemaResolvers
   }
 };
 
 module.exports = {
-  createServer,
+  startService,
   typeDefs
 };

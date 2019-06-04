@@ -1,7 +1,7 @@
-import fetch from 'node-fetch';
-import { HttpLink } from 'apollo-link-http';
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from "apollo-cache-inmemory";
+const fetch = require('node-fetch');
+const { ApolloClient } = require('apollo-client');
+const { HttpLink } = require('apollo-link-http');
+const { InMemoryCache } = require('apollo-cache-inmemory');
 
 const createApolloClient = ({ endpoint }) => {
   const cache = new InMemoryCache();

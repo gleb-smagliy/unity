@@ -1,5 +1,5 @@
-const { createServer } = require('../src/service');
+const { startService } = require('../src/startup');
 
 process.on('SIGINT', process.exit);
 
-createServer({ port: 35575 }).then(({ endpoint }) => console.log('endpoint:', endpoint));
+startService({ port: 35575 }).then(({ endpoint }) => console.log('endpoint:', endpoint));
