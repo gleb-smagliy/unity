@@ -12,10 +12,23 @@ describe('Dispatcher on AWS', () =>
     dispatcher = await startDispatcher({ debug: false });
   });
 
-  afterEach(async () => {
+  afterEach(async () =>
+  {
     dispatcher.close();
     service && service.close();
   });
+
+  it('should be able to register service without metadata successfully', async () =>
+  {
+    const registration = await registerNewService(dispatcher, { skipMetadata: true });
+
+    service = registration.service;
+    const { result } = registration;
+
+    expect(result.success).toEqual(true);
+  });
+
+
 
   it('should be able to register service without metadata successfully', async () =>
   {
