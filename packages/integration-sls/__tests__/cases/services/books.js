@@ -8,24 +8,24 @@ const typeDefs = `
   }
 
   type Query {
-    bookById(id: ID!): Book!
+    bookById(id: Int!): Book!
   }
 `;
 
-const author = {
-  id: 'author_abcd',
-  firstName: 'John',
-  lastName: 'Doe'
+const book = {
+  id: 'book_abcd',
+  title: 'Foo',
+  description: 'Bar'
 };
 
 const createResolvers = () => ({
   Query: {
-    authorById: jest.fn().mockResolvedValue(author)
+    bookById: jest.fn().mockResolvedValue(book)
   }
 });
 
-const verifyResult = (result, alias = 'authorById') =>
-  expect(result.data[alias]).toEqual(author);
+const verifyData = (data, alias = 'bookById') =>
+  expect(data[alias].id).toEqual(book.id);
 
 const verifyResolvers = (resolvers, expectedArgs) =>
 {
@@ -45,7 +45,7 @@ module.exports.createSchema = () =>
 
   return {
     schema,
-    verifyResult,
+    verifyData,
     verifyResolvers: expectedArgs => verifyResolvers(resolvers, expectedArgs)
   };
 };

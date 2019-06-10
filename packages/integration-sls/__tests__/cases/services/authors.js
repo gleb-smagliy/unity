@@ -9,7 +9,7 @@ const typeDefs = `
   }
 
   type Query {
-    authorById(id: ID!): Author!
+    authorById(id: Int!): Author!
   }
 `;
 
@@ -26,7 +26,7 @@ const createResolvers = () => ({
 });
 
 const verifyData = (data, alias = 'authorById') =>
-  expect(data[alias]).toEqual(author);
+  expect(data[alias].id).toEqual(author.id);
 
 const verifyResolvers = (resolvers, expectedArgs) =>
 {

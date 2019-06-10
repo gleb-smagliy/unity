@@ -21,23 +21,26 @@ const createHandlerFactory = ({ playground }) => schema =>
 };
 
 const createHandler = (options, { playground }) =>
-    {
-        const schemaQuery = buildExecutableSchemaQuery(options);
-        const createHandler = createHandlerFactory({ playground });
+{
+    const schemaQuery = buildExecutableSchemaQuery(options);
+    const createHandler = createHandlerFactory({ playground });
 
-        return (event, context, callback) =>
+    return (event, context, callback) =>
     {
         let tag = getTag(event);
         const version = getVersion(event);
 
         if(!tag && !version)
-    {
-        tag = 'stable'
-    }
+        {
+            tag = 'stable'
+        }
 
-    schemaQuery({ tag, version })
-        .then(createHandler)
-        .then(handler => handler(event, context, callback));
+        console.log('tag: ', tag);
+        console.log('version: ', version);
+
+        schemaQuery({ tag, version })
+            .then(createHandler)
+            .then(handler => handler(event, context, callback));
     }
 };
 

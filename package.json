@@ -9,6 +9,7 @@
     "install-peers": "lerna run install-peers",
     "test": "lerna run test",
     "test:int": "lerna run test:integration",
+    "verify": "lerna run build && lerna run test:integration",
     "build": "lerna run build",
     "prune-peers": "lerna run prune-peers"
   },

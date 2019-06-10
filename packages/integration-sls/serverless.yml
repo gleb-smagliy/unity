@@ -47,11 +47,11 @@ functions:
     handler: src/dispatcher/request.handler
     events:
       - http:
-          path: /
+          path: request
           method: post
           cors: true
       - http:
-          path: /
+          path: request
           method: get
           cors: true
   Register:

@@ -8,15 +8,15 @@ const WAIT_INTERVAL = 1000;
 const getEndpoint = port => `http://localhost:${port}`;
 const getStartedPattern = endpoint => `Offline listening on ${endpoint}`;
 
-const startDispatcher = async ({ port, debug = false } = {}) =>
+const startDispatcher = async ({ port = parseInt(Math.random()*10000 + 30000), debug = false } = {}) =>
 {
   let tries = 0;
   let shouldClose = false;
   let stdOut = '';
   let stdErr = '';
 
-  const offlinePort = await findFreePort(port || 3001);
-  const dynamodbPort = await findFreePort(offlinePort + 1);
+  const offlinePort = await findFreePort(port);
+  const dynamodbPort = await findFreePort(offlinePort + 7);
   const endpoint = getEndpoint(offlinePort);
   const pattern = getStartedPattern(endpoint);
 
@@ -29,7 +29,7 @@ const startDispatcher = async ({ port, debug = false } = {}) =>
   {
     const data = d.toString();
 
-    debug && console.log(data);
+    debug && !shouldClose && console.log(data);
     stdOut += data;
   });
 
@@ -45,11 +45,7 @@ const startDispatcher = async ({ port, debug = false } = {}) =>
 
   cp.on('close', (code) =>
   {
-    if(code !== null)
-    {
-      shouldClose = true;
-      console.log(`child process on ${endpoint} exited with code ${code}`);
-    }
+    // debug && console.log(`child process on ${endpoint} exited with code ${code}`);
   });
 
   while(tries < MAX_TRIES)
@@ -60,10 +56,11 @@ const startDispatcher = async ({ port, debug = false } = {}) =>
       {
         return {
           close: () => {
+            shouldClose = true;
             cp.kill();
           },
           registerEndpoint: `${endpoint}/register`,
-          endpoint
+          endpoint: `${endpoint}/request`
         }
       }
       case shouldClose:
