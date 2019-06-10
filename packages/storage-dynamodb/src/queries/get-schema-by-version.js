@@ -20,7 +20,5 @@ export const createGetSchemaByVersionQuery = ({ docClient, tableName }) => async
 {
   const params = createQueryParams({ version, tableName });
 
-  console.log('GetSchemaByVersionQuery::params:', params);
-
   return execute(docClient.query(params), { transformPayload, transformError });
 };

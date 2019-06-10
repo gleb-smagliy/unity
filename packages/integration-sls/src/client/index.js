@@ -1,5 +1,5 @@
 const { createApolloClient } = require('./create-apollo-client');
-const { REGISTER } = require('./mutations');
+const { REGISTER, COMMIT } = require('./mutations');
 
 class SoyuzClient {
   constructor({ endpoint }) {

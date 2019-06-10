@@ -21,7 +21,7 @@
   "scripts": {
     "start:dev": "node --preserve-symlinks ./node_modules/serverless/bin/serverless offline start",
     "start": "serverless dynamodb install && serverless offline start",
-    "test:integration": "./node_modules/.bin/jest",
+    "test:integration": "serverless dynamodb install && jest",
     "service": "node --preserve-symlinks cmd/run-service.js",
     "dispatcher": "node --preserve-symlinks cmd/run-dispatcher.js"
   },
@@ -34,7 +34,6 @@
     "@soyuz/schema-builder-graphql": "^0.3.0",
     "@soyuz/storage-dynamodb": "^0.3.0",
     "@soyuz/versioning-incremental": "^0.3.0",
-    "find-free-port": "^2.0.0",
     "jest": "^24.1.0",
     "serverless": "^1.43.0",
     "serverless-dynamodb-local": "0.2.35",

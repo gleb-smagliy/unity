@@ -70,7 +70,7 @@ functions:
 custom:
   dynamodb:
     start:
-      port: 8874
+      port: ${opt:dynamodbPort, '8874'}
       inMemory: true
       migrate: true
   serverless-offline:

@@ -1,5 +1,5 @@
 const { spawn } = require('child_process');
-const fp = require('find-free-port');
+const { findFreePort } = require('./get-free-port');
 const wait = require('waait');
 
 const MAX_TRIES = 15;
@@ -8,18 +8,6 @@ const WAIT_INTERVAL = 1000;
 const getEndpoint = port => `http://localhost:${port}`;
 const getStartedPattern = endpoint => `Offline listening on ${endpoint}`;
 
-const getFreePort = async (preferredPort) =>
-{
-  if(!preferredPort)
-  {
-    const [ port ] = await fp(3000);
-
-    return port;
-  }
-
-  return preferredPort;
-};
-
 const startDispatcher = async ({ port, debug = false } = {}) =>
 {
   let tries = 0;
@@ -27,13 +15,15 @@ const startDispatcher = async ({ port, debug = false } = {}) =>
   let stdOut = '';
   let stdErr = '';
 
-  const offlinePort = await getFreePort(port);
+  const offlinePort = await findFreePort(port || 3001);
+  const dynamodbPort = await findFreePort(offlinePort + 1);
   const endpoint = getEndpoint(offlinePort);
   const pattern = getStartedPattern(endpoint);
 
-  debug && console.log('get free port:', offlinePort);
+  debug && console.log('get free offline port:', offlinePort);
+  debug && console.log('get free dynamodb port:', dynamodbPort);
 
-  const cp = spawn('node', ['--preserve-symlinks', './node_modules/serverless/bin/serverless', 'offline', 'start', '--offlinePort', offlinePort]);
+  const cp = spawn('node', ['--preserve-symlinks', './node_modules/serverless/bin/serverless', 'offline', 'start', '--offlinePort', offlinePort, '--dynamodbPort', dynamodbPort]);
 
   cp.stdout.on('data', d =>
   {
@@ -73,7 +63,7 @@ const startDispatcher = async ({ port, debug = false } = {}) =>
             cp.kill();
           },
           registerEndpoint: `${endpoint}/register`,
-          gatewayEndpoint: endpoint
+          endpoint
         }
       }
       case shouldClose:
