@@ -3,7 +3,7 @@ const gql = require('graphql-tag');
 const { registerNewService, registerAndCommit } = require('./register-service');
 const { createSchema: authorsSchema } = require('./cases/services/authors');
 const { createSchema: booksSchema } = require('./cases/services/books');
-const { createClient } = require('./create-client');
+const { executeQuery } = require('./execute-query');
 
 jest.setTimeout(20000);
 
@@ -50,14 +50,14 @@ describe('Dispatcher on AWS', () =>
     const registration = await registerAndCommit(dispatcher, { skipMetadata: true }, { schema });
     services.push(registration.service);
 
-    const client = createClient({ endpoint: dispatcher.endpoint });
-
-    const result = await client.query({
+    const result = await executeQuery({
+      endpoint: dispatcher.endpoint,
       query: gql`
         query AuthorById($id: Int!) {
           authorById(id: $id) { id firstName lastName }
         }
-      `, variables
+      `,
+      variables
     });
 
     expect(result.errors).toEqual(undefined);
@@ -72,14 +72,14 @@ describe('Dispatcher on AWS', () =>
     const registration = await registerAndCommit(dispatcher, { skipMetadata: true }, { schema });
     services.push(registration.service);
 
-    const client = createClient({ endpoint: dispatcher.endpoint });
-
-    const result = await client.query({
+    const result = await executeQuery({
+      endpoint: dispatcher.endpoint,
       query: gql`
         query AuthorById($id: Int!) {
           result: authorById(id: $id) { id firstName lastName }
         }
-      `, variables
+      `,
+      variables
     });
 
     expect(result.errors).toEqual(undefined);
@@ -99,15 +99,15 @@ describe('Dispatcher on AWS', () =>
     const booksRegistration = await registerAndCommit(dispatcher, { skipMetadata: true }, { schema: books.schema });
     services.push(booksRegistration.service);
 
-    const client = createClient({ endpoint: dispatcher.endpoint });
-
-    const result = await client.query({
+    const result = await executeQuery({
+      endpoint: dispatcher.endpoint,
       query: gql`
         query TestQuery($bookId: Int!, $authorId: Int!) {
           authorById(id: $authorId) { id firstName lastName }
           bookById(id: $bookId) { id description title }
         }
-      `, variables
+      `,
+      variables
     });
 
     expect(result.errors).toEqual(undefined);
@@ -129,15 +129,15 @@ describe('Dispatcher on AWS', () =>
     const booksRegistration = await registerAndCommit(dispatcher, { skipMetadata: true }, { schema: books.schema });
     services.push(booksRegistration.service);
 
-    const client = createClient({ endpoint: dispatcher.endpoint });
-
-    const result = await client.query({
+    const result = await executeQuery({
+      endpoint: dispatcher.endpoint,
       query: gql`
         query TestQuery($bookId: Int!, $authorId: Int!) {
           author: authorById(id: $authorId) { id firstName lastName }
           book: bookById(id: $bookId) { id description title }
         }
-      `, variables
+      `,
+      variables
     });
 
     expect(result.errors).toEqual(undefined);
@@ -145,5 +145,28 @@ describe('Dispatcher on AWS', () =>
     books.verifyData(result.data, 'book');
     authors.verifyResolvers({ id: variables.authorId });
     books.verifyResolvers({ id: variables.bookId });
+  });
+
+  it('should pass headers to downstream service', async () =>
+  {
+    const variables = { id: 12345 };
+    const headers = { 'x-account-id': 123, 'x-user-id': 321 };
+    const { verifyData, verifyResolvers, verifyHeaders, schema } = authorsSchema();
+    const registration = await registerAndCommit(dispatcher, { skipMetadata: true }, { schema });
+    services.push(registration.service);
+
+    const result = await executeQuery({
+      endpoint: dispatcher.endpoint,
+      query: gql`
+        query AuthorById($id: Int!) {
+          result: authorById(id: $id) { id firstName lastName }
+        }
+      `,
+      headers,
+      variables
+    });
+
+    expect(result.errors).toEqual(undefined);
+    verifyHeaders(headers);
   });
 });

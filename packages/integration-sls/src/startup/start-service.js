@@ -60,7 +60,13 @@ const startService = async (options = {}, { path = '/graphql' } = {}) =>
     resolvers: schemaResolvers
   });
 
-  const server = new ApolloServer({ schema: serviceSchema, playground: true });
+  const server = new ApolloServer({
+    schema: serviceSchema,
+    playground: true,
+    context: ({ req }) => ({
+      headers: req.headers
+    })
+  });
 
   const { endpoint, close } = await runServer(server, path, port);
 
