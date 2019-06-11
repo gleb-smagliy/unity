@@ -1,4 +1,4 @@
-const { buildExecutableSchemaQuery, schemaContextEnhancer } = require('@soyuz/core');
+const { buildExecutableSchemaQuery, schemaContextEnhancer, composeContextEnhancers } = require('@soyuz/core');
 const { ApolloServer } = require('apollo-server-lambda');
 const { options } = require('./options');
 const { getTag, getVersion } = require('./utils');

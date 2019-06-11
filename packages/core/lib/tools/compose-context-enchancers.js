@@ -35,12 +35,20 @@ const executeObjectEnhancer = (args, enhancer) => Object.keys(enhancer).reduce((
   return result;
 }, {});
 
+const executeArrayEnhancers = (args, enhancers) => enhancers.reduce((result, enhancer) => ({ ...result,
+  ...composeContextEnhancers(enhancer)(...args)
+}), {});
+
 const composeContextEnhancers = enhancers => (...args) => {
   if (typeof enhancers === 'function') {
     return enhancers(...args);
   }
 
   if (typeof enhancers === 'object') {
+    if (Array.isArray(enhancers)) {
+      return executeArrayEnhancers(args, enhancers);
+    }
+
     return executeObjectEnhancer(args, enhancers);
   }
 

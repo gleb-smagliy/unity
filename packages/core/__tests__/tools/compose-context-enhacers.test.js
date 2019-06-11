@@ -28,6 +28,45 @@ describe('composeContextEnhancers', () =>
     });
   });
 
+  it('should return plain object when array of functions is passed', async () =>
+  {
+    const result1 = { key1: 'value1' };
+    const result2 = { key2: 'value2' };
+
+    const func1 = jest.fn().mockReturnValue(result1);
+    const func2 = jest.fn().mockReturnValue(result2);
+
+    const enhancer = composeContextEnhancers([ func1, func2 ]);
+
+    expect(enhancer()).toEqual({
+      ...result1,
+      ...result2
+    });
+  });
+
+  it('should return plain object when array with objects is passed', async () =>
+  {
+    const result1 = { key1: 'value1' };
+    const result2 = { key2: 'value2' };
+    const nested = { nestedKey: 'nested_value' };
+
+    const func1 = jest.fn().mockReturnValue(result1);
+    const func2 = jest.fn().mockReturnValue(result2);
+    const nestedFunc = jest.fn().mockReturnValue(nested);
+
+    const enhancer = composeContextEnhancers([
+      func1,
+      func2,
+      { complex: composeContextEnhancers({ nested: nestedFunc }) }
+    ]);
+
+    expect(enhancer()).toEqual({
+      ...result1,
+      ...result2,
+      complex: { nested }
+    });
+  });
+
   it('should be nestable with sub-functions', async () =>
   {
     const result1 = { key1: 'value1' };
