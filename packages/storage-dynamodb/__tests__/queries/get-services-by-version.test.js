@@ -26,6 +26,7 @@ describe('getServicesByVersionQuery', () =>
         id: SERVICE.ServiceId,
         schema: buildClientSchema(JSON.parse(SERVICE.Schema)),
         args: SERVICE.Args,
+        headers: SERVICE.Headers,
         metadata: SERVICE.Metadata,
         endpoint: SERVICE.Endpoint
       }

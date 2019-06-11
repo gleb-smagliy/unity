@@ -21,7 +21,6 @@ const execute = async (operation, {
     const result = await operation.promise();
     return transformResult(transformPayload(result.Items));
   } catch (err) {
-    console.log(err.stack);
     return {
       success: false,
       error: transformError(err)
