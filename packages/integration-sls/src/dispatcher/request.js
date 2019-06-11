@@ -9,7 +9,10 @@ const createHandlerFactory = ({ playground }) => schema =>
         schema,
         introspection: true,
         playground,
-        context: schemaContextEnhancer
+        context: composeContextEnhancers([
+          schemaContextEnhancer,
+          ({ event }) => ({ headers: event.headers })
+        ])
     });
 
     return server.createHandler({

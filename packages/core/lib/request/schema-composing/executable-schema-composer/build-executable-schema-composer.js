@@ -34,6 +34,12 @@ const buildExecutableSchemaComposer = options => {
     const buildGatewayTransformations = gatewayTransformer(schemaSpecification);
     if (!buildGatewayTransformations.success) return buildGatewayTransformations;
     return (0, _mergeServices.mergeServices)(services, {
+      contextSetter: (request, {
+        graphqlContext
+      }) => {
+        console.log('graphqlContext:', graphqlContext);
+        return graphqlContext;
+      },
       servicesTransformations: buildServicesTransformations.payload,
       extensions: buildExtensions.payload,
       gatewayTransformations: buildGatewayTransformations.payload

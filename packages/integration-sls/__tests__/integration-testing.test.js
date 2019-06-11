@@ -150,8 +150,8 @@ describe('Dispatcher on AWS', () =>
   it('should pass headers to downstream service', async () =>
   {
     const variables = { id: 12345 };
-    const headers = { 'x-account-id': 123, 'x-user-id': 321 };
-    const { verifyData, verifyResolvers, verifyHeaders, schema } = authorsSchema();
+    const headers = { 'x-account-id': '123', 'x-user-id': '321' };
+    const { verifyHeaders, schema } = authorsSchema();
     const registration = await registerAndCommit(dispatcher, { skipMetadata: true }, { schema });
     services.push(registration.service);
 
