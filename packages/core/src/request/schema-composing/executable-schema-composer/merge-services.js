@@ -17,7 +17,12 @@ const transformServicesToSchemas = (services, transformations, contextSetter) =>
 {
   return services.map(service =>
   {
-    const schema = makeServiceSchema({ schema: service.schema, endpoint: service.endpoint, contextSetter });
+    const schema = makeServiceSchema({
+      schema: service.schema,
+      endpoint: service.endpoint,
+      headers: service.headers,
+      contextSetter
+    });
     const transformation = transformations[service.id];
 
     return transformIfNeeded(schema, transformation);

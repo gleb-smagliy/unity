@@ -1,12 +1,6 @@
 import GraphQLJson from 'graphql-type-json';
 import { success, error } from './service-registration-result';
 
-const stringifyHeaders = headers =>
-  Object.keys(headers).reduce((result, header) => ({
-    ...headers,
-    [header]: JSON.stringify(headers[header])
-  }), {});
-
 export const createResolvers = ({
   registrationHandler,
   versionTaggingHandler,
@@ -34,7 +28,7 @@ export const createResolvers = ({
       const command = {
         id,
         args,
-        headers: stringifyHeaders(headers),
+        headers,
         endpoint,
         schemaBuilder: builder,
         options

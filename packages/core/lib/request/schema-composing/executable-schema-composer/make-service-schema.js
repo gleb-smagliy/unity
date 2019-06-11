@@ -17,8 +17,9 @@ var _graphqlTools = require("graphql-tools");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const createHttpLink = uri => new _apolloLinkHttp.HttpLink({
+const createHttpLink = (uri, headers) => new _apolloLinkHttp.HttpLink({
   uri,
+  headers,
   fetch: _nodeFetch.default
 });
 
@@ -27,9 +28,10 @@ const createContextLink = contextSetter => (0, _apolloLinkContext.setContext)(co
 const makeServiceSchema = ({
   schema,
   endpoint,
+  headers,
   contextSetter = null
 }) => {
-  const links = contextSetter != null ? [createContextLink(contextSetter), createHttpLink(endpoint)] : [createHttpLink(endpoint)];
+  const links = contextSetter != null ? [createContextLink(contextSetter), createHttpLink(endpoint, headers)] : [createHttpLink(endpoint, headers)];
 
   const link = _apolloLink.ApolloLink.from(links);
 

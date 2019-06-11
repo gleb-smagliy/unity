@@ -4,15 +4,15 @@ import { setContext } from "apollo-link-context";
 import { HttpLink } from 'apollo-link-http';
 import { makeRemoteExecutableSchema } from 'graphql-tools'
 
-const createHttpLink = uri => new HttpLink({ uri, fetch });
+const createHttpLink = (uri, headers) => new HttpLink({ uri, headers, fetch });
 
 const createContextLink = contextSetter => setContext(contextSetter);
 
-export const makeServiceSchema = ({ schema, endpoint, contextSetter = null }) =>
+export const makeServiceSchema = ({ schema, endpoint, headers, contextSetter = null }) =>
 {
   const links = contextSetter != null ?
-    [createContextLink(contextSetter), createHttpLink(endpoint)] :
-    [createHttpLink(endpoint)];
+    [createContextLink(contextSetter), createHttpLink(endpoint, headers)] :
+    [createHttpLink(endpoint, headers)];
 
   const link = ApolloLink.from(links);
 

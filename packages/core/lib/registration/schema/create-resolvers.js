@@ -11,10 +11,6 @@ var _serviceRegistrationResult = require("./service-registration-result");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const stringifyHeaders = headers => Object.keys(headers).reduce((result, header) => ({ ...headers,
-  [header]: JSON.stringify(headers[header])
-}), {});
-
 const createResolvers = ({
   registrationHandler,
   versionTaggingHandler,
@@ -43,7 +39,7 @@ const createResolvers = ({
       const command = {
         id,
         args,
-        headers: stringifyHeaders(headers),
+        headers,
         endpoint,
         schemaBuilder: builder,
         options
