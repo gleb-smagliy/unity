@@ -1,6 +1,6 @@
 {
   "name": "@soyuz/extension-references",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "> TODO: description",
   "author": "gsmagliy <gsmagliy@wildapricot.com>",
   "homepage": "https://github.com/gleb-smagliy/soyuz#readme",
@@ -43,6 +43,5 @@
   },
   "bugs": {
     "url": "https://github.com/gleb-smagliy/soyuz/issues"
-  },
-  "dependencies": {}
+  }
 }
