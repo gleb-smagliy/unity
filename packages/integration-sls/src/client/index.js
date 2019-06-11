@@ -9,7 +9,7 @@ class SoyuzClient {
     this.apolloClient = createApolloClient({endpoint});
   }
 
-  async registerGraphqlService({ id, endpoint }, { skipMetadata })
+  async registerGraphqlService({ id, endpoint, headers }, { skipMetadata })
   {
     try
     {
@@ -19,6 +19,7 @@ class SoyuzClient {
           service: {
             id,
             endpoint,
+            headers,
             schemaBuilder: {
               GraphqlSchemaBuilder: {
                 skipMetadata

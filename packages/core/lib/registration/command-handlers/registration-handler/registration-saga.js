@@ -31,12 +31,14 @@ function* registrationSaga({
   const {
     id: serviceId,
     endpoint,
+    headers,
     args,
     schemaBuilder: schemaBuilderName,
     options: builderOptions
   } = command;
   const serviceDefinition = {
     id: serviceId,
+    headers,
     endpoint,
     args,
     options: builderOptions

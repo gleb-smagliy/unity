@@ -12,9 +12,10 @@ export function* registrationSaga({
 })
 {
   const { schemaBuilders, versioning, serviceSchemaTransformers, storage } = configOptions;
-  const { id: serviceId, endpoint, args, schemaBuilder: schemaBuilderName, options: builderOptions } = command;
+  const { id: serviceId, endpoint, headers, args, schemaBuilder: schemaBuilderName, options: builderOptions } = command;
   const serviceDefinition = {
     id: serviceId,
+    headers,
     endpoint,
     args,
     options: builderOptions

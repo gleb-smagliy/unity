@@ -35,6 +35,7 @@ const pluginMetadataReducer = (result, item) =>
 const serviceMapper = item => ({
   id: item.ServiceId,
   schema: buildClientSchema(JSON.parse(item.Schema)),
+  headers: item.RequestHeaders,
   args: item.Args,
   metadata: item.Metadata || [],
   endpoint: item.Endpoint

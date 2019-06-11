@@ -11,6 +11,10 @@ var _serviceRegistrationResult = require("./service-registration-result");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+const stringifyHeaders = headers => Object.keys(headers).reduce((result, header) => ({ ...headers,
+  [header]: JSON.stringify(headers[header])
+}), {});
+
 const createResolvers = ({
   registrationHandler,
   versionTaggingHandler,
@@ -23,8 +27,9 @@ const createResolvers = ({
     }) {
       const {
         id,
-        args = {},
         endpoint,
+        args = {},
+        headers = {},
         schemaBuilder
       } = service;
       const usedSchemaBuilders = Object.keys(schemaBuilder).filter(k => schemaBuilder[k] != null);
@@ -38,6 +43,7 @@ const createResolvers = ({
       const command = {
         id,
         args,
+        headers: stringifyHeaders(headers),
         endpoint,
         schemaBuilder: builder,
         options

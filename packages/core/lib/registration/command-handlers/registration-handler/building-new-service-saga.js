@@ -31,7 +31,8 @@ function* buildingNewServiceSaga({
       metadata: serviceMetadata.metadata,
       id: serviceDefinition.id,
       endpoint: serviceDefinition.endpoint,
-      args: serviceDefinition.args
+      args: serviceDefinition.args,
+      headers: serviceDefinition.headers
     }
   };
 }

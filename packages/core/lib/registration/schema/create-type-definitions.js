@@ -91,6 +91,7 @@ const composeBuildersUnion = apiDefinitions => {
     {
       id: String!
       endpoint: String!
+      headers: JSON
       args: JSON
       schemaBuilder: SchemaBuilderUnionInput!
     }

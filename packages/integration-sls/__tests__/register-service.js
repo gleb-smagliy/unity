@@ -3,7 +3,7 @@ const { startService } = require('../src/startup');
 
 const randomId = () => `service_${Math.random().toString(36).substring(7)}`;
 
-const registerNewService = async (dispatcher, { skipMetadata }, options) => {
+const registerNewService = async (dispatcher, { skipMetadata, headers }, options) => {
   const id = randomId();
 
   const service = await startService(options);
@@ -12,7 +12,8 @@ const registerNewService = async (dispatcher, { skipMetadata }, options) => {
 
   const result = await client.registerGraphqlService({
     id,
-    endpoint: service.endpoint
+    endpoint: service.endpoint,
+    headers
   }, { skipMetadata });
 
   return {
@@ -22,9 +23,9 @@ const registerNewService = async (dispatcher, { skipMetadata }, options) => {
   };
 };
 
-const registerAndCommit = async (dispatcher, { skipMetadata }, options) =>
+const registerAndCommit = async (dispatcher, { skipMetadata, headers }, options) =>
 {
-  const { service, client, result: registration } = await registerNewService(dispatcher, { skipMetadata }, options);
+  const { service, client, result: registration } = await registerNewService(dispatcher, { skipMetadata, headers }, options);
 
   expect(registration.success).toEqual(true);
 

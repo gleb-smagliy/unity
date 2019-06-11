@@ -20,17 +20,17 @@ const toPutRequest = item => ({
 const toServiceItem = (version, service) => {
   const serviceId = service.id;
   const args = service.args || {};
-  const ret = {
+  return {
     Version: version,
     Id: `${_schemaMappings.ITEM_TYPE.SERVICE}/${serviceId}`,
     SchemaItemType: _schemaMappings.ITEM_TYPE.SERVICE,
+    RequestHeaders: service.headers,
     ServiceId: serviceId,
     Schema: JSON.stringify((0, _graphql.introspectionFromSchema)(service.schema)),
     Metadata: service.metadata,
     Endpoint: service.endpoint,
     Args: args
   };
-  return ret;
 };
 
 const toPluginMetadataItem = (pluginName, version, pluginMetadata) => {

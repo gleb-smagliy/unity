@@ -169,4 +169,28 @@ describe('Dispatcher on AWS', () =>
     expect(result.errors).toEqual(undefined);
     verifyHeaders(headers);
   });
+
+  it('should pass registration-time headers to downstream service', async () =>
+  {
+    const variables = { id: 12345 };
+    const registrationHeaders = { 'x-api-key': 'api_key_abcd' };
+
+    const { verifyHeaders, schema } = authorsSchema();
+
+    const registration = await registerAndCommit(dispatcher, { skipMetadata: true, headers: registrationHeaders }, { schema });
+    services.push(registration.service);
+
+    const result = await executeQuery({
+      endpoint: dispatcher.endpoint,
+      query: gql`
+        query AuthorById($id: Int!) {
+          result: authorById(id: $id) { id firstName lastName }
+        }
+      `,
+      variables
+    });
+
+    expect(result.errors).toEqual(undefined);
+    verifyHeaders(registrationHeaders);
+  });
 });
