@@ -40,6 +40,8 @@ export class GraphqlSchemaBuilder
     this.metadataQuery = createMetadataQuery(this.options.metadataQueryName);
   }
 
+  createHttpLink = ({ endpoint, headers }) => new HttpLink({ uri: endpoint, headers, fetch: this.options.fetch });
+
   getApiDefinition = () => ({
     name: 'GraphqlSchemaBuilder',
     type: 'GraphqlSchemaBuilderInput',
@@ -58,9 +60,9 @@ export class GraphqlSchemaBuilder
     return transformSchema(schema, transforms);
   };
 
-  buildServiceModel = async ({ endpoint }) =>
+  buildServiceModel = async ({ endpoint, headers }) =>
   {
-    const link = new HttpLink({ uri: endpoint, fetch: this.options.fetch });
+    const link = this.createHttpLink({ endpoint, headers });
 
     try
     {
@@ -82,7 +84,7 @@ export class GraphqlSchemaBuilder
     }
   };
 
-  extractMetadata = async ({ endpoint, options: { skipMetadata } = {} }) =>
+  extractMetadata = async ({ endpoint, headers, options: { skipMetadata } = {} }) =>
   {
     if(skipMetadata)
     {
@@ -95,7 +97,7 @@ export class GraphqlSchemaBuilder
     }
 
     const cache = new InMemoryCache();
-    const link = new HttpLink({ uri: endpoint, fetch });
+    const link = this.createHttpLink({ endpoint, headers });
     const client = new ApolloClient({ cache, link });
 
     let response;

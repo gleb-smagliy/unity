@@ -48,6 +48,15 @@ class GraphqlSchemaBuilder {
   constructor(options) {
     _defineProperty(this, "name", 'GraphqlSchemaBuilder');
 
+    _defineProperty(this, "createHttpLink", ({
+      endpoint,
+      headers
+    }) => new _apolloLinkHttp.HttpLink({
+      uri: endpoint,
+      headers,
+      fetch: this.options.fetch
+    }));
+
     _defineProperty(this, "getApiDefinition", () => ({
       name: 'GraphqlSchemaBuilder',
       type: 'GraphqlSchemaBuilderInput',
@@ -68,11 +77,12 @@ class GraphqlSchemaBuilder {
     });
 
     _defineProperty(this, "buildServiceModel", async ({
-      endpoint
+      endpoint,
+      headers
     }) => {
-      const link = new _apolloLinkHttp.HttpLink({
-        uri: endpoint,
-        fetch: this.options.fetch
+      const link = this.createHttpLink({
+        endpoint,
+        headers
       });
 
       try {
@@ -93,6 +103,7 @@ class GraphqlSchemaBuilder {
 
     _defineProperty(this, "extractMetadata", async ({
       endpoint,
+      headers,
       options: {
         skipMetadata
       } = {}
@@ -107,9 +118,9 @@ class GraphqlSchemaBuilder {
       }
 
       const cache = new _apolloCacheInmemory.InMemoryCache();
-      const link = new _apolloLinkHttp.HttpLink({
-        uri: endpoint,
-        fetch: _nodeFetch.default
+      const link = this.createHttpLink({
+        endpoint,
+        headers
       });
       const client = new _apolloClient.ApolloClient({
         cache,
