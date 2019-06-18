@@ -13,6 +13,8 @@ var _buildCompositeExtensionBuilder = require("./build-composite-extension-build
 
 var _mergeServices = require("./merge-services");
 
+var _normalizeHeaders = require("./normalize-headers");
+
 const buildExecutableSchemaComposer = options => {
   const extensionsBuilder = (0, _buildCompositeExtensionBuilder.buildCompositeExtensionBuilder)(options.extensionBuilders);
   const servicesTransformer = (0, _buildCompositeServiceTransformer.buildCompositeServicesTransformer)(options.serviceSchemaTransformers);
@@ -35,8 +37,10 @@ const buildExecutableSchemaComposer = options => {
     if (!buildGatewayTransformations.success) return buildGatewayTransformations;
     return (0, _mergeServices.mergeServices)(services, {
       contextSetter: (request, {
-        graphqlContext
-      }) => graphqlContext,
+        graphqlContext = {}
+      }) => ({ ...graphqlContext,
+        headers: (0, _normalizeHeaders.normalizeHeaders)(graphqlContext.headers)
+      }),
       servicesTransformations: buildServicesTransformations.payload,
       extensions: buildExtensions.payload,
       gatewayTransformations: buildGatewayTransformations.payload

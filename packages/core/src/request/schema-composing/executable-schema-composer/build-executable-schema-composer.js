@@ -2,6 +2,7 @@ import { buildCompositeGatewayTransformer } from './build-composite-gateway-tran
 import { buildCompositeServicesTransformer } from './build-composite-service-transformer';
 import { buildCompositeExtensionBuilder } from './build-composite-extension-builder';
 import { mergeServices } from './merge-services';
+import { normalizeHeaders } from './normalize-headers';
 
 export const buildExecutableSchemaComposer = (options) =>
 {
@@ -23,7 +24,10 @@ export const buildExecutableSchemaComposer = (options) =>
     if(!buildGatewayTransformations.success) return buildGatewayTransformations;
 
     return mergeServices(services, {
-      contextSetter: (request, { graphqlContext }) => graphqlContext,
+      contextSetter: (request, { graphqlContext = {} }) => ({
+        ...graphqlContext,
+        headers: normalizeHeaders(graphqlContext.headers)
+      }),
       servicesTransformations: buildServicesTransformations.payload,
       extensions: buildExtensions.payload,
       gatewayTransformations: buildGatewayTransformations.payload

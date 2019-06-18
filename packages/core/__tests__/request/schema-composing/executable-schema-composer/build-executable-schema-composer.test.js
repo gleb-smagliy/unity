@@ -85,6 +85,7 @@ describe('buildExecutableSchemaComposer', () =>
     expect(bookResult.data['Gateway_Book_randomBook'].title).toEqual(BOOK_RESPONSE.data.randomBook.title);
   });
 
+
   it('should call extension builder with metadata model', async () =>
   {
     const mocks = createSuccessfulMocks();

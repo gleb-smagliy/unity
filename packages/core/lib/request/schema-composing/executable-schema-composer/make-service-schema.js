@@ -15,6 +15,8 @@ var _apolloLinkHttp = require("apollo-link-http");
 
 var _graphqlTools = require("graphql-tools");
 
+var _normalizeHeaders = require("./normalize-headers");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const createHttpLink = (uri, headers) => new _apolloLinkHttp.HttpLink({
@@ -31,7 +33,7 @@ const makeServiceSchema = ({
   headers,
   contextSetter = null
 }) => {
-  const links = contextSetter != null ? [createContextLink(contextSetter), createHttpLink(endpoint, headers)] : [createHttpLink(endpoint, headers)];
+  const links = contextSetter != null ? [createContextLink(contextSetter), createHttpLink(endpoint, (0, _normalizeHeaders.normalizeHeaders)(headers))] : [createHttpLink(endpoint, (0, _normalizeHeaders.normalizeHeaders)(headers))];
 
   const link = _apolloLink.ApolloLink.from(links);
 

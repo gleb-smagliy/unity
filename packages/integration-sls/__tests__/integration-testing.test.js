@@ -170,6 +170,38 @@ describe('Dispatcher on AWS', () =>
     verifyHeaders(headers);
   });
 
+  it.only('should merge headers and make it lower-case', async () =>
+  {
+    const variables = { id: 12345 };
+    const headers = {
+      'Content-Type': 'application/json',
+      'content-type': 'application/json',
+      'x-user-id': '123',
+      'X-User-Id': '321'
+    };
+
+    const { verifyHeaders, schema } = authorsSchema();
+    const registration = await registerAndCommit(dispatcher, { skipMetadata: true }, { schema });
+    services.push(registration.service);
+
+    const result = await executeQuery({
+      endpoint: dispatcher.endpoint,
+      query: gql`
+        query AuthorById($id: Int!) {
+          result: authorById(id: $id) { id firstName lastName }
+        }
+      `,
+      headers,
+      variables
+    });
+
+    expect(result.errors).toEqual(undefined);
+    verifyHeaders({
+      'content-type': 'application/json',
+      'x-user-id': '321'
+    });
+  });
+
   it('should pass registration-time headers to downstream service', async () =>
   {
     const variables = { id: 12345 };
