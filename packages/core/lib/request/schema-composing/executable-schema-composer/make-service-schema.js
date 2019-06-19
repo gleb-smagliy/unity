@@ -25,15 +25,21 @@ const createHttpLink = (uri, headers) => new _apolloLinkHttp.HttpLink({
   fetch: _nodeFetch.default
 });
 
-const createContextLink = contextSetter => (0, _apolloLinkContext.setContext)(contextSetter);
+const createContextLink = (contextSetter, omitHeaders) => (0, _apolloLinkContext.setContext)((...args) => {
+  const context = contextSetter(...args);
+  return { ...context,
+    headers: (0, _normalizeHeaders.normalizeHeaders)(context.headers, omitHeaders)
+  };
+});
 
 const makeServiceSchema = ({
   schema,
   endpoint,
-  headers,
+  headers = {},
   contextSetter = null
 }) => {
-  const links = contextSetter != null ? [createContextLink(contextSetter), createHttpLink(endpoint, (0, _normalizeHeaders.normalizeHeaders)(headers))] : [createHttpLink(endpoint, (0, _normalizeHeaders.normalizeHeaders)(headers))];
+  const omitHeaders = Object.keys(headers);
+  const links = contextSetter != null ? [createContextLink(contextSetter, omitHeaders), createHttpLink(endpoint, (0, _normalizeHeaders.normalizeHeaders)(headers))] : [createHttpLink(endpoint, (0, _normalizeHeaders.normalizeHeaders)(headers))];
 
   const link = _apolloLink.ApolloLink.from(links);
 

@@ -24,10 +24,7 @@ export const buildExecutableSchemaComposer = (options) =>
     if(!buildGatewayTransformations.success) return buildGatewayTransformations;
 
     return mergeServices(services, {
-      contextSetter: (request, { graphqlContext = {} }) => ({
-        ...graphqlContext,
-        headers: normalizeHeaders(graphqlContext.headers)
-      }),
+      contextSetter: (request, { graphqlContext = {} }) => graphqlContext,
       servicesTransformations: buildServicesTransformations.payload,
       extensions: buildExtensions.payload,
       gatewayTransformations: buildGatewayTransformations.payload

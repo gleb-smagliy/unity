@@ -7,12 +7,21 @@ import { normalizeHeaders } from './normalize-headers';
 
 const createHttpLink = (uri, headers) => new HttpLink({ uri, headers, fetch });
 
-const createContextLink = contextSetter => setContext(contextSetter);
+const createContextLink = (contextSetter, omitHeaders) => setContext((...args) => {
+  const context = contextSetter(...args);
 
-export const makeServiceSchema = ({ schema, endpoint, headers, contextSetter = null }) =>
+  return {
+    ...context,
+    headers: normalizeHeaders(context.headers, omitHeaders)
+  }
+});
+
+export const makeServiceSchema = ({ schema, endpoint, headers = {}, contextSetter = null }) =>
 {
+  const omitHeaders = Object.keys(headers);
+
   const links = contextSetter != null ?
-    [createContextLink(contextSetter), createHttpLink(endpoint, normalizeHeaders(headers))] :
+    [createContextLink(contextSetter, omitHeaders), createHttpLink(endpoint, normalizeHeaders(headers))] :
     [createHttpLink(endpoint, normalizeHeaders(headers))];
 
   const link = ApolloLink.from(links);

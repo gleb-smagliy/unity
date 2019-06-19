@@ -38,9 +38,7 @@ const buildExecutableSchemaComposer = options => {
     return (0, _mergeServices.mergeServices)(services, {
       contextSetter: (request, {
         graphqlContext = {}
-      }) => ({ ...graphqlContext,
-        headers: (0, _normalizeHeaders.normalizeHeaders)(graphqlContext.headers)
-      }),
+      }) => graphqlContext,
       servicesTransformations: buildServicesTransformations.payload,
       extensions: buildExtensions.payload,
       gatewayTransformations: buildGatewayTransformations.payload

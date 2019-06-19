@@ -44,6 +44,6 @@ describe('makeServiceSchema', () =>
     await querySchema(remoteSchema);
 
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch.mock.calls[0][1].headers['X-Test']).toEqual(1);
+    expect(fetch.mock.calls[0][1].headers['x-test']).toEqual(1);
   });
 });

@@ -1,4 +1,4 @@
-const omitHeaders = [
+const DEFAULT_OMIT_HEADERS = [
   'accept',
   'accept-encoding',
   'accept-Language',
@@ -13,10 +13,15 @@ const omitHeaders = [
 ];
 
 
-export const normalizeHeaders = (headers = {}) => Object
+export const normalizeHeaders = (headers = {}, exclude = []) => Object
   .keys(headers)
   .reduce((result, header) =>
   {
+    const omitHeaders = [
+      ...DEFAULT_OMIT_HEADERS,
+      ...exclude.map(h => h.toLowerCase())
+    ];
+
     const lowerCasedHeader = header.toLowerCase();
 
     if(omitHeaders.indexOf(lowerCasedHeader) === -1)
