@@ -1,8 +1,28 @@
+const omitHeaders = [
+  'accept',
+  'accept-encoding',
+  'accept-Language',
+  'connection',
+  'content-length',
+  'content-type',
+  'cookie',
+  'host',
+  'origin',
+  'referer',
+  'user-agent'
+];
+
+
 export const normalizeHeaders = (headers = {}) => Object
   .keys(headers)
-  .reduce((acc, cur) =>
+  .reduce((result, header) =>
   {
-    acc[cur.toLowerCase()] = headers[cur];
+    const lowerCasedHeader = header.toLowerCase();
 
-    return acc;
+    if(omitHeaders.indexOf(lowerCasedHeader) === -1)
+    {
+      result[lowerCasedHeader] = headers[header];
+    }
+
+    return result;
   }, {});

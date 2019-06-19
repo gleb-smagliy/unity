@@ -13,14 +13,14 @@ const testCases = [
   },
   {
     should: 'make headers lower case',
-    input: { 'X-Api-Key': 'abc', 'Content-Type': 'application/json' },
-    expectedOutput: { 'x-api-key': 'abc', 'content-type': 'application/json' },
+    input: { 'X-Api-Key': 'abc' },
+    expectedOutput: { 'x-api-key': 'abc' }
   },
   {
-    should: 'collapse headers in different cases',
-    input: { 'content-type': 'unknown', 'Content-Type': 'application/json' },
-    expectedOutput: { 'content-type': 'application/json' },
-  }
+    should: 'omit default headers (e.g. host, content-type)',
+    input: { 'host': 'unknown', 'Content-Type': 'application/json' },
+    expectedOutput: { },
+  },
 ];
 
 describe('normalizeHeaders', () =>
