@@ -1,13 +1,13 @@
-const { startDispatcher } = require('../src/startup');
 const gql = require('graphql-tag');
-const { registerNewService, registerAndCommit } = require('./register-service');
-const { createSchema: authorsSchema } = require('./cases/services/authors');
-const { createSchema: booksSchema } = require('./cases/services/books');
-const { executeQuery } = require('./execute-query');
+const { startDispatcher } = require('../../src/startup');
+const { registerNewService, registerAndCommit } = require('../utils/register-service');
+const { executeQuery } = require('../utils/execute-query');
+const { createSchema: authorsSchema } = require('./basic.authors');
+const { createSchema: booksSchema } = require('./basic.books');
 
 jest.setTimeout(20000);
 
-describe('Dispatcher on AWS', () =>
+describe('Dispatcher on AWS (without using metadata)', () =>
 {
   let dispatcher = null;
   let services = [];
@@ -170,7 +170,7 @@ describe('Dispatcher on AWS', () =>
     verifyHeaders(headers);
   });
 
-  it.only('should merge headers and make it lower-case', async () =>
+  it('should merge headers and make it lower-case', async () =>
   {
     const variables = { id: 12345 };
     const headers = {

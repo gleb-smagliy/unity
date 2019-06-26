@@ -2,12 +2,12 @@ import { getNullableType, isListType } from 'graphql';
 
 export const getSubType = (type) =>
 {
-  const nullableType = getNullableType();
+  const nullableType = getNullableType(type);
 
   if(isListType(nullableType))
   {
-    return type.ofType;
+    return getNullableType(nullableType.ofType);
   }
 
-  return type;
+  return nullableType;
 };

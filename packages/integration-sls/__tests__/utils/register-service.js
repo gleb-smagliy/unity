@@ -1,5 +1,6 @@
-const { SoyuzClient } = require('../src/client');
-const { startService } = require('../src/startup');
+const { SoyuzClient } = require('../../src/client');
+const { startService } = require('../../src/startup');
+const wait = require('waait');
 
 const randomId = () => `service_${Math.random().toString(36).substring(7)}`;
 

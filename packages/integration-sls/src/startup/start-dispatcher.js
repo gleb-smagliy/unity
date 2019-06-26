@@ -43,11 +43,6 @@ const startDispatcher = async ({ port = parseInt(Math.random()*10000 + 30000), d
     stdErr += data;
   });
 
-  cp.on('close', (code) =>
-  {
-    // debug && console.log(`child process on ${endpoint} exited with code ${code}`);
-  });
-
   while(tries < MAX_TRIES)
   {
     switch(true)

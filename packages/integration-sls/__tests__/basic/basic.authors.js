@@ -1,5 +1,4 @@
-const { makeExecutableSchema } = require('graphql-tools');
-const { } = require('graphql-tag');
+const { makeExecutableSchema } = require('graphql-metadata-introspection');
 
 const typeDefs = `
   type Author {

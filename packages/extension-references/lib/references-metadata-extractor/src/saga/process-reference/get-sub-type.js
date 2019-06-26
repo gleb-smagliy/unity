@@ -8,13 +8,13 @@ exports.getSubType = void 0;
 var _graphql = require("graphql");
 
 const getSubType = type => {
-  const nullableType = (0, _graphql.getNullableType)();
+  const nullableType = (0, _graphql.getNullableType)(type);
 
   if ((0, _graphql.isListType)(nullableType)) {
-    return type.ofType;
+    return (0, _graphql.getNullableType)(nullableType.ofType);
   }
 
-  return type;
+  return nullableType;
 };
 
 exports.getSubType = getSubType;

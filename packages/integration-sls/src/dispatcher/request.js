@@ -38,9 +38,6 @@ const createHandler = (options, { playground }) =>
             tag = 'stable'
         }
 
-        console.log('tag: ', tag);
-        console.log('version: ', version);
-
         schemaQuery({ tag, version })
             .then(createHandler)
             .then(handler => handler(event, context, callback));

@@ -34,6 +34,7 @@
     "@soyuz/schema-builder-graphql": "^0.6.3",
     "@soyuz/storage-dynamodb": "^0.6.3",
     "@soyuz/versioning-incremental": "^0.6.0",
+    "graphql-metadata-introspection": "^0.1.1",
     "jest": "^24.1.0",
     "serverless": "^1.43.0",
     "serverless-dynamodb-local": "0.2.35",

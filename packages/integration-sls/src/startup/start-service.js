@@ -1,5 +1,5 @@
 const express = require('express');
-const { makeExecutableSchema } = require('graphql-tools');
+const { makeExecutableSchema } = require('graphql-metadata-introspection');
 const { ApolloServer } = require('apollo-server-express');
 const GraphQLJSON  = require('graphql-type-json');
 
