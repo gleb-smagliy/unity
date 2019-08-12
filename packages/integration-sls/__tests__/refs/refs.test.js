@@ -14,7 +14,7 @@ describe('Dispatcher on AWS (using metadata)', () =>
 
   beforeEach(async () =>
   {
-    dispatcher = await startDispatcher({ debug: true });
+    dispatcher = await startDispatcher({ debug: false });
   });
 
   afterEach(() =>

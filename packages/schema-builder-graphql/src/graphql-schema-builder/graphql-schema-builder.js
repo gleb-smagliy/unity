@@ -108,7 +108,7 @@ export class GraphqlSchemaBuilder
         query: this.metadataQuery
       });
 
-      console.log('response:', response);
+      // console.log('response:', response);
 
       const metadata = response.data.metadata;
 
