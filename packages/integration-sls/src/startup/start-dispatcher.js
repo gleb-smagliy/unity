@@ -29,6 +29,8 @@ const startDispatcher = async ({ port = parseInt(Math.random()*10000 + 30000), d
   {
     const data = d.toString();
 
+    // console.log('stdout:', data);
+
     debug && !shouldClose && console.log(data);
     stdOut += data;
   });

@@ -14,7 +14,7 @@ describe('Dispatcher on AWS (using metadata)', () =>
 
   beforeEach(async () =>
   {
-    dispatcher = await startDispatcher({ debug: false });
+    dispatcher = await startDispatcher({ debug: true });
   });
 
   afterEach(() =>
@@ -93,7 +93,7 @@ describe('Dispatcher on AWS (using metadata)', () =>
     expect(result.data.author.topBook).toEqual(books[0]);
   });
 
-  it.skip('should add x-soyuz-ref=1 header to the request', async () =>
+  it('should add x-soyuz-ref=1 header to the request', async () =>
   {
     const { schema: booksServiceSchema, resolvers: booksResolvers } = booksSchema();
 
@@ -116,8 +116,6 @@ describe('Dispatcher on AWS (using metadata)', () =>
       variables: { authorId: 1 }
     });
 
-    // expect(result.data.author.topBook).toEqual(books[0]);
-
-    expect(booksResolvers.Query.topBooksByAuthorsIds.mock.calls[0][2].headers['x-soyuz-ref']).toEqual(1);
+    expect(booksResolvers.Query.topBooksByAuthorsIds.mock.calls[0][2].headers['x-soyuz-ref']).toEqual('1');
   });
 });

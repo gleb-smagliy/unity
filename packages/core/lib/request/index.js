@@ -9,6 +9,18 @@ Object.defineProperty(exports, "buildExecutableSchemaQuery", {
     return _buildExecutabeSchemaQuery.buildExecutableSchemaQuery;
   }
 });
+Object.defineProperty(exports, "SPECIAL_HEADERS_PREFIX", {
+  enumerable: true,
+  get: function () {
+    return _context.SPECIAL_HEADERS_PREFIX;
+  }
+});
+Object.defineProperty(exports, "SPECIAL_HEADERS_SYMBOL", {
+  enumerable: true,
+  get: function () {
+    return _context.SPECIAL_HEADERS_SYMBOL;
+  }
+});
 Object.defineProperty(exports, "getSchemaFromContext", {
   enumerable: true,
   get: function () {
@@ -19,6 +31,12 @@ Object.defineProperty(exports, "schemaContextEnhancer", {
   enumerable: true,
   get: function () {
     return _context.schemaContextEnhancer;
+  }
+});
+Object.defineProperty(exports, "addSpecialHeader", {
+  enumerable: true,
+  get: function () {
+    return _context.addSpecialHeader;
   }
 });
 

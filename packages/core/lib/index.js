@@ -9,6 +9,12 @@ Object.defineProperty(exports, "createSchema", {
     return _registration.createSchema;
   }
 });
+Object.defineProperty(exports, "addSpecialHeader", {
+  enumerable: true,
+  get: function () {
+    return _request.addSpecialHeader;
+  }
+});
 Object.defineProperty(exports, "buildExecutableSchemaQuery", {
   enumerable: true,
   get: function () {

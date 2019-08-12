@@ -14,23 +14,29 @@ const DEFAULT_OMIT_HEADERS = [
 
 const SOYUZ_HEADER = 'x-soyuz';
 
-export const normalizeHeaders = (headers = {}, exclude = []) => Object
-  .keys(headers)
-  .reduce((result, header) =>
-  {
-    const omitHeaders = [
-      ...DEFAULT_OMIT_HEADERS,
-      ...exclude.map(h => h.toLowerCase())
-    ];
+export const normalizeHeaders = (headers = {}, exclude = []) =>
+{
+  // console.log('normalizeHeaders::headers:', headers);
 
-    const lowerCasedHeader = header.toLowerCase();
+  const omitHeaders = [
+    ...DEFAULT_OMIT_HEADERS,
+    ...exclude.map(h => h.toLowerCase())
+  ];
 
-    if(omitHeaders.indexOf(lowerCasedHeader) === -1 && !lowerCasedHeader.startsWith(SOYUZ_HEADER))
+  return Object
+    .keys(headers)
+    .reduce((result, header) =>
     {
-      console.log('lowerCasedHeader:', lowerCasedHeader);
+      const lowerCasedHeader = header.toLowerCase();
+      // console.log('lowerCasedHeader1:', lowerCasedHeader);
 
-      result[lowerCasedHeader] = headers[header];
-    }
+      if(omitHeaders.indexOf(lowerCasedHeader) === -1 && !lowerCasedHeader.startsWith(SOYUZ_HEADER))
+      {
+        // console.log('lowerCasedHeader2:', lowerCasedHeader);
 
-    return result;
-  }, {});
+        result[lowerCasedHeader] = headers[header];
+      }
+
+      return result;
+    }, {});
+};

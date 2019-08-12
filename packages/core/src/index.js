@@ -1,3 +1,8 @@
 export { createSchema } from './registration';
-export { buildExecutableSchemaQuery, schemaContextEnhancer, getSchemaFromContext } from './request';
+export {
+  addSpecialHeader,
+  buildExecutableSchemaQuery,
+  schemaContextEnhancer,
+  getSchemaFromContext
+} from './request';
 export { composeContextEnhancers } from './tools';

@@ -192,13 +192,11 @@ describe('Dispatcher on AWS (without using metadata)', () =>
 
     const h = resolvers.Query.authorById.mock.calls[0][2].headers;
 
-    console.log('headers:', h);
-
     expect(result.errors).toEqual(undefined);
     expect(h[HEADER]).toEqual(undefined);
   });
 
-  it.skip('should merge headers and make it lower-case', async () =>
+  it('should merge headers and make it lower-case', async () =>
   {
     const variables = { id: 12345 };
     const headers = {

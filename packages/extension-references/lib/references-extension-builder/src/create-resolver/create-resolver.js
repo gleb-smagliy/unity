@@ -30,13 +30,20 @@ const createResolver = model => {
   const resolve = async (parent, args, context, info) => {
     const sourceFieldValues = parent[sourceKey];
     const schema = (0, _core.getSchemaFromContext)(context);
+    const downstreamContext = (0, _core.addSpecialHeader)(context, 'ref', '1'); // const downstreamContext = {
+    //   ...context,
+    //   headers: {
+    //     ...context.headers,
+    //     'x-soyuz-ref': '1'
+    //   }
+    // };
 
     if (Array.isArray(sourceFieldValues)) {
       const targetArgs = prepareTargetArgs(targetKey, sourceFieldValues);
       return await schema.batchQueryMany({
         query,
         args: targetArgs,
-        context,
+        context: downstreamContext,
         info
       });
     }
@@ -47,7 +54,7 @@ const createResolver = model => {
     return await schema.batchQuery({
       query,
       args: targetArgs,
-      context,
+      context: downstreamContext,
       info
     });
   };
