@@ -53,6 +53,7 @@ module.exports.createSchema = () =>
 
   return {
     schema,
+    resolvers,
     verifyHeaders: expectedHeaders => verifyHeaders(resolvers, expectedHeaders),
     verifyResolvers: expectedArgs => verifyResolvers(resolvers, expectedArgs),
     verifyData

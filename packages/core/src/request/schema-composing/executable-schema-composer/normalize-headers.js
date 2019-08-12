@@ -12,6 +12,7 @@ const DEFAULT_OMIT_HEADERS = [
   'user-agent'
 ];
 
+const SOYUZ_HEADER = 'x-soyuz';
 
 export const normalizeHeaders = (headers = {}, exclude = []) => Object
   .keys(headers)
@@ -24,8 +25,10 @@ export const normalizeHeaders = (headers = {}, exclude = []) => Object
 
     const lowerCasedHeader = header.toLowerCase();
 
-    if(omitHeaders.indexOf(lowerCasedHeader) === -1)
+    if(omitHeaders.indexOf(lowerCasedHeader) === -1 && !lowerCasedHeader.startsWith(SOYUZ_HEADER))
     {
+      console.log('lowerCasedHeader:', lowerCasedHeader);
+
       result[lowerCasedHeader] = headers[header];
     }
 

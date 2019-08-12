@@ -170,7 +170,35 @@ describe('Dispatcher on AWS (without using metadata)', () =>
     verifyHeaders(headers);
   });
 
-  it('should merge headers and make it lower-case', async () =>
+  it('should remove x-soyuz-* headers from passing to downstream service', async () =>
+  {
+    const HEADER = 'x-soyuz-some-header';
+    const variables = { id: 12345 };
+    const headers = { [HEADER]: '1' };
+    const { verifyHeaders, schema, resolvers } = authorsSchema();
+    const registration = await registerAndCommit(dispatcher, { skipMetadata: true }, { schema });
+    services.push(registration.service);
+
+    const result = await executeQuery({
+      endpoint: dispatcher.endpoint,
+      query: gql`
+        query AuthorById($id: Int!) {
+          result: authorById(id: $id) { id firstName lastName }
+        }
+      `,
+      headers,
+      variables
+    });
+
+    const h = resolvers.Query.authorById.mock.calls[0][2].headers;
+
+    console.log('headers:', h);
+
+    expect(result.errors).toEqual(undefined);
+    expect(h[HEADER]).toEqual(undefined);
+  });
+
+  it.skip('should merge headers and make it lower-case', async () =>
   {
     const variables = { id: 12345 };
     const headers = {

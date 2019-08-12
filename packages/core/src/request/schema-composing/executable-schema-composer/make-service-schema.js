@@ -5,10 +5,11 @@ import { HttpLink } from 'apollo-link-http';
 import { makeRemoteExecutableSchema } from 'graphql-tools';
 import { normalizeHeaders } from './normalize-headers';
 
+const emptyContext = () => ({});
 const createHttpLink = (uri, headers) => new HttpLink({ uri, headers, fetch });
 
-const createContextLink = (contextSetter, omitHeaders) => setContext((...args) => {
-  const context = contextSetter(...args);
+const createContextLink = (contextSetter = emptyContext, omitHeaders) => setContext((request, previousContext) => {
+  const context = contextSetter(request, previousContext);
 
   return {
     ...context,
@@ -20,9 +21,13 @@ export const makeServiceSchema = ({ schema, endpoint, headers = {}, contextSette
 {
   const omitHeaders = Object.keys(headers);
 
-  const links = contextSetter != null ?
-    [createContextLink(contextSetter, omitHeaders), createHttpLink(endpoint, normalizeHeaders(headers))] :
-    [createHttpLink(endpoint, normalizeHeaders(headers))];
+  // const links = contextSetter != null ?
+  //   [createContextLink(contextSetter, omitHeaders), createHttpLink(endpoint, normalizeHeaders(headers))] :
+  //   [createHttpLink(endpoint, normalizeHeaders(headers))];
+  const links = [
+    createContextLink(contextSetter, omitHeaders),
+    createHttpLink(endpoint, normalizeHeaders(headers))
+  ];
 
   const link = ApolloLink.from(links);
 

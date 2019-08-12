@@ -30,8 +30,6 @@ describe('Dispatcher on AWS (using metadata)', () =>
 
     const { result } = registration;
 
-    console.log('result', result);
-
     expect(result.success).toEqual(true);
   });
 
@@ -93,5 +91,33 @@ describe('Dispatcher on AWS (using metadata)', () =>
     });
 
     expect(result.data.author.topBook).toEqual(books[0]);
+  });
+
+  it.skip('should add x-soyuz-ref=1 header to the request', async () =>
+  {
+    const { schema: booksServiceSchema, resolvers: booksResolvers } = booksSchema();
+
+    const booksRegistration = await registerAndCommit(dispatcher, { skipMetadata: false }, { schema: booksServiceSchema, port: 2777});
+    services.push(booksRegistration.service);
+
+    const authorsRegistration = await registerAndCommit(dispatcher, { skipMetadata: false }, { schema: authorsSchema().schema });
+    services.push(authorsRegistration.service);
+
+    const result = await executeQuery({
+      endpoint: dispatcher.endpoint,
+      query: gql`
+        query TestQuery($authorId: Int!) {
+          author: authorById(id: $authorId) {
+           id 
+           topBook { id title description }
+          }
+        }
+      `,
+      variables: { authorId: 1 }
+    });
+
+    // expect(result.data.author.topBook).toEqual(books[0]);
+
+    expect(booksResolvers.Query.topBooksByAuthorsIds.mock.calls[0][2].headers['x-soyuz-ref']).toEqual(1);
   });
 });
