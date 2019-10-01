@@ -11,12 +11,20 @@ var _getSchemaVersion = require("./data/get-schema-version");
 
 var _schemaComposing = require("./schema-composing");
 
+var _tracing = require("../tracing");
+
 const buildExecutableSchemaQuery = options => {
   const optionsPreparation = (0, _options.prepareOptions)(options);
 
   if (!optionsPreparation.success) {
     throw new Error(`Options is not valid: <${optionsPreparation.error}>`);
   }
+
+  console.log('CONSOLE LOG: OPTIONS PREPARED2');
+
+  _tracing.tracing.info('OPTIONS PREPARED');
+
+  _tracing.tracing.info('OPTIONS PREPARED');
 
   const composeSchema = (0, _schemaComposing.buildSchemaComposer)(optionsPreparation.payload);
   return async ({
@@ -52,17 +60,5 @@ const buildExecutableSchemaQuery = options => {
     return result.payload;
   };
 };
-/*
-  usage (lambda):
-
-  const getExecutableSchema = buildExecutableSchemaRetriever(options);
-
-  const { version, tag } = getSchemaSpecificationFromEvent(event);
-
-  const schema = await getExecutableSchema({ version, tag })
-
-  return new ApolloServer({ schema }).createHandler();
- */
-
 
 exports.buildExecutableSchemaQuery = buildExecutableSchemaQuery;

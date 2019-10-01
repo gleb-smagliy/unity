@@ -5,13 +5,13 @@ const { createStorage } = require('./storage');
 const { createLocking } = require('./locking');
 
 module.exports.options = {
-    storage: createStorage(),
-    versioning: new IncrementalVersioning(),
-    extensionBuilders: [
-        new ReferencesExtensionBuilder()
-    ],
-    schemaBuilders: [
-        graphqlSchemaBuilder()
-    ],
-    locking: createLocking()
+  storage: createStorage(),
+  versioning: new IncrementalVersioning(),
+  extensionBuilders: [
+      new ReferencesExtensionBuilder()
+  ],
+  schemaBuilders: [
+      graphqlSchemaBuilder()
+  ],
+  locking: createLocking()
 };

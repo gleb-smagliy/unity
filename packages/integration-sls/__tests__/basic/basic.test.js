@@ -43,7 +43,7 @@ describe('Dispatcher on AWS (without using metadata)', () =>
     expect(result.success).toEqual(true);
   });
 
-  it('should allow to query without alias single registered service', async () =>
+  it.only('should allow to query without alias single registered service', async () =>
   {
     const variables = { id: 12345 };
     const { verifyData, verifyResolvers, schema } = authorsSchema();

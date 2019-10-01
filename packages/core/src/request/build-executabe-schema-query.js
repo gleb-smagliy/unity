@@ -1,6 +1,7 @@
 import { prepareOptions } from "../common-modules/options";
 import { getSchemaVersion } from './data/get-schema-version';
 import { buildSchemaComposer } from "./schema-composing";
+import { tracing } from '../tracing';
 
 export const buildExecutableSchemaQuery = (options) =>
 {
@@ -10,6 +11,8 @@ export const buildExecutableSchemaQuery = (options) =>
   {
     throw new Error(`Options is not valid: <${optionsPreparation.error}>`);
   }
+
+  tracing.info('OPTIONS PREPARED');
 
   const composeSchema = buildSchemaComposer(optionsPreparation.payload);
 
@@ -35,15 +38,3 @@ export const buildExecutableSchemaQuery = (options) =>
     return result.payload;
   };
 };
-
-/*
-  usage (lambda):
-
-  const getExecutableSchema = buildExecutableSchemaRetriever(options);
-
-  const { version, tag } = getSchemaSpecificationFromEvent(event);
-
-  const schema = await getExecutableSchema({ version, tag })
-
-  return new ApolloServer({ schema }).createHandler();
- */

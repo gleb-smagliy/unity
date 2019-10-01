@@ -14,7 +14,7 @@ describe('Dispatcher on AWS (using metadata)', () =>
 
   beforeEach(async () =>
   {
-    dispatcher = await startDispatcher({ debug: false });
+    dispatcher = await startDispatcher({ debug: true });
   });
 
   afterEach(() =>
@@ -23,7 +23,7 @@ describe('Dispatcher on AWS (using metadata)', () =>
     services.forEach(s => s.close());
   });
 
-  it('should register single service with metadata successfully', async () =>
+  it.skip('should register single service with metadata successfully', async () =>
   {
     const registration = await registerNewService(dispatcher, { skipMetadata: false }, { schema: booksSchema().schema });
     services.push(registration.service);
@@ -33,24 +33,24 @@ describe('Dispatcher on AWS (using metadata)', () =>
     expect(result.success).toEqual(true);
   });
 
-  it('should register two services with many to many refs', async () =>
+  it.skip('should register two services with many to many refs', async () =>
   {
-    const booksRegistration = await registerAndCommit(dispatcher, { skipMetadata: false }, { schema: booksSchema().schema });
+    const booksRegistration = await registerAndCommit.skip(dispatcher, { skipMetadata: false }, { schema: booksSchema().schema });
     services.push(booksRegistration.service);
 
-    const authorsRegistration = await registerAndCommit(dispatcher, { skipMetadata: false }, { schema: authorsSchema().schema });
+    const authorsRegistration = await registerAndCommit.skip(dispatcher, { skipMetadata: false }, { schema: authorsSchema().schema });
     services.push(authorsRegistration.service);
 
     expect(authorsRegistration.result.success).toEqual(true);
     expect(booksRegistration.result.success).toEqual(true);
   });
 
-  it('should return data from referenced service when ref is queried', async () =>
+  it.skip('should return data from referenced service when ref is queried', async () =>
   {
-    const booksRegistration = await registerAndCommit(dispatcher, { skipMetadata: false }, { schema: booksSchema().schema, port: 2777});
+    const booksRegistration = await registerAndCommit.skip(dispatcher, { skipMetadata: false }, { schema: booksSchema().schema, port: 2777});
     services.push(booksRegistration.service);
 
-    const authorsRegistration = await registerAndCommit(dispatcher, { skipMetadata: false }, { schema: authorsSchema().schema });
+    const authorsRegistration = await registerAndCommit.skip(dispatcher, { skipMetadata: false }, { schema: authorsSchema().schema });
     services.push(authorsRegistration.service);
 
     const result = await executeQuery({
@@ -69,12 +69,12 @@ describe('Dispatcher on AWS (using metadata)', () =>
     expect(result.data.author.books).toEqual(books);
   });
 
-  it('should return data with one to one reference', async () =>
+  it.skip('should return data with one to one reference', async () =>
   {
-    const booksRegistration = await registerAndCommit(dispatcher, { skipMetadata: false }, { schema: booksSchema().schema, port: 2777});
+    const booksRegistration = await registerAndCommit.skip(dispatcher, { skipMetadata: false }, { schema: booksSchema().schema, port: 2777});
     services.push(booksRegistration.service);
 
-    const authorsRegistration = await registerAndCommit(dispatcher, { skipMetadata: false }, { schema: authorsSchema().schema });
+    const authorsRegistration = await registerAndCommit.skip(dispatcher, { skipMetadata: false }, { schema: authorsSchema().schema });
     services.push(authorsRegistration.service);
 
     const result = await executeQuery({
@@ -93,14 +93,14 @@ describe('Dispatcher on AWS (using metadata)', () =>
     expect(result.data.author.topBook).toEqual(books[0]);
   });
 
-  it('should add x-soyuz-ref=1 header to the request', async () =>
+  it.skip('should add x-soyuz-ref=1 header to the request', async () =>
   {
     const { schema: booksServiceSchema, resolvers: booksResolvers } = booksSchema();
 
-    const booksRegistration = await registerAndCommit(dispatcher, { skipMetadata: false }, { schema: booksServiceSchema, port: 2777});
+    const booksRegistration = await registerAndCommit.skip(dispatcher, { skipMetadata: false }, { schema: booksServiceSchema, port: 2777});
     services.push(booksRegistration.service);
 
-    const authorsRegistration = await registerAndCommit(dispatcher, { skipMetadata: false }, { schema: authorsSchema().schema });
+    const authorsRegistration = await registerAndCommit.skip(dispatcher, { skipMetadata: false }, { schema: authorsSchema().schema });
     services.push(authorsRegistration.service);
 
     const result = await executeQuery({

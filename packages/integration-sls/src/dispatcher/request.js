@@ -1,7 +1,16 @@
-const { buildExecutableSchemaQuery, schemaContextEnhancer, composeContextEnhancers } = require('@soyuz/core');
+const { buildExecutableSchemaQuery, schemaContextEnhancer, composeContextEnhancers, tracing } = require('@soyuz/core');
 const { ApolloServer } = require('apollo-server-lambda');
 const { options } = require('./options');
 const { getTag, getVersion } = require('./utils');
+const { createTracer } = require('./console-tracer');
+
+const tracer = createTracer();
+
+tracing.configure({
+  trace: true,
+  logLevel: 'INFO',
+  tracer
+});
 
 const createHandlerFactory = ({ playground }) => schema =>
 {

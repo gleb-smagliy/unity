@@ -39,9 +39,17 @@ Object.defineProperty(exports, "composeContextEnhancers", {
     return _tools.composeContextEnhancers;
   }
 });
+Object.defineProperty(exports, "tracing", {
+  enumerable: true,
+  get: function () {
+    return _tracing.tracing;
+  }
+});
 
 var _registration = require("./registration");
 
 var _request = require("./request");
 
 var _tools = require("./tools");
+
+var _tracing = require("./tracing");
