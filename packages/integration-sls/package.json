@@ -1,6 +1,6 @@
 {
   "name": "@soyuz/integration-sls",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Integration with serverless framework",
   "author": "Gleb Smagliy <glebsmag@gmail.com>",
   "homepage": "https://github.com/gleb-smagliy/soyuz#readme",
@@ -29,11 +29,11 @@
     "url": "https://github.com/gleb-smagliy/soyuz/issues"
   },
   "devDependencies": {
-    "@soyuz/core": "^0.7.0",
-    "@soyuz/extension-references": "^0.7.0",
-    "@soyuz/schema-builder-graphql": "^0.7.0",
-    "@soyuz/storage-dynamodb": "^0.7.0",
-    "@soyuz/versioning-incremental": "^0.7.0",
+    "@soyuz/core": "^0.8.0",
+    "@soyuz/extension-references": "^0.8.0",
+    "@soyuz/schema-builder-graphql": "^0.8.0",
+    "@soyuz/storage-dynamodb": "^0.8.0",
+    "@soyuz/versioning-incremental": "^0.8.0",
     "graphql-metadata-introspection": "^0.1.1",
     "jest": "^24.1.0",
     "serverless": "^1.43.0",
