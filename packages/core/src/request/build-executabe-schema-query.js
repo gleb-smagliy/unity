@@ -1,7 +1,8 @@
 import { prepareOptions } from "../common-modules/options";
 import { getSchemaVersion } from './data/get-schema-version';
 import { buildSchemaComposer } from "./schema-composing";
-import { tracing } from '../tracing';
+import { applyTracingToSchema } from '../middleware';
+import { getLogger as l } from '../tracing';
 
 export const buildExecutableSchemaQuery = (options) =>
 {
@@ -11,8 +12,6 @@ export const buildExecutableSchemaQuery = (options) =>
   {
     throw new Error(`Options is not valid: <${optionsPreparation.error}>`);
   }
-
-  tracing.info('OPTIONS PREPARED');
 
   const composeSchema = buildSchemaComposer(optionsPreparation.payload);
 
@@ -34,6 +33,10 @@ export const buildExecutableSchemaQuery = (options) =>
     {
       throw new Error(result.error);
     }
+
+    l().info('Schema for ({tag}, {version}) loaded', { tag, version: resultVersion });
+
+    applyTracingToSchema(result.payload);
 
     return result.payload;
   };

@@ -3,10 +3,15 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.tracing = void 0;
+exports.configure = exports.getLogger = exports.getTracer = void 0;
 
-var _tracing = require("./tracing");
+var _container = require("./container");
 
-const tracing = (0, _tracing.createTracing)(); // export const tracing = null;
-
-exports.tracing = tracing;
+const tracingContainer = (0, _container.createContainer)();
+const tracing = tracingContainer;
+const getTracer = tracingContainer.getTracer;
+exports.getTracer = getTracer;
+const getLogger = tracingContainer.getLogger;
+exports.getLogger = getLogger;
+const configure = tracingContainer.configure;
+exports.configure = configure;

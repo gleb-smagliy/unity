@@ -7,12 +7,28 @@ exports.createQueryMany = exports.createQuery = void 0;
 
 const DataLoader = require('dataloader');
 
+const {
+  getLogger: l
+} = require('../../tracing');
+
+const fieldPathFromInfo = info => {
+  let path = info.path;
+  const segments = [];
+
+  while (path) {
+    segments.unshift(path.key);
+    path = path.prev;
+  }
+
+  return segments.join('.');
+};
+
 const getLoaderCacheKey = ({
   query,
   args,
   context,
   info
-}) => `DataLoader/${query}/${JSON.stringify(info)}`;
+}) => `DataLoader/${query}/${fieldPathFromInfo(info)}`;
 
 const cacheKeyFn = args => JSON.stringify(args);
 
@@ -45,14 +61,25 @@ const createDataLoader = ({
       }
     }
 
-    return await info.mergeInfo.delegateToSchema({
-      schema: info.schema,
-      operation: 'query',
-      fieldName: query,
-      args,
-      context,
-      info
+    l().info('delegating {query} to the schema', {
+      query
     });
+    return await l().useLogging(() => {
+      return info.mergeInfo.delegateToSchema({
+        schema: info.schema,
+        operation: 'query',
+        fieldName: query,
+        args,
+        context,
+        info
+      });
+    }, {
+      delegatedQuery: query
+    }); // return await l().useLogging(() =>
+    // {
+    //
+    // },
+    // { fieldName: query });
   };
 
   return new DataLoader(delegateToSchema, {

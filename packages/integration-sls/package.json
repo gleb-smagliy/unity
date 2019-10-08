@@ -48,10 +48,12 @@
     "apollo-link-http": "^1.5.14",
     "apollo-server-express": "^2.5.0",
     "apollo-server-lambda": "^2.5.0",
+    "aws-xray-sdk-core": "^2.3.6",
     "express": "^4.17.1",
     "graphql": "^14.3.0",
     "graphql-tools": "^4.0.4",
     "graphql-type-json": "^0.3.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "winston": "^3.2.1"
   }
 }

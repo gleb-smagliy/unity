@@ -11,6 +11,8 @@ var _getSchemaVersion = require("./data/get-schema-version");
 
 var _schemaComposing = require("./schema-composing");
 
+var _middleware = require("../middleware");
+
 var _tracing = require("../tracing");
 
 const buildExecutableSchemaQuery = options => {
@@ -19,12 +21,6 @@ const buildExecutableSchemaQuery = options => {
   if (!optionsPreparation.success) {
     throw new Error(`Options is not valid: <${optionsPreparation.error}>`);
   }
-
-  console.log('CONSOLE LOG: OPTIONS PREPARED2');
-
-  _tracing.tracing.info('OPTIONS PREPARED');
-
-  _tracing.tracing.info('OPTIONS PREPARED');
 
   const composeSchema = (0, _schemaComposing.buildSchemaComposer)(optionsPreparation.payload);
   return async ({
@@ -57,6 +53,11 @@ const buildExecutableSchemaQuery = options => {
       throw new Error(result.error);
     }
 
+    (0, _tracing.getLogger)().info('Schema for ({tag}, {version}) loaded', {
+      tag,
+      version: resultVersion
+    });
+    (0, _middleware.applyTracingToSchema)(result.payload);
     return result.payload;
   };
 };

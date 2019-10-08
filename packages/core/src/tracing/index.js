@@ -1,4 +1,11 @@
-import { createTracing } from './tracing';
+import { createContainer } from './container';
 
-export const tracing = createTracing();
-// export const tracing = null;
+const tracingContainer = createContainer();
+
+const tracing = tracingContainer;
+
+export const getTracer = tracingContainer.getTracer;
+export const getLogger = tracingContainer.getLogger;
+export const configure = tracingContainer.configure;
+
+

@@ -5,11 +5,12 @@ import { HttpLink } from 'apollo-link-http';
 import { makeRemoteExecutableSchema } from 'graphql-tools';
 import { normalizeHeaders } from './normalize-headers';
 import { getSpecialHeaders } from '../../context';
+import { getLogger as l } from '../../../tracing'
 
 const emptyContext = request => request;
 const createHttpLink = (uri, headers) => new HttpLink({ uri, headers, fetch });
 
-const createContextLink = (contextSetter = emptyContext, omitHeaders) => setContext((request, previousContext) => {
+const createContextLink = (contextSetter = emptyContext, omitHeaders, endpoint) => setContext((request, previousContext) => {
   const context = contextSetter(request, previousContext);
 
   // console.log('createContextLink::request', context);
@@ -26,6 +27,8 @@ const createContextLink = (contextSetter = emptyContext, omitHeaders) => setCont
 
   // console.log('createContextLink::ret', context);
 
+  l().info('delegating query to {endpoint}', { endpoint });
+
   return ret;
 });
 
@@ -37,7 +40,7 @@ export const makeServiceSchema = ({ schema, endpoint, headers = {}, contextSette
   //   [createContextLink(contextSetter, omitHeaders), createHttpLink(endpoint, normalizeHeaders(headers))] :
   //   [createHttpLink(endpoint, normalizeHeaders(headers))];
   const links = [
-    createContextLink(contextSetter, omitHeaders),
+    createContextLink(contextSetter, omitHeaders, endpoint),
     createHttpLink(endpoint, normalizeHeaders(headers))
   ];
 

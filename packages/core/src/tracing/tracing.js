@@ -1,71 +1,15 @@
-function noop () { }
+import { noop } from './noop';
 
-const DEFAULT_OPTIONS = {
-  logLevel: 'NONE',
-  trace: false,
-  tracer: {
-    wrap: noop,
-    addAnnotation: noop,
-    addMetadata: noop,
-    warn: noop,
-    error: noop,
-    debug: noop,
-    trace: noop,
-    info: noop
-  }
+const noopTracer = {
+  wrap: (operationName, func) => func,
+  addAnnotation: noop,
+  addMetadata: noop,
 };
 
-export const createTracing = () =>
-{
-  let options = DEFAULT_OPTIONS;
+export const createNoopTracerGetter = () => {
+  return () => noopTracer;
+};
 
-  return {
-    configure: (configuration = {}) =>
-    {
-      const tracer = {
-        ...DEFAULT_OPTIONS.tracer,
-        ...(configuration.tracer || {})
-      };
-
-      options = {
-        ...DEFAULT_OPTIONS,
-        ...configuration,
-        tracer
-      };
-
-      console.log('configured tracing to ', options);
-      console.log('configured tracing.tracer.info to ', options.tracer.info);
-    },
-    wrap: (operationName, func) =>
-    {
-      if(!options.trace)
-      {
-        return func;
-      }
-
-      return options.tracer.wrap(operationName, func);
-    },
-    addAnnotation: options.tracer.addAnnotation,
-    addMetadata: options.tracer.addMetadata,
-    warn: (...args) =>
-    {
-      options.tracer.warn(...args)
-    },
-    error: (...args) =>
-    {
-      options.tracer.error(...args)
-    },
-    debug: (...args) =>
-    {
-      options.tracer.debug(...args)
-    },
-    trace: (...args) =>
-    {
-      options.tracer.trace(...args)
-    },
-    info: (...args) =>
-    {
-      options.tracer.info(...args)
-    }
-  };
+export const createTracerGetter = ({ tracer }) => {
+  return () => tracer;
 };

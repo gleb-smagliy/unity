@@ -6,4 +6,4 @@ export {
   getSchemaFromContext
 } from './request';
 export { composeContextEnhancers } from './tools';
-export { tracing } from './tracing';
+export { getTracer, getLogger, configure as configureTracing } from './tracing';

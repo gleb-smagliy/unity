@@ -38,6 +38,7 @@
     "apollo-link-http": "^1.5.11",
     "apollo-server": "^2.4.8",
     "dataloader": "^1.4.0",
+    "graphql-middleware": "^4.0.1",
     "graphql-tools": "^4.0.4",
     "graphql-type-json": "^0.2.2",
     "lru-cache": "^5.1.1",

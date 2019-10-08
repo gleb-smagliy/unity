@@ -35,6 +35,7 @@ provider:
       Resource:
         Fn::ImportValue: GraphqlDispatcher-Tags-Table-Arn
   environment:
+    AWS_XRAY_CONTEXT_MISSING: LOG_ERROR
     STAGE: ${self:provider.stage}
     SCHEMAS_TABLE: Schemas
     TAGS_TABLE: Tags

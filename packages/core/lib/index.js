@@ -39,10 +39,22 @@ Object.defineProperty(exports, "composeContextEnhancers", {
     return _tools.composeContextEnhancers;
   }
 });
-Object.defineProperty(exports, "tracing", {
+Object.defineProperty(exports, "getTracer", {
   enumerable: true,
   get: function () {
-    return _tracing.tracing;
+    return _tracing.getTracer;
+  }
+});
+Object.defineProperty(exports, "getLogger", {
+  enumerable: true,
+  get: function () {
+    return _tracing.getLogger;
+  }
+});
+Object.defineProperty(exports, "configureTracing", {
+  enumerable: true,
+  get: function () {
+    return _tracing.configure;
   }
 });
 

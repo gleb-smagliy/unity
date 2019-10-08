@@ -19,6 +19,8 @@ var _normalizeHeaders = require("./normalize-headers");
 
 var _context = require("../../context");
 
+var _tracing = require("../../../tracing");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const emptyContext = request => request;
@@ -29,7 +31,7 @@ const createHttpLink = (uri, headers) => new _apolloLinkHttp.HttpLink({
   fetch: _nodeFetch.default
 });
 
-const createContextLink = (contextSetter = emptyContext, omitHeaders) => (0, _apolloLinkContext.setContext)((request, previousContext) => {
+const createContextLink = (contextSetter = emptyContext, omitHeaders, endpoint) => (0, _apolloLinkContext.setContext)((request, previousContext) => {
   const context = contextSetter(request, previousContext); // console.log('createContextLink::request', context);
   // console.log('createContextLink::previousContext', previousContext);
   // console.log('createContextLink::context', context);
@@ -40,6 +42,9 @@ const createContextLink = (contextSetter = emptyContext, omitHeaders) => (0, _ap
     }
   }; // console.log('createContextLink::ret', context);
 
+  (0, _tracing.getLogger)().info('delegating query to {endpoint}', {
+    endpoint
+  });
   return ret;
 });
 
@@ -53,7 +58,7 @@ const makeServiceSchema = ({
   //   [createContextLink(contextSetter, omitHeaders), createHttpLink(endpoint, normalizeHeaders(headers))] :
   //   [createHttpLink(endpoint, normalizeHeaders(headers))];
 
-  const links = [createContextLink(contextSetter, omitHeaders), createHttpLink(endpoint, (0, _normalizeHeaders.normalizeHeaders)(headers))];
+  const links = [createContextLink(contextSetter, omitHeaders, endpoint), createHttpLink(endpoint, (0, _normalizeHeaders.normalizeHeaders)(headers))];
 
   const link = _apolloLink.ApolloLink.from(links);
 

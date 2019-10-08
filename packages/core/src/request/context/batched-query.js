@@ -1,18 +1,22 @@
 const DataLoader = require('dataloader');
+const { getLogger : l } = require('../../tracing');
 
-const getLoaderCacheKey = ({ query, args, context, info }) => `DataLoader/${query}/${JSON.stringify(info)}`;
+const fieldPathFromInfo = (info) => {
+  let path = info.path;
+  const segments = [];
+  while (path) {
+    segments.unshift(path.key);
+    path = path.prev;
+  }
 
+  return segments.join('.');
+};
+
+const getLoaderCacheKey = ({ query, args, context, info }) => `DataLoader/${query}/${fieldPathFromInfo(info)}`;
 const cacheKeyFn = args => JSON.stringify(args);
 
 const createDataLoader = ({ query, args, context, info }) =>
 {
-  /*
-    const argsList = [
-      { ids: 123 },
-      { ids: 321 },
-        ...
-    ];
-  */
   const delegateToSchema = async (argsList) =>
   {
     if(argsList.length === 0)
@@ -34,14 +38,19 @@ const createDataLoader = ({ query, args, context, info }) =>
       }
     }
 
-    return await info.mergeInfo.delegateToSchema({
-      schema: info.schema,
-      operation: 'query',
-      fieldName: query,
-      args,
-      context,
-      info
-    });
+    l().info('delegating {query} to the schema', {query});
+
+    return await l().useLogging(() => {
+      return info.mergeInfo.delegateToSchema({
+        schema: info.schema,
+        operation: 'query',
+        fieldName: query,
+        args,
+        context,
+        info
+      });
+    },
+    { delegatedQuery: query });
   };
 
   return new DataLoader(delegateToSchema, { cacheKeyFn });

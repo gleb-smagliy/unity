@@ -14,5 +14,7 @@
     "build": "lerna run build",
     "prune-peers": "lerna run prune-peers"
   },
-  "dependencies": {}
+  "dependencies": {
+    "cls-hooked": "^4.2.2"
+  }
 }
