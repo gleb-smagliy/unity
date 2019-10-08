@@ -37,6 +37,7 @@
     "apollo-link-context": "^1.0.14",
     "apollo-link-http": "^1.5.11",
     "apollo-server": "^2.4.8",
+    "cls-hooked": "^4.2.2",
     "dataloader": "^1.4.0",
     "graphql-middleware": "^4.0.1",
     "graphql-tools": "^4.0.4",
